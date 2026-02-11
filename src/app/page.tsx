@@ -7,7 +7,6 @@ import { PizzaCarousel } from '@/components/PizzaCarousel';
 import { PizzaCard } from '@/components/PizzaCard';
 import { PizzaThumbnails } from '@/components/PizzaThumbnails';
 import { CategoryNavigator } from '@/components/CategoryNavigator';
-import { ParallaxText } from '@/components/ParallaxText';
 import { Button } from '@/components/ui/button';
 import { ShoppingBag, Search, Menu } from 'lucide-react';
 
@@ -15,10 +14,7 @@ export default function Home() {
   const [activeIndex, setActiveIndex] = useState(0);
 
   return (
-    <main className="relative h-screen w-full bg-[#f8f9fa] overflow-hidden font-lalezar text-foreground">
-      {/* Background Decorative Text */}
-      <ParallaxText text={PIZZAS[activeIndex].name} activeIndex={activeIndex} />
-
+    <main className="relative h-screen w-full bg-white overflow-hidden font-lalezar text-foreground">
       {/* Header */}
       <header className="absolute top-0 left-0 w-full px-8 py-6 flex items-center justify-between z-50">
         <div className="flex items-center gap-3">
@@ -57,7 +53,7 @@ export default function Home() {
       {/* Hero Content Area */}
       <div className="relative h-full w-full flex items-center">
         {/* Left Section: Pizza Carousel */}
-        <div className="w-[50%] h-full flex items-center z-10">
+        <div className="w-[55%] h-full flex items-center z-10">
           <PizzaCarousel 
             pizzas={PIZZAS} 
             activeIndex={activeIndex} 
@@ -66,7 +62,7 @@ export default function Home() {
         </div>
 
         {/* Right Section: Info Card */}
-        <div className="w-[50%] flex justify-center items-center pr-12 z-20">
+        <div className="w-[45%] flex justify-center items-center pr-16 z-20">
           <PizzaCard 
             pizza={PIZZAS[activeIndex]} 
             visible={true}
@@ -74,8 +70,8 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Bottom Controls Container - Moved to left with padding */}
-      <div className="fixed bottom-8 left-8 z-40 flex flex-col items-start gap-3">
+      {/* Bottom Controls Container */}
+      <div className="fixed bottom-10 left-10 z-40 flex flex-col items-start gap-4">
         <PizzaThumbnails 
           pizzas={PIZZAS} 
           activeIndex={activeIndex} 
@@ -92,8 +88,8 @@ export default function Home() {
           <button
             key={i}
             onClick={() => setActiveIndex(i)}
-            className={`w-1 transition-all duration-500 rounded-full ${
-              i === activeIndex ? 'h-12 bg-primary' : 'h-3 bg-black/5 hover:bg-black/20'
+            className={`w-1.5 transition-all duration-500 rounded-full ${
+              i === activeIndex ? 'h-12 bg-primary' : 'h-3 bg-black/10 hover:bg-black/20'
             }`}
           />
         ))}
