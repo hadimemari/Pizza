@@ -37,13 +37,13 @@ export const PizzaThumbnails: React.FC<PizzaThumbnailsProps> = ({ pizzas, active
           </div>
           <div className="flex flex-col items-start">
             <span className={cn(
-              "text-[8px] font-black uppercase tracking-tighter leading-none whitespace-nowrap",
+              "text-[10px] font-bold leading-none whitespace-nowrap",
               index === activeIndex ? "text-primary" : "text-muted-foreground"
             )}>
               {pizza.name}
             </span>
             {index === activeIndex && (
-              <span className="text-[7px] text-muted-foreground/60 font-bold uppercase">Selected</span>
+              <span className="text-[8px] text-muted-foreground/60 font-bold uppercase mt-1">انتخاب شده</span>
             )}
           </div>
         </button>

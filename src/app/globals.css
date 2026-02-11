@@ -34,8 +34,12 @@
   }
   body {
     @apply bg-background text-foreground selection:bg-primary/30;
-    font-feature-settings: "rlig" 1, "calt" 1;
+    font-family: 'Lalezar', 'Vazirmatn', sans-serif;
   }
+}
+
+.font-lalezar {
+  font-family: 'Lalezar', cursive;
 }
 
 .glass-card {

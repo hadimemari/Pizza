@@ -15,7 +15,7 @@ export default function Home() {
   const [activeIndex, setActiveIndex] = useState(0);
 
   return (
-    <main className="relative h-screen w-full bg-[#f8f9fa] overflow-hidden font-body text-foreground">
+    <main className="relative h-screen w-full bg-[#f8f9fa] overflow-hidden font-lalezar text-foreground">
       {/* Background Decorative Text */}
       <ParallaxText text={PIZZAS[activeIndex].name} activeIndex={activeIndex} />
 
@@ -23,17 +23,17 @@ export default function Home() {
       <header className="absolute top-0 left-0 w-full px-8 py-6 flex items-center justify-between z-50">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center text-white font-black text-xl shadow-lg shadow-primary/20">
-            P
+            پ
           </div>
-          <span className="font-headline font-black text-2xl tracking-tighter uppercase italic text-foreground">
-            Pizza<span className="text-primary">Motion</span>
+          <span className="font-black text-2xl tracking-tighter uppercase italic text-foreground">
+            پیتزا<span className="text-primary">موشن</span>
           </span>
         </div>
 
         <nav className="hidden md:flex items-center gap-8">
-          <a href="#" className="text-[10px] font-black uppercase tracking-[0.2em] hover:text-primary transition-colors">Story</a>
-          <a href="#" className="text-[10px] font-black uppercase tracking-[0.2em] hover:text-primary transition-colors">Menu</a>
-          <a href="#" className="text-[10px] font-black uppercase tracking-[0.2em] hover:text-primary transition-colors">Locations</a>
+          <a href="#" className="text-sm font-bold hover:text-primary transition-colors">داستان ما</a>
+          <a href="#" className="text-sm font-bold hover:text-primary transition-colors">منو</a>
+          <a href="#" className="text-sm font-bold hover:text-primary transition-colors">شعب</a>
         </nav>
 
         <div className="flex items-center gap-4">
@@ -45,7 +45,7 @@ export default function Home() {
               <ShoppingBag className="w-5 h-5" />
             </Button>
             <div className="absolute -top-1 -right-1 w-5 h-5 bg-accent text-white rounded-full flex items-center justify-center text-[10px] font-bold">
-              3
+              ۳
             </div>
           </div>
           <Button variant="ghost" size="icon" className="md:hidden">
@@ -56,7 +56,7 @@ export default function Home() {
 
       {/* Hero Content Area */}
       <div className="relative h-full w-full flex items-center">
-        {/* Left Section: Pizza Carousel */}
+        {/* Left Section: Pizza Carousel (Now visually consistent with RTL context) */}
         <div className="w-[50%] h-full flex items-center z-10">
           <PizzaCarousel 
             pizzas={PIZZAS} 
@@ -66,7 +66,7 @@ export default function Home() {
         </div>
 
         {/* Right Section: Info Card */}
-        <div className="w-[50%] flex justify-center items-center pr-12 z-20">
+        <div className="w-[50%] flex justify-center items-center pl-12 z-20">
           <PizzaCard 
             pizza={PIZZAS[activeIndex]} 
             visible={true}
@@ -74,8 +74,8 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Bottom Controls Container - Adjusted to Left */}
-      <div className="fixed bottom-12 left-12 z-40 flex flex-col items-start gap-4">
+      {/* Bottom Controls Container - Aligned to the same side as Logo */}
+      <div className="fixed bottom-12 right-12 z-40 flex flex-col items-start gap-4">
         <PizzaThumbnails 
           pizzas={PIZZAS} 
           activeIndex={activeIndex} 
@@ -84,8 +84,8 @@ export default function Home() {
         <CategoryNavigator activeId="pizzas" />
       </div>
 
-      {/* Vertical Navigation (Hidden on small screens, shifted slightly) */}
-      <div className="fixed left-6 top-1/2 -translate-y-1/2 hidden lg:flex flex-col gap-4 z-40">
+      {/* Vertical Navigation */}
+      <div className="fixed right-6 top-1/2 -translate-y-1/2 hidden lg:flex flex-col gap-4 z-40">
         {PIZZAS.map((_, i) => (
           <button
             key={i}

@@ -40,14 +40,14 @@ export const PizzaCard: React.FC<PizzaCardProps> = ({ pizza, visible }) => {
             <div className="flex text-yellow-500">
               {[...Array(5)].map((_, i) => <Star key={i} className="w-3.5 h-3.5 fill-current" />)}
             </div>
-            <span className="text-[9px] font-black uppercase tracking-widest text-muted-foreground">Premium Selection</span>
+            <span className="text-xs font-bold text-muted-foreground">انتخاب ممتاز</span>
           </div>
           
           <div className="space-y-1">
-            <h2 className="text-5xl font-black text-foreground font-headline uppercase tracking-tighter leading-[0.9]">
+            <h2 className="text-5xl font-black text-foreground uppercase tracking-tighter leading-[0.9]">
               {displayPizza.name}
             </h2>
-            <p className="text-primary font-black text-4xl mt-2 tracking-tighter">{displayPizza.price}</p>
+            <p className="text-primary font-black text-3xl mt-2">{displayPizza.price}</p>
           </div>
         </div>
 
@@ -57,20 +57,20 @@ export const PizzaCard: React.FC<PizzaCardProps> = ({ pizza, visible }) => {
 
         <div className="space-y-6">
           <div className="space-y-2">
-            <div className="flex justify-between text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">
-              <span>Texture & Freshness</span>
-              <span>{displayPizza.cheesiness}%</span>
+            <div className="flex justify-between text-xs font-bold text-muted-foreground">
+              <span>بافت و تازگی</span>
+              <span className="font-mono">{displayPizza.cheesiness}%</span>
             </div>
             <Progress value={displayPizza.cheesiness} className="h-1.5 bg-black/5" />
           </div>
 
           <div className="pt-2 space-y-4">
-            <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">Top Ingredients</h4>
+            <h4 className="text-xs font-bold text-muted-foreground">مواد تشکیل دهنده</h4>
             <div className="flex flex-wrap gap-2">
               {displayPizza.ingredients.map((ing) => (
                 <div 
                   key={ing} 
-                  className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/50 border border-white/60 text-[9px] font-bold uppercase tracking-wider"
+                  className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/50 border border-white/60 text-[10px] font-bold"
                 >
                   <Leaf className="w-2.5 h-2.5 text-green-600" />
                   {ing}
@@ -82,9 +82,9 @@ export const PizzaCard: React.FC<PizzaCardProps> = ({ pizza, visible }) => {
       </div>
 
       <div className="pt-8">
-        <Button className="w-full h-14 rounded-2xl bg-black hover:bg-primary text-white text-sm font-black uppercase tracking-widest group shadow-xl transition-all active:scale-95 border-none">
-          <ShoppingCart className="mr-3 w-4 h-4 transition-transform group-hover:translate-x-1" />
-          Order This Slice
+        <Button className="w-full h-14 rounded-2xl bg-black hover:bg-primary text-white text-lg font-bold group shadow-xl transition-all active:scale-95 border-none">
+          <ShoppingCart className="ml-3 w-5 h-5 transition-transform group-hover:-translate-x-1" />
+          سفارش این برش
         </Button>
       </div>
     </div>
