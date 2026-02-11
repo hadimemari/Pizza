@@ -77,8 +77,7 @@ export const PizzaCarousel: React.FC<PizzaCarouselProps> = ({ pizzas, activeInde
                     alt={pizza.name}
                     fill
                     className={cn(
-                      "object-contain pizza-glow",
-                      isActive ? "animate-spin-slow" : ""
+                      "object-contain pizza-glow animate-spin-slow"
                     )}
                     style={{ 
                       animationDuration: '60s',
