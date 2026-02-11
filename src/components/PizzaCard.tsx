@@ -19,6 +19,7 @@ export const PizzaCard: React.FC<PizzaCardProps> = ({ pizza, visible }) => {
 
   useEffect(() => {
     setAnimating(true);
+    // زمان‌بندی هماهنگ با گردونه
     const timeout = setTimeout(() => {
       setDisplayPizza(pizza);
       setAnimating(false);
