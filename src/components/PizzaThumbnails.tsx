@@ -14,18 +14,18 @@ interface PizzaThumbnailsProps {
 
 export const PizzaThumbnails: React.FC<PizzaThumbnailsProps> = ({ pizzas, activeIndex, onSelect }) => {
   return (
-    <div className="flex items-center justify-center gap-6 mb-8 px-4 py-2">
+    <div className="flex items-center gap-4 p-2">
       {pizzas.map((pizza, index) => (
         <button
           key={pizza.id}
           onClick={() => onSelect(index)}
-          className="group flex flex-col items-center gap-2 transition-all duration-300"
+          className="group flex items-center gap-3 transition-all duration-300 bg-white/40 backdrop-blur-md px-3 py-2 rounded-2xl border border-white/40 hover:bg-white/60"
         >
           <div className={cn(
-            "relative w-16 h-16 rounded-full overflow-hidden transition-all duration-500 border-2",
+            "relative w-10 h-10 rounded-full overflow-hidden transition-all duration-500 border-2 shadow-sm",
             index === activeIndex 
-              ? "border-primary scale-110 shadow-lg shadow-primary/20" 
-              : "border-transparent opacity-60 hover:opacity-100 grayscale-[0.5] hover:grayscale-0"
+              ? "border-primary scale-110" 
+              : "border-transparent opacity-60 grayscale-[0.3]"
           )}>
             <Image
               src={pizza.image}
@@ -35,12 +35,17 @@ export const PizzaThumbnails: React.FC<PizzaThumbnailsProps> = ({ pizzas, active
               data-ai-hint="pizza thumbnail"
             />
           </div>
-          <span className={cn(
-            "text-[10px] font-bold uppercase tracking-tighter transition-colors max-w-[70px] text-center leading-none",
-            index === activeIndex ? "text-primary" : "text-muted-foreground"
-          )}>
-            {pizza.name}
-          </span>
+          <div className="flex flex-col items-start">
+            <span className={cn(
+              "text-[8px] font-black uppercase tracking-tighter leading-none whitespace-nowrap",
+              index === activeIndex ? "text-primary" : "text-muted-foreground"
+            )}>
+              {pizza.name}
+            </span>
+            {index === activeIndex && (
+              <span className="text-[7px] text-muted-foreground/60 font-bold uppercase">Selected</span>
+            )}
+          </div>
         </button>
       ))}
     </div>

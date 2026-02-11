@@ -57,7 +57,7 @@ export default function Home() {
       {/* Hero Content Area */}
       <div className="relative h-full w-full flex items-center">
         {/* Left Section: Pizza Carousel */}
-        <div className="w-[55%] h-full flex items-center z-10">
+        <div className="w-[50%] h-full flex items-center z-10">
           <PizzaCarousel 
             pizzas={PIZZAS} 
             activeIndex={activeIndex} 
@@ -66,7 +66,7 @@ export default function Home() {
         </div>
 
         {/* Right Section: Info Card */}
-        <div className="w-[45%] flex justify-center items-center pr-12 z-20">
+        <div className="w-[50%] flex justify-center items-center pr-12 z-20">
           <PizzaCard 
             pizza={PIZZAS[activeIndex]} 
             visible={true}
@@ -74,8 +74,8 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Bottom Controls Container */}
-      <div className="fixed bottom-8 left-0 w-full z-40 flex flex-col items-center">
+      {/* Bottom Controls Container - Adjusted to Left */}
+      <div className="fixed bottom-12 left-12 z-40 flex flex-col items-start gap-4">
         <PizzaThumbnails 
           pizzas={PIZZAS} 
           activeIndex={activeIndex} 
@@ -84,11 +84,8 @@ export default function Home() {
         <CategoryNavigator activeId="pizzas" />
       </div>
 
-      {/* Vertical Navigation (Left Side) */}
-      <div className="fixed left-8 top-1/2 -translate-y-1/2 flex flex-col gap-4 z-40">
-        <div className="text-[8px] font-black vertical-text opacity-30 mb-6 tracking-[0.3em] uppercase">
-          Slide to Explore
-        </div>
+      {/* Vertical Navigation (Hidden on small screens, shifted slightly) */}
+      <div className="fixed left-6 top-1/2 -translate-y-1/2 hidden lg:flex flex-col gap-4 z-40">
         {PIZZAS.map((_, i) => (
           <button
             key={i}
