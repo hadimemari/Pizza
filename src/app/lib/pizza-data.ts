@@ -23,7 +23,7 @@ export const PIZZAS: Pizza[] = [
     cheesiness: 85,
     ingredients: ["Fresh Basil", "Mozzarella", "Tomato Sauce", "Olive Oil"],
     description: "The timeless Italian classic with fresh mozzarella and aromatic basil leaves.",
-    image: "https://picsum.photos/seed/piz1/800/800",
+    image: "/pizzas/margherita.png",
     category: "pizzas"
   },
   {
@@ -33,7 +33,7 @@ export const PIZZAS: Pizza[] = [
     cheesiness: 92,
     ingredients: ["Spicy Salami", "Extra Cheese", "Italian Herbs", "Oregano"],
     description: "A meat lover's dream packed with crispy pepperoni and melting double cheese.",
-    image: "https://picsum.photos/seed/piz2/800/800",
+    image: "/pizzas/pepperoni.png",
     category: "pizzas"
   },
   {
@@ -43,7 +43,7 @@ export const PIZZAS: Pizza[] = [
     cheesiness: 70,
     ingredients: ["Bell Peppers", "Olives", "Mushrooms", "Red Onion"],
     description: "A colorful garden blend of roasted vegetables on a crispy golden crust.",
-    image: "https://picsum.photos/seed/piz3/800/800",
+    image: "/pizzas/veggie.png",
     category: "pizzas"
   },
   {
@@ -53,7 +53,7 @@ export const PIZZAS: Pizza[] = [
     cheesiness: 80,
     ingredients: ["Grilled Chicken", "BBQ Sauce", "Corn", "Cilantro"],
     description: "Smoky BBQ sauce paired with tender grilled chicken for a rustic flavor profile.",
-    image: "https://picsum.photos/seed/piz4/800/800",
+    image: "/pizzas/bbq.png",
     category: "pizzas"
   },
   {
@@ -63,7 +63,7 @@ export const PIZZAS: Pizza[] = [
     cheesiness: 75,
     ingredients: ["Pineapple", "Ham", "Caramelized Onion", "Honey"],
     description: "Sweet pineapple and salty ham create a perfect tropical balance.",
-    image: "https://picsum.photos/seed/piz5/800/800",
+    image: "/pizzas/hawaiian.png",
     category: "pizzas"
   }
 ];

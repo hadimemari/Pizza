@@ -2,34 +2,34 @@
 {
   "placeholderImages": [
     {
-      "id": "pizza-margherita",
+      "id": "piz-margherita",
       "description": "Classic Margherita Pizza",
-      "imageUrl": "https://picsum.photos/seed/piz1/800/800",
-      "imageHint": "margherita pizza"
+      "imageUrl": "/pizzas/margherita.png",
+      "imageHint": "margherita pizza transparent"
     },
     {
-      "id": "pizza-pepperoni",
+      "id": "piz-pepperoni",
       "description": "Double Pepperoni Pizza",
-      "imageUrl": "https://picsum.photos/seed/piz2/800/800",
-      "imageHint": "pepperoni pizza"
+      "imageUrl": "/pizzas/pepperoni.png",
+      "imageHint": "pepperoni pizza transparent"
     },
     {
-      "id": "pizza-veggie",
+      "id": "piz-veggie",
       "description": "Roasted Vegetable Pizza",
-      "imageUrl": "https://picsum.photos/seed/piz3/800/800",
-      "imageHint": "vegetable pizza"
+      "imageUrl": "/pizzas/veggie.png",
+      "imageHint": "vegetable pizza transparent"
     },
     {
-      "id": "pizza-bbq",
+      "id": "piz-bbq",
       "description": "BBQ Chicken Pizza",
-      "imageUrl": "https://picsum.photos/seed/piz4/800/800",
-      "imageHint": "bbq chicken pizza"
+      "imageUrl": "/pizzas/bbq.png",
+      "imageHint": "bbq chicken pizza transparent"
     },
     {
-      "id": "pizza-hawaiian",
+      "id": "piz-hawaiian",
       "description": "Hawaiian Tropical Pizza",
-      "imageUrl": "https://picsum.photos/seed/piz5/800/800",
-      "imageHint": "hawaiian pizza"
+      "imageUrl": "/pizzas/hawaiian.png",
+      "imageHint": "hawaiian pizza transparent"
     }
   ]
 }
