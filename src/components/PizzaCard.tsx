@@ -1,4 +1,3 @@
-
 "use client";
 
 import React, { useEffect, useState } from 'react';
@@ -83,7 +82,7 @@ export const PizzaCard: React.FC<PizzaCardProps> = ({ pizza, visible }) => {
 
       <div className="pt-8">
         <Button className="w-full h-14 rounded-2xl bg-black hover:bg-primary text-white text-lg font-bold group shadow-xl transition-all active:scale-95 border-none">
-          <ShoppingCart className="ml-3 w-5 h-5 transition-transform group-hover:-translate-x-1" />
+          <ShoppingCart className="mr-3 w-5 h-5 transition-transform group-hover:translate-x-1" />
           سفارش این برش
         </Button>
       </div>

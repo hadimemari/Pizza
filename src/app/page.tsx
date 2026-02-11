@@ -1,4 +1,3 @@
-
 "use client";
 
 import React, { useState } from 'react';
@@ -56,7 +55,7 @@ export default function Home() {
 
       {/* Hero Content Area */}
       <div className="relative h-full w-full flex items-center">
-        {/* Left Section: Pizza Carousel (Now visually consistent with RTL context) */}
+        {/* Left Section: Pizza Carousel */}
         <div className="w-[50%] h-full flex items-center z-10">
           <PizzaCarousel 
             pizzas={PIZZAS} 
@@ -66,7 +65,7 @@ export default function Home() {
         </div>
 
         {/* Right Section: Info Card */}
-        <div className="w-[50%] flex justify-center items-center pl-12 z-20">
+        <div className="w-[50%] flex justify-center items-center pr-12 z-20">
           <PizzaCard 
             pizza={PIZZAS[activeIndex]} 
             visible={true}
@@ -74,8 +73,8 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Bottom Controls Container - Aligned to the same side as Logo */}
-      <div className="fixed bottom-12 right-12 z-40 flex flex-col items-start gap-4">
+      {/* Bottom Controls Container - Aligned to the left (Logo side) */}
+      <div className="fixed bottom-12 left-12 z-40 flex flex-col items-start gap-4">
         <PizzaThumbnails 
           pizzas={PIZZAS} 
           activeIndex={activeIndex} 

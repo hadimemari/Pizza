@@ -1,4 +1,3 @@
-
 "use client";
 
 import React from 'react';
@@ -13,7 +12,7 @@ export const ParallaxText: React.FC<ParallaxTextProps> = ({ text, activeIndex })
     <div className="absolute inset-0 pointer-events-none flex flex-col items-center justify-center overflow-hidden">
       <div 
         className="transition-transform duration-1000 ease-out flex whitespace-nowrap"
-        style={{ transform: `translateX(${activeIndex * 10}%)` }} // Adjusted for RTL
+        style={{ transform: `translateX(${activeIndex * -10}%)` }}
       >
         <span className="text-[20vw] font-black text-primary/5 uppercase leading-none select-none px-10">
           {text}
@@ -24,7 +23,7 @@ export const ParallaxText: React.FC<ParallaxTextProps> = ({ text, activeIndex })
       </div>
       <div 
         className="transition-transform duration-700 ease-out flex whitespace-nowrap mt-[-5vw]"
-        style={{ transform: `translateX(${-activeIndex * 15}%)` }} // Adjusted for RTL
+        style={{ transform: `translateX(${activeIndex * 15}%)` }}
       >
         <span className="text-[12vw] font-black text-accent/5 uppercase leading-none select-none px-10 italic">
           بسیار لذیذ
