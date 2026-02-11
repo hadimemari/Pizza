@@ -13,18 +13,20 @@ interface PizzaCarouselProps {
 }
 
 export const PizzaCarousel: React.FC<PizzaCarouselProps> = ({ pizzas, activeIndex, onPizzaClick }) => {
-  // Increased radius for a more dramatic arc from the side
-  const radius = 600; 
+  // شعاع را بر اساس اندازه صفحه تنظیم می‌کنیم تا پیتزاها همیشه در دید باشند
+  const radius = 500; 
   const total = pizzas.length;
 
   return (
-    <div className="relative w-full h-full flex items-center justify-start overflow-visible">
-      {/* Center point moved far to the left of the screen container */}
+    <div className="relative w-full h-full flex items-center overflow-visible">
+      {/* 
+          مرکز دایره را به بیرون از سمت چپ هدایت می‌کنیم.
+          با چرخش دایره حول این نقطه، پیتزاها به صورت تکی وارد کادر می‌شوند.
+      */}
       <div 
-        className="absolute transition-transform duration-1000 cubic-bezier(0.4, 0, 0.2, 1)"
+        className="absolute left-[-450px] top-1/2 -translate-y-1/2 transition-transform duration-1000 ease-[cubic-bezier(0.34,1.56,0.64,1)]"
         style={{ 
-          left: '-20%', // Shift the pivot point off-screen left
-          transform: `rotate(${activeIndex * -(360 / total)}deg)`
+          transform: `translateY(-50%) rotate(${activeIndex * -(360 / total)}deg)`
         }}
       >
         {pizzas.map((pizza, index) => {
@@ -36,33 +38,35 @@ export const PizzaCarousel: React.FC<PizzaCarouselProps> = ({ pizzas, activeInde
               key={pizza.id}
               onClick={() => onPizzaClick(index)}
               className={cn(
-                "absolute top-0 left-0 cursor-pointer transition-all duration-700 origin-center",
-                isActive ? "z-20 scale-150" : "z-10 scale-75 opacity-20 grayscale"
+                "absolute top-1/2 left-1/2 cursor-pointer transition-all duration-700 origin-center",
+                isActive ? "z-20 scale-125" : "z-10 scale-50 opacity-10 grayscale"
               )}
               style={{
                 transform: `
                   rotate(${angle}deg) 
-                  translateY(-${radius}px) 
+                  translateX(${radius}px) 
                   rotate(-${angle}deg)
                   rotate(${activeIndex * (360 / total)}deg)
+                  translate(-50%, -50%)
                 `
               }}
             >
               <div className="relative group">
                 <div className={cn(
-                  "absolute inset-0 bg-primary/20 rounded-full blur-3xl transition-opacity duration-500",
+                  "absolute inset-0 bg-primary/20 rounded-full blur-[100px] transition-opacity duration-1000",
                   isActive ? "opacity-100" : "opacity-0"
                 )} />
                 <Image
                   src={pizza.image}
                   alt={pizza.name}
-                  width={450}
-                  height={450}
+                  width={600}
+                  height={600}
                   className={cn(
-                    "rounded-full shadow-[0_30px_60px_-15px_rgba(0,0,0,0.5)] transition-all duration-700",
-                    isActive ? "rotate-0" : "rotate-12"
+                    "rounded-full shadow-[0_50px_100px_-20px_rgba(0,0,0,0.6)] transition-all duration-700",
+                    isActive ? "rotate-0 scale-100" : "rotate-45 scale-75"
                   )}
                   data-ai-hint="pizza"
+                  priority
                 />
               </div>
             </div>

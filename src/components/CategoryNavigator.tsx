@@ -11,28 +11,28 @@ interface CategoryNavigatorProps {
 }
 
 const IconMap: Record<string, React.ReactNode> = {
-  Pizza: <Pizza className="w-5 h-5" />,
-  ChefHat: <ChefHat className="w-5 h-5" />,
-  Salad: <Salad className="w-5 h-5" />,
-  CupSoda: <CupSoda className="w-5 h-5" />
+  Pizza: <Pizza className="w-4 h-4" />,
+  ChefHat: <ChefHat className="w-4 h-4" />,
+  Salad: <Salad className="w-4 h-4" />,
+  CupSoda: <CupSoda className="w-4 h-4" />
 };
 
 export const CategoryNavigator: React.FC<CategoryNavigatorProps> = ({ activeId }) => {
   return (
-    <div className="fixed bottom-10 left-1/2 -translate-x-1/2 z-50">
-      <div className="glass-card flex items-center gap-2 p-2 rounded-2xl border-white/50 shadow-2xl">
+    <div className="mt-2">
+      <div className="bg-white/10 backdrop-blur-md flex items-center gap-1 p-1.5 rounded-full border border-white/10 shadow-xl">
         {CATEGORIES.map((cat) => (
           <button
             key={cat.id}
             className={cn(
-              "flex items-center gap-2 px-5 py-3 rounded-xl transition-all duration-300 font-bold text-sm",
+              "flex items-center gap-2 px-4 py-2 rounded-full transition-all duration-300 font-bold text-xs",
               activeId === cat.id 
                 ? "bg-primary text-white shadow-lg shadow-primary/20 scale-105" 
-                : "hover:bg-black/5 text-muted-foreground"
+                : "hover:bg-white/10 text-muted-foreground/80 hover:text-foreground"
             )}
           >
             {IconMap[cat.icon]}
-            <span>{cat.label}</span>
+            <span className="hidden sm:inline">{cat.label}</span>
           </button>
         ))}
       </div>
