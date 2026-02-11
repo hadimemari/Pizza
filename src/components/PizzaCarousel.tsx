@@ -12,24 +12,25 @@ interface PizzaCarouselProps {
 }
 
 export const PizzaCarousel: React.FC<PizzaCarouselProps> = ({ pizzas, activeIndex, onPizzaClick }) => {
-  // شعاع را بر اساس اندازه صفحه تنظیم می‌کنیم تا پیتزاها همیشه در دید باشند
-  const radius = 500; 
+  // شعاع دایره بزرگ برای حرکت منحنی جذاب
+  const radius = 650; 
   const total = pizzas.length;
+  const angleStep = 360 / total;
 
   return (
-    <div className="relative w-full h-full flex items-center overflow-visible">
+    <div className="relative w-full h-full flex items-center overflow-visible select-none">
       {/* 
-          مرکز دایره را به بیرون از سمت چپ هدایت می‌کنیم.
-          با چرخش دایره حول این نقطه، پیتزاها به صورت تکی وارد کادر می‌شوند.
+          محور چرخش: این کانتینر حول نقطه‌ای در سمت چپ می‌چرخد.
+          استفاده از cubic-bezier برای ایجاد حس فیزیکی و نرم در چرخش.
       */}
       <div 
-        className="absolute left-[-450px] top-1/2 -translate-y-1/2 transition-transform duration-1000 ease-[cubic-bezier(0.34,1.56,0.64,1)]"
+        className="absolute left-[-500px] top-1/2 -translate-y-1/2 w-0 h-0 transition-transform duration-[1200ms] ease-[cubic-bezier(0.23,1,0.32,1)]"
         style={{ 
-          transform: `translateY(-50%) rotate(${activeIndex * -(360 / total)}deg)`
+          transform: `translateY(-50%) rotate(${-activeIndex * angleStep}deg)`
         }}
       >
         {pizzas.map((pizza, index) => {
-          const angle = index * (360 / total);
+          const angle = index * angleStep;
           const isActive = index === activeIndex;
 
           return (
@@ -37,36 +38,43 @@ export const PizzaCarousel: React.FC<PizzaCarouselProps> = ({ pizzas, activeInde
               key={pizza.id}
               onClick={() => onPizzaClick(index)}
               className={cn(
-                "absolute top-1/2 left-1/2 cursor-pointer transition-all duration-700 origin-center",
-                isActive ? "z-20 scale-125" : "z-10 scale-50 opacity-10 grayscale"
+                "absolute top-1/2 left-1/2 cursor-pointer transition-all duration-1000 origin-center",
+                isActive ? "z-30 scale-110" : "z-10 scale-50 opacity-20 blur-[2px] grayscale hover:opacity-40 hover:blur-none transition-all"
               )}
               style={{
                 transform: `
                   rotate(${angle}deg) 
                   translateX(${radius}px) 
-                  rotate(-${angle}deg)
-                  rotate(${activeIndex * (360 / total)}deg)
+                  rotate(${-angle}deg) 
+                  rotate(${activeIndex * angleStep}deg)
                   translate(-50%, -50%)
                 `
               }}
             >
-              <div className="relative group">
+              <div className="relative group perspective-1000">
+                {/* هاله نوری پشت پیتزای فعال */}
                 <div className={cn(
-                  "absolute inset-0 bg-primary/20 rounded-full blur-[100px] transition-opacity duration-1000",
+                  "absolute inset-0 bg-primary/30 rounded-full blur-[120px] transition-opacity duration-1000",
                   isActive ? "opacity-100" : "opacity-0"
                 )} />
-                <Image
-                  src={pizza.image}
-                  alt={pizza.name}
-                  width={600}
-                  height={600}
-                  className={cn(
-                    "rounded-full shadow-[0_50px_100px_-20px_rgba(0,0,0,0.6)] transition-all duration-700",
-                    isActive ? "rotate-0 scale-100" : "rotate-45 scale-75"
-                  )}
-                  data-ai-hint="pizza"
-                  priority
-                />
+                
+                <div className={cn(
+                  "relative transition-transform duration-1000 ease-out",
+                  isActive ? "rotate-0 scale-110" : "rotate-12 scale-90"
+                )}>
+                  <Image
+                    src={pizza.image}
+                    alt={pizza.name}
+                    width={550}
+                    height={550}
+                    className={cn(
+                      "rounded-full pizza-glow transition-all duration-700 drop-shadow-[0_40px_60px_rgba(0,0,0,0.4)]",
+                      isActive ? "animate-spin-slow" : ""
+                    )}
+                    data-ai-hint="top view pizza"
+                    priority
+                  />
+                </div>
               </div>
             </div>
           );

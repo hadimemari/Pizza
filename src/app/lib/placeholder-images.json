@@ -1,35 +1,34 @@
-
 {
   "placeholderImages": [
     {
       "id": "piz-margherita",
-      "description": "Classic Margherita Pizza",
-      "imageUrl": "/pizzas/margherita.png",
-      "imageHint": "margherita pizza transparent"
+      "description": "Authentic Italian Margherita Pizza with fresh basil",
+      "imageUrl": "https://picsum.photos/seed/margherita/800/800",
+      "imageHint": "margherita pizza"
     },
     {
       "id": "piz-pepperoni",
-      "description": "Double Pepperoni Pizza",
-      "imageUrl": "/pizzas/pepperoni.png",
-      "imageHint": "pepperoni pizza transparent"
+      "description": "Spicy Double Pepperoni Pizza with melted cheese",
+      "imageUrl": "https://picsum.photos/seed/pepperoni/800/800",
+      "imageHint": "pepperoni pizza"
     },
     {
       "id": "piz-veggie",
-      "description": "Roasted Vegetable Pizza",
-      "imageUrl": "/pizzas/veggie.png",
-      "imageHint": "vegetable pizza transparent"
+      "description": "Fresh Roasted Vegetable Pizza with bell peppers",
+      "imageUrl": "https://picsum.photos/seed/veggie/800/800",
+      "imageHint": "veggie pizza"
     },
     {
       "id": "piz-bbq",
-      "description": "BBQ Chicken Pizza",
-      "imageUrl": "/pizzas/bbq.png",
-      "imageHint": "bbq chicken pizza transparent"
+      "description": "BBQ Chicken Pizza with cilantro and corn",
+      "imageUrl": "https://picsum.photos/seed/bbq/800/800",
+      "imageHint": "bbq pizza"
     },
     {
       "id": "piz-hawaiian",
-      "description": "Hawaiian Tropical Pizza",
-      "imageUrl": "/pizzas/hawaiian.png",
-      "imageHint": "hawaiian pizza transparent"
+      "description": "Tropical Hawaiian Pizza with ham and pineapple",
+      "imageUrl": "https://picsum.photos/seed/hawaiian/800/800",
+      "imageHint": "hawaiian pizza"
     }
   ]
 }

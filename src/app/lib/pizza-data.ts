@@ -1,4 +1,3 @@
-
 export interface Pizza {
   id: string;
   name: string;
@@ -17,7 +16,7 @@ export const PIZZAS: Pizza[] = [
     price: "۱۴۹,۰۰۰ تومان",
     cheesiness: 85,
     ingredients: ["ریحان تازه", "پنیر موزارلا", "سس گوجه", "روغن زیتون"],
-    description: "کلاسیک بی نظیر ایتالیایی با موزارلای تازه و برگ‌های معطر ریحان.",
+    description: "کلاسیک بی نظیر ایتالیایی با موزارلای تازه و برگ‌های معطر ریحان که روی خمیری ترد و نازک چیده شده است.",
     image: "/pizzas/margherita.png",
     category: "pizzas"
   },
@@ -26,8 +25,8 @@ export const PIZZAS: Pizza[] = [
     name: "پپرونی دوبل",
     price: "۱۶۹,۰۰۰ تومان",
     cheesiness: 92,
-    ingredients: ["سامی تند", "پنیر اضافه", "سبزیجات معطر", "آویشن"],
-    description: "رویای عاشقان گوشت با پپرونی ترد و پنیر دوبل کشسان.",
+    ingredients: ["سلامی تند", "پنیر اضافه", "سبزیجات معطر", "آویشن"],
+    description: "رویای عاشقان گوشت با پپرونی ترد و پنیر دوبل کشسان که با هر گاز، طعمی تند و به یاد ماندنی را تجربه می‌کنید.",
     image: "/pizzas/pepperoni.png",
     category: "pizzas"
   },
@@ -37,7 +36,7 @@ export const PIZZAS: Pizza[] = [
     price: "۱۵۴,۰۰۰ تومان",
     cheesiness: 70,
     ingredients: ["فلفل دلمه", "زیتون", "قارچ", "پیاز قرمز"],
-    description: "ترکیبی رنگارنگ از سبزیجات تازه رست شده روی خمیر ترد طلایی.",
+    description: "ترکیبی رنگارنگ از سبزیجات تازه رست شده روی خمیر ترد طلایی، انتخابی سالم و سرشار از طعم‌های طبیعی.",
     image: "/pizzas/veggie.png",
     category: "pizzas"
   },
@@ -47,7 +46,7 @@ export const PIZZAS: Pizza[] = [
     price: "۱۷۹,۰۰۰ تومان",
     cheesiness: 80,
     ingredients: ["جوجه گریل", "سس باربیکیو", "ذرت", "گشنیز"],
-    description: "طعم دودی سس باربیکیو همراه با مرغ گریل شده نرم و لذیذ.",
+    description: "طعم دودی سس باربیکیو همراه با مرغ گریل شده نرم و لذیذ، تجربه‌ای متفاوت از ترکیب پیتزا و کباب.",
     image: "/pizzas/bbq.png",
     category: "pizzas"
   },
@@ -57,7 +56,7 @@ export const PIZZAS: Pizza[] = [
     price: "۱۵۹,۰۰۰ تومان",
     cheesiness: 75,
     ingredients: ["آناناس", "ژامبون", "پیاز کاراملی", "عسل"],
-    description: "شیرینی آناناس و شوری ژامبون یک تضاد طعم استوایی بی‌نظیر.",
+    description: "شیرینی آناناس و شوری ژامبون یک تضاد طعم استوایی بی‌نظیر که ذائقه شما را به سفری در سواحل هاوایی می‌برد.",
     image: "/pizzas/hawaiian.png",
     category: "pizzas"
   }
