@@ -16,26 +16,27 @@ interface PizzaCardProps {
 export const PizzaCard: React.FC<PizzaCardProps> = ({ pizza, visible }) => {
   const [displayPizza, setDisplayPizza] = useState(pizza);
   const [animating, setAnimating] = useState(false);
+  const transitionTime = 4000; // همگام با گردونه
 
   useEffect(() => {
     setAnimating(true);
     const timeout = setTimeout(() => {
       setDisplayPizza(pizza);
       setAnimating(false);
-    }, 1000); // همگام با اوج سرعت چرخش (کمی سریع‌تر برای نمایش محتوای جدید)
+    }, transitionTime / 3); // تغییر محتوا در یک‌سوم زمان حرکت برای هماهنگی بهتر
     return () => clearTimeout(timeout);
   }, [pizza]);
 
   return (
     <div 
       className={cn(
-        "glass-card p-10 rounded-[3.5rem] transform w-full max-w-[500px] min-h-[660px] flex flex-col justify-between overflow-hidden relative",
+        "glass-card p-10 rounded-[3.5rem] transform w-full max-w-[500px] min-h-[680px] flex flex-col justify-between overflow-hidden relative",
       )}
       style={{
-        transition: 'all 3000ms cubic-bezier(0.16, 1, 0.3, 1)',
-        opacity: animating ? 0.4 : 1,
-        filter: animating ? 'blur(10px)' : 'blur(0)',
-        transform: animating ? 'translateY(20px) scale(0.98)' : 'translateY(0) scale(1)'
+        transition: `all ${transitionTime}ms cubic-bezier(0.16, 1, 0.3, 1)`,
+        opacity: animating ? 0.3 : 1,
+        filter: animating ? 'blur(15px)' : 'blur(0)',
+        transform: animating ? 'translateY(30px) scale(0.95)' : 'translateY(0) scale(1)'
       }}
     >
       <div className="space-y-8">
@@ -44,7 +45,7 @@ export const PizzaCard: React.FC<PizzaCardProps> = ({ pizza, visible }) => {
             <div className="flex text-yellow-500">
               {[...Array(5)].map((_, i) => <Star key={i} className="w-4 h-4 fill-current" />)}
             </div>
-            <span className="text-xs font-bold text-muted-foreground tracking-widest uppercase">Premium Selection</span>
+            <span className="text-xs font-bold text-muted-foreground tracking-widest uppercase">انتخاب ممتاز</span>
           </div>
           
           <div className="space-y-1">
@@ -55,7 +56,7 @@ export const PizzaCard: React.FC<PizzaCardProps> = ({ pizza, visible }) => {
           </div>
         </div>
 
-        <p className="text-muted-foreground/80 text-base leading-relaxed font-medium min-h-[100px]">
+        <p className="text-muted-foreground/80 text-lg leading-relaxed font-medium min-h-[120px]">
           {displayPizza.description}
         </p>
 
