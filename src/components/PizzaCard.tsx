@@ -28,7 +28,7 @@ export const PizzaCard: React.FC<PizzaCardProps> = ({ pizza, visible }) => {
   return (
     <div 
       className={cn(
-        "glass-card p-10 rounded-[3rem] transition-all duration-700 transform w-full max-w-[480px] min-h-[640px] flex flex-col justify-between",
+        "glass-card p-10 rounded-[3rem] transition-all duration-700 transform w-full max-w-[480px] h-[660px] flex flex-col justify-between overflow-hidden",
         visible ? "translate-x-0 opacity-100" : "translate-x-32 opacity-0",
         animating ? "scale-[0.98] opacity-80 blur-sm" : "scale-100 opacity-100 blur-0"
       )}
@@ -50,7 +50,7 @@ export const PizzaCard: React.FC<PizzaCardProps> = ({ pizza, visible }) => {
           </div>
         </div>
 
-        <p className="text-muted-foreground/80 text-sm leading-relaxed font-medium min-h-[60px]">
+        <p className="text-muted-foreground/80 text-sm leading-relaxed font-medium min-h-[80px]">
           {displayPizza.description}
         </p>
 

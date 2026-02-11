@@ -1,4 +1,3 @@
-
 "use client";
 
 import React from 'react';
@@ -14,25 +13,28 @@ interface PizzaThumbnailsProps {
 
 export const PizzaThumbnails: React.FC<PizzaThumbnailsProps> = ({ pizzas, activeIndex, onSelect }) => {
   return (
-    <div className="flex items-center gap-4 p-2">
+    <div className="flex items-center gap-3 p-2">
       {pizzas.map((pizza, index) => (
         <button
           key={pizza.id}
           onClick={() => onSelect(index)}
-          className="group flex items-center gap-3 transition-all duration-300 bg-white/40 backdrop-blur-md px-3 py-2 rounded-2xl border border-white/40 hover:bg-white/60"
+          className={cn(
+            "group flex items-center gap-3 transition-all duration-300 bg-white/40 backdrop-blur-md px-3 py-2 rounded-2xl border border-white/40 hover:bg-white/60",
+            index === activeIndex && "bg-white/80 ring-2 ring-primary/20"
+          )}
         >
           <div className={cn(
             "relative w-10 h-10 rounded-full overflow-hidden transition-all duration-500 border-2 shadow-sm",
             index === activeIndex 
               ? "border-primary scale-110" 
-              : "border-transparent opacity-60 grayscale-[0.3]"
+              : "border-transparent opacity-60"
           )}>
             <Image
               src={pizza.image}
               alt={pizza.name}
               fill
               className="object-cover"
-              data-ai-hint="pizza thumbnail"
+              unoptimized
             />
           </div>
           <div className="flex flex-col items-start">
@@ -42,9 +44,6 @@ export const PizzaThumbnails: React.FC<PizzaThumbnailsProps> = ({ pizzas, active
             )}>
               {pizza.name}
             </span>
-            {index === activeIndex && (
-              <span className="text-[8px] text-muted-foreground/60 font-bold uppercase mt-1">انتخاب شده</span>
-            )}
           </div>
         </button>
       ))}

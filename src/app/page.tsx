@@ -73,17 +73,19 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Bottom Controls Container - Aligned to the left (Logo side) */}
-      <div className="fixed bottom-12 left-12 z-40 flex flex-col items-start gap-4">
+      {/* Bottom Controls Container - Moved to left with padding */}
+      <div className="fixed bottom-8 left-8 z-40 flex flex-col items-start gap-3">
         <PizzaThumbnails 
           pizzas={PIZZAS} 
           activeIndex={activeIndex} 
           onSelect={setActiveIndex} 
         />
-        <CategoryNavigator activeId="pizzas" />
+        <div className="ml-2">
+          <CategoryNavigator activeId="pizzas" />
+        </div>
       </div>
 
-      {/* Vertical Navigation */}
+      {/* Vertical Navigation Dot Indicator */}
       <div className="fixed right-6 top-1/2 -translate-y-1/2 hidden lg:flex flex-col gap-4 z-40">
         {PIZZAS.map((_, i) => (
           <button
