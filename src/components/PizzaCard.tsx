@@ -19,21 +19,24 @@ export const PizzaCard: React.FC<PizzaCardProps> = ({ pizza, visible }) => {
 
   useEffect(() => {
     setAnimating(true);
-    // زمان‌بندی هماهنگ با سرعت گردونه (کمی سریع‌تر برای انتقال محتوا)
     const timeout = setTimeout(() => {
       setDisplayPizza(pizza);
       setAnimating(false);
-    }, 600); // زمان هماهنگ با اوج سرعت جابجایی گردونه
+    }, 1000); // همگام با اوج سرعت چرخش (کمی سریع‌تر برای نمایش محتوای جدید)
     return () => clearTimeout(timeout);
   }, [pizza]);
 
   return (
     <div 
       className={cn(
-        "glass-card p-10 rounded-[3.5rem] transition-all duration-[1500ms] ease-[cubic-bezier(0.16,1,0.3,1)] transform w-full max-w-[500px] min-h-[660px] flex flex-col justify-between overflow-hidden relative",
-        visible ? "translate-x-0 opacity-100" : "translate-x-32 opacity-0",
-        animating ? "scale-[0.98] opacity-40 blur-md translate-y-4" : "scale-100 opacity-100 blur-0 translate-y-0"
+        "glass-card p-10 rounded-[3.5rem] transform w-full max-w-[500px] min-h-[660px] flex flex-col justify-between overflow-hidden relative",
       )}
+      style={{
+        transition: 'all 3000ms cubic-bezier(0.16, 1, 0.3, 1)',
+        opacity: animating ? 0.4 : 1,
+        filter: animating ? 'blur(10px)' : 'blur(0)',
+        transform: animating ? 'translateY(20px) scale(0.98)' : 'translateY(0) scale(1)'
+      }}
     >
       <div className="space-y-8">
         <div className="space-y-4">
@@ -45,14 +48,14 @@ export const PizzaCard: React.FC<PizzaCardProps> = ({ pizza, visible }) => {
           </div>
           
           <div className="space-y-1">
-            <h2 className="text-6xl font-black text-foreground uppercase tracking-tighter leading-[0.85] transition-all duration-[1500ms]">
+            <h2 className="text-6xl font-black text-foreground uppercase tracking-tighter leading-[0.85]">
               {displayPizza.name}
             </h2>
-            <p className="text-primary font-black text-4xl mt-3 transition-all duration-[1500ms]">{displayPizza.price}</p>
+            <p className="text-primary font-black text-4xl mt-3">{displayPizza.price}</p>
           </div>
         </div>
 
-        <p className="text-muted-foreground/80 text-base leading-relaxed font-medium min-h-[100px] transition-all duration-[1500ms]">
+        <p className="text-muted-foreground/80 text-base leading-relaxed font-medium min-h-[100px]">
           {displayPizza.description}
         </p>
 
