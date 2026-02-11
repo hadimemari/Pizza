@@ -13,18 +13,17 @@ interface PizzaCarouselProps {
 }
 
 export const PizzaCarousel: React.FC<PizzaCarouselProps> = ({ pizzas, activeIndex, onPizzaClick }) => {
-  const radius = 350; // Distance from center
+  // Increased radius for a more dramatic arc from the side
+  const radius = 600; 
   const total = pizzas.length;
 
   return (
-    <div className="relative w-full h-full flex items-center justify-center">
-      {/* Decorative center glow */}
-      <div className="absolute w-[500px] h-[500px] bg-primary/10 rounded-full blur-[100px]" />
-      
-      {/* The Wheel */}
+    <div className="relative w-full h-full flex items-center justify-start overflow-visible">
+      {/* Center point moved far to the left of the screen container */}
       <div 
-        className="relative w-full h-full transition-transform duration-700 cubic-bezier(0.4, 0, 0.2, 1)"
+        className="absolute transition-transform duration-1000 cubic-bezier(0.4, 0, 0.2, 1)"
         style={{ 
+          left: '-20%', // Shift the pivot point off-screen left
           transform: `rotate(${activeIndex * -(360 / total)}deg)`
         }}
       >
@@ -37,12 +36,11 @@ export const PizzaCarousel: React.FC<PizzaCarouselProps> = ({ pizzas, activeInde
               key={pizza.id}
               onClick={() => onPizzaClick(index)}
               className={cn(
-                "absolute top-1/2 left-1/2 cursor-pointer transition-all duration-500 origin-center",
-                isActive ? "z-20 scale-125 brightness-110" : "z-10 scale-75 opacity-60 grayscale-[0.2]"
+                "absolute top-0 left-0 cursor-pointer transition-all duration-700 origin-center",
+                isActive ? "z-20 scale-150" : "z-10 scale-75 opacity-20 grayscale"
               )}
               style={{
                 transform: `
-                  translate(-50%, -50%) 
                   rotate(${angle}deg) 
                   translateY(-${radius}px) 
                   rotate(-${angle}deg)
@@ -52,26 +50,24 @@ export const PizzaCarousel: React.FC<PizzaCarouselProps> = ({ pizzas, activeInde
             >
               <div className="relative group">
                 <div className={cn(
-                  "absolute inset-0 bg-primary/20 rounded-full blur-2xl transition-opacity duration-500",
-                  isActive ? "opacity-100" : "opacity-0 group-hover:opacity-50"
+                  "absolute inset-0 bg-primary/20 rounded-full blur-3xl transition-opacity duration-500",
+                  isActive ? "opacity-100" : "opacity-0"
                 )} />
                 <Image
                   src={pizza.image}
                   alt={pizza.name}
-                  width={350}
-                  height={350}
-                  className="rounded-full shadow-2xl pizza-glow"
+                  width={450}
+                  height={450}
+                  className={cn(
+                    "rounded-full shadow-[0_30px_60px_-15px_rgba(0,0,0,0.5)] transition-all duration-700",
+                    isActive ? "rotate-0" : "rotate-12"
+                  )}
                   data-ai-hint="pizza"
                 />
               </div>
             </div>
           );
         })}
-      </div>
-      
-      {/* Scroll indicator/Navigation Helpers */}
-      <div className="absolute inset-0 pointer-events-none flex items-center justify-center">
-        <div className="w-[450px] h-[450px] border-2 border-primary/10 rounded-full border-dashed animate-spin-slow" />
       </div>
     </div>
   );

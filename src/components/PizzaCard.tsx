@@ -7,7 +7,7 @@ import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
-import { Flame, Leaf, Utensils, ShoppingCart } from 'lucide-react';
+import { Leaf, ShoppingCart, Star } from 'lucide-react';
 
 interface PizzaCardProps {
   pizza: Pizza;
@@ -16,58 +16,62 @@ interface PizzaCardProps {
 
 export const PizzaCard: React.FC<PizzaCardProps> = ({ pizza, visible }) => {
   const [displayPizza, setDisplayPizza] = useState(pizza);
-  const [opacity, setOpacity] = useState(1);
+  const [animating, setAnimating] = useState(false);
 
   useEffect(() => {
-    setOpacity(0);
+    setAnimating(true);
     const timeout = setTimeout(() => {
       setDisplayPizza(pizza);
-      setOpacity(1);
-    }, 200);
+      setAnimating(false);
+    }, 400);
     return () => clearTimeout(timeout);
   }, [pizza]);
 
   return (
     <div 
       className={cn(
-        "glass-card p-8 rounded-[2rem] transition-all duration-300 transform w-[420px]",
-        visible ? "translate-x-0 opacity-100" : "translate-x-10 opacity-0"
+        "glass-card p-10 rounded-[3rem] transition-all duration-700 transform w-[450px]",
+        visible ? "translate-x-0 opacity-100" : "translate-x-20 opacity-0",
+        animating ? "scale-95 opacity-50 blur-sm" : "scale-100 opacity-100 blur-0"
       )}
-      style={{ opacity }}
     >
       <div className="space-y-6">
-        <div className="flex justify-between items-start">
-          <div className="space-y-1">
-            <h2 className="text-3xl font-black text-foreground font-headline uppercase tracking-tighter">
+        <div className="space-y-4">
+          <div className="flex items-center gap-2">
+            <div className="flex text-yellow-500">
+              {[...Array(5)].map((_, i) => <Star key={i} className="w-4 h-4 fill-current" />)}
+            </div>
+            <span className="text-xs font-bold text-muted-foreground">(4.9 Rating)</span>
+          </div>
+          
+          <div className="space-y-2">
+            <h2 className="text-5xl font-black text-foreground font-headline uppercase tracking-tighter leading-tight">
               {displayPizza.name}
             </h2>
-            <p className="text-primary font-bold text-2xl">{displayPizza.price}</p>
+            <p className="text-primary font-black text-3xl">{displayPizza.price}</p>
           </div>
-          <Badge variant="secondary" className="bg-primary/10 text-primary border-none">
-            {displayPizza.category}
-          </Badge>
         </div>
 
-        <p className="text-muted-foreground text-sm leading-relaxed">
+        <p className="text-muted-foreground text-base leading-relaxed">
           {displayPizza.description}
         </p>
 
-        <div className="space-y-4">
+        <div className="space-y-5">
           <div className="space-y-2">
-            <div className="flex justify-between text-xs font-bold uppercase tracking-widest text-muted-foreground">
-              <span>Cheesiness Rating</span>
-              <span>{displayPizza.cheesiness}%</span>
+            <div className="flex justify-between text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">
+              <span>Authentic Recipe</span>
+              <span>{displayPizza.cheesiness}% Quality</span>
             </div>
-            <Progress value={displayPizza.cheesiness} className="h-2" />
+            <Progress value={displayPizza.cheesiness} className="h-1.5" />
           </div>
 
           <div className="pt-4 space-y-3">
-            <h4 className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Ingredients</h4>
+            <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">Core Ingredients</h4>
             <div className="flex flex-wrap gap-2">
               {displayPizza.ingredients.map((ing) => (
                 <div 
                   key={ing} 
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/50 border border-black/5 text-xs font-medium"
+                  className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-slate-100/50 border border-black/5 text-xs font-bold"
                 >
                   <Leaf className="w-3 h-3 text-green-600" />
                   {ing}
@@ -77,10 +81,10 @@ export const PizzaCard: React.FC<PizzaCardProps> = ({ pizza, visible }) => {
           </div>
         </div>
 
-        <div className="pt-6">
-          <Button className="w-full h-14 rounded-2xl bg-primary hover:bg-primary/90 text-white text-lg font-bold group shadow-xl shadow-primary/20 transition-all active:scale-95">
-            <ShoppingCart className="mr-2 w-5 h-5 group-hover:scale-110 transition-transform" />
-            Add to Order
+        <div className="pt-8">
+          <Button className="w-full h-16 rounded-2xl bg-black hover:bg-primary text-white text-lg font-black group shadow-2xl transition-all active:scale-95 border-none">
+            <ShoppingCart className="mr-3 w-6 h-6 transition-transform group-hover:translate-x-1" />
+            Order This Slice
           </Button>
         </div>
       </div>
