@@ -19,20 +19,20 @@ export const PizzaCard: React.FC<PizzaCardProps> = ({ pizza, visible }) => {
 
   useEffect(() => {
     setAnimating(true);
-    // زمان‌بندی هماهنگ با گردونه
+    // زمان‌بندی هماهنگ با سرعت گردونه (کمی سریع‌تر برای انتقال محتوا)
     const timeout = setTimeout(() => {
       setDisplayPizza(pizza);
       setAnimating(false);
-    }, 400);
+    }, 600); // زمان هماهنگ با اوج سرعت جابجایی گردونه
     return () => clearTimeout(timeout);
   }, [pizza]);
 
   return (
     <div 
       className={cn(
-        "glass-card p-10 rounded-[3.5rem] transition-all duration-700 transform w-full max-w-[500px] min-h-[660px] flex flex-col justify-between overflow-hidden relative",
+        "glass-card p-10 rounded-[3.5rem] transition-all duration-[1500ms] ease-[cubic-bezier(0.16,1,0.3,1)] transform w-full max-w-[500px] min-h-[660px] flex flex-col justify-between overflow-hidden relative",
         visible ? "translate-x-0 opacity-100" : "translate-x-32 opacity-0",
-        animating ? "scale-[0.97] opacity-60 blur-sm" : "scale-100 opacity-100 blur-0"
+        animating ? "scale-[0.98] opacity-40 blur-md translate-y-4" : "scale-100 opacity-100 blur-0 translate-y-0"
       )}
     >
       <div className="space-y-8">
@@ -45,14 +45,14 @@ export const PizzaCard: React.FC<PizzaCardProps> = ({ pizza, visible }) => {
           </div>
           
           <div className="space-y-1">
-            <h2 className="text-6xl font-black text-foreground uppercase tracking-tighter leading-[0.85]">
+            <h2 className="text-6xl font-black text-foreground uppercase tracking-tighter leading-[0.85] transition-all duration-[1500ms]">
               {displayPizza.name}
             </h2>
-            <p className="text-primary font-black text-4xl mt-3">{displayPizza.price}</p>
+            <p className="text-primary font-black text-4xl mt-3 transition-all duration-[1500ms]">{displayPizza.price}</p>
           </div>
         </div>
 
-        <p className="text-muted-foreground/80 text-base leading-relaxed font-medium min-h-[100px]">
+        <p className="text-muted-foreground/80 text-base leading-relaxed font-medium min-h-[100px] transition-all duration-[1500ms]">
           {displayPizza.description}
         </p>
 
@@ -83,7 +83,7 @@ export const PizzaCard: React.FC<PizzaCardProps> = ({ pizza, visible }) => {
       </div>
 
       <div className="pt-8 mt-auto">
-        <Button className="w-full h-16 rounded-2xl bg-black hover:bg-primary text-white text-xl font-bold group shadow-2xl transition-all active:scale-95 border-none">
+        <Button className="w-full h-16 rounded-2xl bg-black hover:bg-primary text-white text-xl font-bold group shadow-2xl transition-all duration-700 active:scale-95 border-none">
           <ShoppingCart className="mr-3 w-6 h-6 transition-transform group-hover:translate-x-1" />
           سفارش این برش
         </Button>
