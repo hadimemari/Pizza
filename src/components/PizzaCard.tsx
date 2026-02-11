@@ -16,27 +16,26 @@ interface PizzaCardProps {
 export const PizzaCard: React.FC<PizzaCardProps> = ({ pizza, visible }) => {
   const [displayPizza, setDisplayPizza] = useState(pizza);
   const [animating, setAnimating] = useState(false);
-  const transitionTime = 4000; // دقیقاً همگام با گردونه
+  const transitionTime = 4000; // همگام با ریل
 
   useEffect(() => {
     setAnimating(true);
     const timeout = setTimeout(() => {
       setDisplayPizza(pizza);
       setAnimating(false);
-    }, transitionTime / 4); 
+    }, transitionTime / 2); 
     return () => clearTimeout(timeout);
   }, [pizza]);
 
   return (
     <div 
       className={cn(
-        "glass-card p-12 rounded-[4rem] transform w-full max-w-[520px] min-h-[700px] flex flex-col justify-between overflow-hidden relative border-none shadow-none bg-white/40",
+        "p-12 rounded-[4rem] transform w-full max-w-[500px] min-h-[680px] flex flex-col justify-between overflow-hidden relative bg-white/40 backdrop-blur-md border border-black/5 shadow-2xl shadow-black/5",
       )}
       style={{
         transition: `all ${transitionTime}ms cubic-bezier(0.16, 1, 0.3, 1)`,
-        opacity: animating ? 0.2 : 1,
-        filter: animating ? 'blur(20px)' : 'blur(0)',
-        transform: animating ? 'translateY(40px) scale(0.98)' : 'translateY(0) scale(1)'
+        opacity: animating ? 0.3 : 1,
+        transform: animating ? 'translateX(20px)' : 'translateX(0)'
       }}
     >
       <div className="space-y-8">
@@ -45,18 +44,18 @@ export const PizzaCard: React.FC<PizzaCardProps> = ({ pizza, visible }) => {
             <div className="flex text-primary">
               {[...Array(5)].map((_, i) => <Star key={i} className="w-4 h-4 fill-current" />)}
             </div>
-            <span className="text-xs font-bold text-muted-foreground tracking-widest uppercase">طعم اصیل ایتالیایی</span>
+            <span className="text-xs font-bold text-muted-foreground tracking-widest uppercase">طعم اصیل پیتزا موشن</span>
           </div>
           
           <div className="space-y-2">
-            <h2 className="text-7xl font-black text-foreground uppercase tracking-tighter leading-[0.8]">
+            <h2 className="text-6xl font-black text-foreground uppercase tracking-tighter leading-[0.9]">
               {displayPizza.name}
             </h2>
             <p className="text-primary font-black text-4xl mt-4">{displayPizza.price}</p>
           </div>
         </div>
 
-        <p className="text-muted-foreground/90 text-xl leading-relaxed font-medium min-h-[140px]">
+        <p className="text-muted-foreground/90 text-xl leading-relaxed font-medium min-h-[120px]">
           {displayPizza.description}
         </p>
 
@@ -75,7 +74,7 @@ export const PizzaCard: React.FC<PizzaCardProps> = ({ pizza, visible }) => {
               {displayPizza.ingredients.map((ing) => (
                 <div 
                   key={ing} 
-                  className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-black/5 text-xs font-bold"
+                  className="flex items-center gap-2 px-4 py-2 rounded-full bg-black/5 text-xs font-bold"
                 >
                   <Leaf className="w-3.5 h-3.5 text-green-600" />
                   {ing}
@@ -86,8 +85,8 @@ export const PizzaCard: React.FC<PizzaCardProps> = ({ pizza, visible }) => {
         </div>
       </div>
 
-      <div className="pt-10">
-        <Button className="w-full h-16 rounded-2xl bg-black hover:bg-primary text-white text-xl font-bold group shadow-xl transition-all duration-700 border-none">
+      <div className="pt-8">
+        <Button className="w-full h-16 rounded-2xl bg-black hover:bg-primary text-white text-xl font-bold group shadow-xl transition-all duration-700">
           <ShoppingCart className="mr-3 w-6 h-6 transition-transform group-hover:translate-x-1" />
           سفارش این برش لذیذ
         </Button>

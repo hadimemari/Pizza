@@ -13,24 +13,28 @@ interface PizzaCarouselProps {
 }
 
 export const PizzaCarousel: React.FC<PizzaCarouselProps> = ({ pizzas, activeIndex, onPizzaClick }) => {
-  // شعاع دایره دوران
-  const radius = 750; 
+  // شعاع دقیق دایره ریل
+  const radius = 800; 
   const total = pizzas.length;
   const angleStep = 360 / total;
-  // زمان انتقال ۴ ثانیه برای حرکت فوق‌العاده آرام
+  
+  // زمان انتقال ۴ ثانیه برای حرکت بسیار آرام و مکانیکی
   const transitionDuration = "4000ms"; 
   const easing = "cubic-bezier(0.16, 1, 0.3, 1)";
+
+  // زاویه فعلی والد برای خنثی‌سازی در فرزندان
+  const parentRotation = activeIndex * -angleStep;
 
   return (
     <div className="relative w-full h-full flex items-center overflow-visible select-none">
       {/* 
-        مرکز دوران: این ظرف دقیقاً در وسط ارتفاع صفحه قرار دارد.
-        دوران والد باعث چرخش کل مجموعه می‌شود.
+        مرکز دوران: در ارتفاع دقیق ۵۰٪ قرار دارد.
+        X تراز شده تا لبه دایره در بخش طلایی سمت چپ قرار بگیرد.
       */}
       <div 
-        className="absolute left-[-450px] top-1/2 w-0 h-0"
+        className="absolute left-[-550px] top-1/2 w-0 h-0"
         style={{ 
-          transform: `translateY(-50%) rotate(${-activeIndex * angleStep}deg)`,
+          transform: `translateY(-50%) rotate(${parentRotation}deg)`,
           transition: `transform ${transitionDuration} ${easing}`,
           transformOrigin: 'center center'
         }}
@@ -48,46 +52,44 @@ export const PizzaCarousel: React.FC<PizzaCarouselProps> = ({ pizzas, activeInde
               )}
               style={{
                 /* 
-                   مهندسی دقیق: 
-                   1. ابتدا پیتزا را در زاویه مشخص خود در دایره قرار می‌دهیم.
-                   2. سپس آن را به اندازه شعاع به بیرون می‌بریم.
-                   3. چرخش پیتزا را خنثی می‌کنیم تا همیشه صاف بماند.
-                   4. چرخش والد را هم خنثی می‌کنیم تا در هر زاویه‌ای، پیتزا نسبت به ناظر صاف باشد.
-                   5. translate(-50%, -50%) مرکز تصویر را دقیقاً روی مدار قرار می‌دهد.
+                   مهندسی دقیق تراز عمودی:
+                   1. rotate(angle): پیتزا را در جایگاه اصلی‌اش روی ریل قرار می‌دهد.
+                   2. translateX(radius): آن را به فاصله شعاع از مرکز می‌برد.
+                   3. rotate(-angle - parentRotation): 
+                      -angle: چرخش مرحله ۱ را خنثی می‌کند تا پیتزا عمود بماند.
+                      -parentRotation: چرخش لحظه‌ای کل ریل را خنثی می‌کند.
+                   نتیجه: پیتزا در هر زاویه‌ای که باشد، همیشه صاف و در یک تراز ارتفاعی دقیق نسبت به افق دیده می‌شود.
                 */
                 transform: `
                   rotate(${angle}deg) 
                   translateX(${radius}px) 
-                  rotate(${-angle}deg) 
-                  rotate(${activeIndex * angleStep}deg)
+                  rotate(${-angle - parentRotation}deg)
                   translate(-50%, -50%)
                 `,
-                transition: `all ${transitionDuration} ${easing}`,
+                transition: `transform ${transitionDuration} ${easing}, opacity ${transitionDuration} ease`,
                 zIndex: isActive ? 40 : 10,
-                opacity: isActive ? 1 : 0.2,
-                filter: isActive ? 'blur(0) drop-shadow(0 20px 50px rgba(0,0,0,0.1))' : 'blur(10px) grayscale(0.9)',
-                scale: isActive ? '1.1' : '0.5'
+                opacity: isActive ? 1 : 0.6, // عدم محو شدن کامل، مانند یک ریل فیزیکی
+                scale: isActive ? '1' : '0.8'
               }}
             >
-              <div className="relative group perspective-2000">
-                {isActive && (
-                  <div className="absolute inset-0 bg-primary/10 rounded-full blur-[120px] animate-pulse" />
-                )}
-                
+              <div className="relative group">
                 <div className="relative" style={{
-                  transform: isActive ? 'scale(1.1)' : 'scale(0.9)',
+                  transform: isActive ? 'scale(1.15)' : 'scale(1)',
                   transition: `transform ${transitionDuration} ${easing}`
                 }}>
-                  <div className="relative w-[600px] h-[600px]">
+                  <div className="relative w-[550px] h-[550px]">
                     <Image
                       src={pizza.image}
                       alt={pizza.name}
                       fill
                       className={cn(
-                        "object-contain pizza-glow transition-all duration-1000",
+                        "object-contain pizza-glow",
                         isActive ? "animate-spin-slow" : ""
                       )}
-                      style={{ animationDuration: '60s' }}
+                      style={{ 
+                        animationDuration: '60s',
+                        filter: isActive ? 'drop-shadow(0 30px 60px rgba(0,0,0,0.15))' : 'none'
+                      }}
                       unoptimized
                       priority
                     />

@@ -5,7 +5,7 @@
 
 @layer base {
   :root {
-    --background: 0 0% 98%;
+    --background: 0 0% 100%;
     --foreground: 20 10% 10%;
     --card: 0 0% 100%;
     --card-foreground: 20 10% 10%;
@@ -42,12 +42,8 @@
   font-family: 'Lalezar', cursive;
 }
 
-.glass-card {
-  @apply bg-white/60 backdrop-blur-xl border border-white/40 shadow-2xl shadow-black/5;
-}
-
 .pizza-glow {
-  filter: drop-shadow(0 0 30px rgba(230, 126, 34, 0.2));
+  filter: drop-shadow(0 0 40px rgba(230, 126, 34, 0.15));
 }
 
 @keyframes spin-slow {
@@ -56,11 +52,5 @@
 }
 
 .animate-spin-slow {
-  animation: spin-slow 40s linear infinite; /* کندتر شد از ۲۰ ثانیه به ۴۰ ثانیه */
-}
-
-@layer utilities {
-  .perspective-2000 {
-    perspective: 2000px;
-  }
+  animation: spin-slow 60s linear infinite;
 }

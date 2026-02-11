@@ -53,7 +53,7 @@ export default function Home() {
       {/* Hero Content Area */}
       <div className="relative h-full w-full flex items-center">
         {/* Left Section: Pizza Carousel */}
-        <div className="w-[55%] h-full flex items-center z-10">
+        <div className="w-[60%] h-full flex items-center z-10">
           <PizzaCarousel 
             pizzas={PIZZAS} 
             activeIndex={activeIndex} 
@@ -62,7 +62,7 @@ export default function Home() {
         </div>
 
         {/* Right Section: Info Card */}
-        <div className="w-[45%] flex justify-center items-center pr-16 z-20">
+        <div className="w-[40%] flex justify-center items-center pr-16 z-20">
           <PizzaCard 
             pizza={PIZZAS[activeIndex]} 
             visible={true}
@@ -88,7 +88,7 @@ export default function Home() {
           <button
             key={i}
             onClick={() => setActiveIndex(i)}
-            className={`w-1.5 transition-all duration-500 rounded-full ${
+            className={`w-1.5 transition-all duration-1000 rounded-full ${
               i === activeIndex ? 'h-12 bg-primary' : 'h-3 bg-black/10 hover:bg-black/20'
             }`}
           />

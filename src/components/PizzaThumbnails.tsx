@@ -13,7 +13,7 @@ interface PizzaThumbnailsProps {
 }
 
 export const PizzaThumbnails: React.FC<PizzaThumbnailsProps> = ({ pizzas, activeIndex, onSelect }) => {
-  const transitionTime = "4000ms";
+  const transitionTime = "4000ms"; // همگام با ریل
 
   return (
     <div className="flex items-center gap-4 p-2">
@@ -22,33 +22,30 @@ export const PizzaThumbnails: React.FC<PizzaThumbnailsProps> = ({ pizzas, active
           key={pizza.id}
           onClick={() => onSelect(index)}
           className={cn(
-            "group flex items-center gap-3 bg-white/30 backdrop-blur-xl px-4 py-3 rounded-[2rem] border border-white/40 hover:bg-white/60 shadow-lg shadow-black/5"
+            "group flex items-center gap-3 bg-white/40 backdrop-blur-md px-5 py-3 rounded-full border border-black/5 hover:bg-white/80 transition-all shadow-sm"
           )}
           style={{
             transition: `all ${transitionTime} cubic-bezier(0.16, 1, 0.3, 1)`,
-            backgroundColor: index === activeIndex ? 'rgba(255, 255, 255, 0.8)' : '',
-            boxShadow: index === activeIndex ? '0 0 0 2px rgba(230, 126, 34, 0.4)' : '',
-            scale: index === activeIndex ? '1.05' : '1'
+            backgroundColor: index === activeIndex ? 'rgba(255, 255, 255, 0.9)' : '',
+            boxShadow: index === activeIndex ? '0 10px 30px rgba(0,0,0,0.05)' : '',
+            transform: index === activeIndex ? 'scale(1.05)' : 'scale(1)'
           }}
         >
-          <div className="relative w-12 h-12 rounded-full" style={{
+          <div className="relative w-10 h-10" style={{
             transition: `all ${transitionTime} cubic-bezier(0.16, 1, 0.3, 1)`,
-            transform: index === activeIndex ? 'scale(1.1) rotate(15deg)' : '',
-            opacity: index === activeIndex ? '1' : '0.6',
-            filter: index === activeIndex ? '' : 'grayscale(0.5)'
+            transform: index === activeIndex ? 'rotate(15deg)' : 'rotate(0)',
           }}>
             <Image
               src={pizza.image}
               alt={pizza.name}
               fill
-              className="object-contain drop-shadow-md"
+              className="object-contain"
               unoptimized
             />
           </div>
-          <div className="flex flex-col items-start pr-1">
-            <span className="text-xs font-black leading-none whitespace-nowrap uppercase tracking-tight" style={{
-              transition: `color ${transitionTime} cubic-bezier(0.16, 1, 0.3, 1)`,
-              color: index === activeIndex ? 'hsl(var(--primary))' : 'hsl(var(--muted-foreground))'
+          <div className="flex flex-col items-start">
+            <span className="text-xs font-black uppercase tracking-tight" style={{
+              color: index === activeIndex ? 'hsl(var(--primary))' : 'hsl(var(--foreground))'
             }}>
               {pizza.name}
             </span>
