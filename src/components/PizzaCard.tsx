@@ -16,14 +16,14 @@ interface PizzaCardProps {
 export const PizzaCard: React.FC<PizzaCardProps> = ({ pizza, visible }) => {
   const [displayPizza, setDisplayPizza] = useState(pizza);
   const [animating, setAnimating] = useState(false);
-  const transitionTime = 4000; // همگام با ریل
+  const transitionTime = 5000; // همگام با ریل (۵ ثانیه)
 
   useEffect(() => {
     setAnimating(true);
     const timeout = setTimeout(() => {
       setDisplayPizza(pizza);
       setAnimating(false);
-    }, transitionTime / 2); 
+    }, transitionTime / 2.5); 
     return () => clearTimeout(timeout);
   }, [pizza]);
 

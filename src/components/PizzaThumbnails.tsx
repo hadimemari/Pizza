@@ -13,7 +13,7 @@ interface PizzaThumbnailsProps {
 }
 
 export const PizzaThumbnails: React.FC<PizzaThumbnailsProps> = ({ pizzas, activeIndex, onSelect }) => {
-  const transitionTime = "4000ms"; // همگام با ریل
+  const transitionTime = "5000ms"; // همگام با ریل
 
   return (
     <div className="flex items-center gap-4 p-2">
