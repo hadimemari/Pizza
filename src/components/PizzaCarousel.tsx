@@ -13,12 +13,12 @@ interface PizzaCarouselProps {
 }
 
 export const PizzaCarousel: React.FC<PizzaCarouselProps> = ({ pizzas, activeIndex, onPizzaClick }) => {
-  // شعاع ریل برای حرکت دایره‌ای بزرگ
+  // شعاع دقیق ریل برای حرکت دایره‌ای
   const radius = 850; 
   const total = pizzas.length;
   const angleStep = 360 / total;
   
-  // زمان انتقال ۵ ثانیه برای وقار و سنگینی مکانیکی
+  // زمان انتقال ۵ ثانیه برای وقار و سنگینی مکانیکی (Ultra-Smooth)
   const transitionDuration = "5000ms"; 
   const easing = "cubic-bezier(0.16, 1, 0.3, 1)";
 
@@ -30,22 +30,77 @@ export const PizzaCarousel: React.FC<PizzaCarouselProps> = ({ pizzas, activeInde
       {/* 
         مرکز دوران مهندسی شده:
         دقیقاً در ارتفاع ۵۰٪ فیکس شده است.
-        والد دیگر نمی‌چرخد، بلکه محاسبات دوران در سطح فرزندان انجام می‌شود 
-        تا از ثبات ۱۰۰٪ در نقطه فرود اطمینان حاصل شود.
       */}
       <div 
         className="absolute left-[-400px] top-1/2 w-1 h-1 bg-transparent"
         style={{ transform: 'translateY(-50%)' }}
       >
+        {/* مسیر دایره‌ای با استایل خط گچی کارتونی */}
+        <svg 
+          className="absolute pointer-events-none overflow-visible" 
+          width={radius * 2} 
+          height={radius * 2} 
+          style={{ 
+            left: 0, 
+            top: 0, 
+            transform: 'translate(-50%, -50%)',
+            zIndex: 0
+          }}
+        >
+          <defs>
+            <filter id="chalk-effect">
+              <feTurbulence type="fractalNoise" baseFrequency="0.5" numOctaves="3" result="noise" />
+              <feDisplacementMap in="SourceGraphic" in2="noise" scale="3" />
+            </filter>
+            <marker
+              id="arrowhead"
+              markerWidth="10"
+              markerHeight="7"
+              refX="0"
+              refY="3.5"
+              orient="auto"
+            >
+              <polygon points="0 0, 10 3.5, 0 7" fill="rgba(0,0,0,0.15)" />
+            </marker>
+          </defs>
+          
+          {/* دایره اصلی مسیر */}
+          <circle 
+            cx="0" 
+            cy="0" 
+            r={radius} 
+            fill="none" 
+            stroke="black" 
+            strokeWidth="3" 
+            strokeDasharray="20 30" 
+            filter="url(#chalk-effect)"
+            className="opacity-10"
+            style={{ transform: `translate(${radius}px, ${radius}px)` }}
+          />
+
+          {/* فلش‌های جهت‌نما پاد ساعت‌گرد */}
+          {[0, 45, 90, 135, 180].map((angle) => (
+            <g key={angle} style={{ transform: `translate(${radius}px, ${radius}px) rotate(${angle}deg)` }}>
+              <path
+                d={`M ${radius - 20} -40 L ${radius} -60 L ${radius + 20} -40`}
+                fill="none"
+                stroke="black"
+                strokeWidth="3"
+                strokeLinecap="round"
+                filter="url(#chalk-effect)"
+                className="opacity-10"
+              />
+            </g>
+          ))}
+        </svg>
+
         {pizzas.map((pizza, index) => {
           const angle = index * angleStep;
           const isActive = index === activeIndex;
 
           /* 
-             فرمول مهندسی تراز مطلق (Absolute Alignment Formula):
-             ما مجموع دوران والد و موقعیت نسبی پیتزا را محاسبه می‌کنیم.
-             وقتی index === activeIndex باشد، حاصل (angle + parentRotation) دقیقاً ۰ می‌شود.
-             در نتیجه تمام پیتزاهای فعال در زاویه ۰ درجه و با فاصله radius از مرکز قرار می‌گیرند.
+             فرمول مهندسی تراز مطلق:
+             ترکیب چرخش والد و فرزند برای رسیدن به نقطه فرود دقیقاً یکسان (Y=0).
           */
           const currentRotation = angle + parentRotation;
 

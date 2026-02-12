@@ -27,9 +27,9 @@ export default function Home() {
         </div>
 
         <nav className="hidden md:flex items-center gap-8">
-          <a href="#" className="text-sm font-bold hover:text-primary transition-colors">داستان ما</a>
-          <a href="#" className="text-sm font-bold hover:text-primary transition-colors">منو</a>
-          <a href="#" className="text-sm font-bold hover:text-primary transition-colors">شعب</a>
+          <button className="text-sm font-bold hover:text-primary transition-colors">داستان ما</button>
+          <button className="text-sm font-bold hover:text-primary transition-colors">منو</button>
+          <button className="text-sm font-bold hover:text-primary transition-colors">شعب</button>
         </nav>
 
         <div className="flex items-center gap-4">
@@ -88,7 +88,7 @@ export default function Home() {
           <button
             key={i}
             onClick={() => setActiveIndex(i)}
-            className={`w-1.5 transition-all duration-1000 rounded-full ${
+            className={`w-1.5 transition-all duration-[5000ms] rounded-full ${
               i === activeIndex ? 'h-12 bg-primary' : 'h-3 bg-black/10 hover:bg-black/20'
             }`}
           />
