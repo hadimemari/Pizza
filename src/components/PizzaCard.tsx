@@ -11,9 +11,10 @@ import { Leaf, ShoppingCart, Star } from 'lucide-react';
 interface PizzaCardProps {
   pizza: Pizza;
   visible: boolean;
+  onOrder: (pizza: Pizza) => void;
 }
 
-export const PizzaCard: React.FC<PizzaCardProps> = ({ pizza, visible }) => {
+export const PizzaCard: React.FC<PizzaCardProps> = ({ pizza, visible, onOrder }) => {
   const [displayPizza, setDisplayPizza] = useState(pizza);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
@@ -49,7 +50,6 @@ export const PizzaCard: React.FC<PizzaCardProps> = ({ pizza, visible }) => {
         isTransitioning ? "opacity-40 translate-x-4" : "opacity-100 translate-x-0"
       )}
     >
-      {/* Modern Mouse-Follow Glow Effect - 5% Increased Opacity (20% -> 25%) */}
       <div 
         className={cn(
           "absolute pointer-events-none transition-opacity duration-700 ease-in-out bg-primary/25 blur-[100px] rounded-full w-[300px] h-[300px] -z-10",
@@ -110,7 +110,10 @@ export const PizzaCard: React.FC<PizzaCardProps> = ({ pizza, visible }) => {
       </div>
 
       <div className="pt-6 lg:pt-8 relative z-10">
-        <Button className="w-full h-11 lg:h-16 rounded-xl lg:rounded-2xl bg-black hover:bg-primary text-white text-base lg:text-xl font-bold group shadow-xl transition-all duration-700">
+        <Button 
+          onClick={() => onOrder(displayPizza)}
+          className="w-full h-11 lg:h-16 rounded-xl lg:rounded-2xl bg-black hover:bg-primary text-white text-base lg:text-xl font-bold group shadow-xl transition-all duration-700"
+        >
           <ShoppingCart className="mr-3 w-4 h-4 lg:w-6 lg:h-6 transition-transform group-hover:translate-x-1" />
           سفارش این برش لذیذ
         </Button>
