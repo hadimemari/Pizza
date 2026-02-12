@@ -1,6 +1,7 @@
+
 "use client";
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { Pizza } from '@/app/lib/pizza-data';
 import { cn } from '@/lib/utils';
@@ -12,7 +13,17 @@ interface PizzaCarouselProps {
 }
 
 export const PizzaCarousel: React.FC<PizzaCarouselProps> = ({ pizzas, activeIndex, onPizzaClick }) => {
-  const radius = 850; 
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  // محاسبات مهندسی برای تراز دقیق
+  const radius = isMobile ? 400 : 850; 
   const total = pizzas.length;
   const angleStep = 360 / total;
   
@@ -20,12 +31,21 @@ export const PizzaCarousel: React.FC<PizzaCarouselProps> = ({ pizzas, activeInde
   const easing = "cubic-bezier(0.16, 1, 0.3, 1)";
   const parentRotation = activeIndex * -angleStep;
 
+  // مرکز دایره در موبایل وسط صفحه و در دسکتاپ سمت چپ کادر
+  const centerLeft = isMobile ? '50%' : '-400px';
+  const centerTop = isMobile ? '-100px' : '50%';
+
   return (
-    <div className="relative w-full h-full flex items-center overflow-visible select-none">
+    <div className="relative w-full h-full flex items-center justify-center md:justify-start overflow-visible select-none">
       <div 
-        className="absolute left-[-400px] top-1/2 w-1 h-1 bg-transparent"
-        style={{ transform: 'translateY(-50%)' }}
+        className="absolute w-1 h-1 bg-transparent"
+        style={{ 
+          left: centerLeft, 
+          top: centerTop,
+          transform: isMobile ? 'translateX(-50%)' : 'translateY(-50%)'
+        }}
       >
+        {/* Chalk Line Path */}
         <svg 
           className="absolute pointer-events-none overflow-visible" 
           width={radius * 2} 
@@ -75,6 +95,9 @@ export const PizzaCarousel: React.FC<PizzaCarouselProps> = ({ pizzas, activeInde
         {pizzas.map((pizza, index) => {
           const angle = index * angleStep;
           const isActive = index === activeIndex;
+          
+          // فرمول مهندسی برای تراز دقیق در همان نقطه Pizza 1
+          // چرخش والد + چرخش معکوس فرزند = تراز صفر
           const currentRotation = angle + parentRotation;
 
           return (
@@ -94,10 +117,13 @@ export const PizzaCarousel: React.FC<PizzaCarouselProps> = ({ pizzas, activeInde
               }}
             >
               <div className="relative" style={{
-                transform: isActive ? 'scale(1.2)' : 'scale(1)',
+                transform: isActive ? 'scale(1.1)' : 'scale(0.8)',
                 transition: `transform ${transitionDuration} ${easing}`
               }}>
-                <div className="relative w-[520px] h-[520px]">
+                <div className={cn(
+                  "relative",
+                  isMobile ? "w-[280px] h-[280px]" : "w-[520px] h-[520px]"
+                )}>
                   <Image
                     src={pizza.image}
                     alt={pizza.name}
