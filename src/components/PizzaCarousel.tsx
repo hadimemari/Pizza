@@ -1,4 +1,3 @@
-
 "use client";
 
 import React from 'react';
@@ -12,30 +11,46 @@ interface PizzaCarouselProps {
   onPizzaClick: (index: number) => void;
 }
 
+const SteamEffect = ({ isActive }: { isActive: boolean }) => {
+  return (
+    <div className={cn(
+      "absolute inset-0 z-30 pointer-events-none transition-opacity duration-1000",
+      isActive ? "opacity-100" : "opacity-30"
+    )}>
+      {/* ذرات بخار با زمان‌بندی‌های متفاوت */}
+      {[...Array(6)].map((_, i) => (
+        <div
+          key={i}
+          className="steam-particle animate-steam"
+          style={{
+            width: `${40 + Math.random() * 40}px`,
+            height: `${40 + Math.random() * 40}px`,
+            left: `${30 + Math.random() * 40}%`,
+            top: `${30 + Math.random() * 40}%`,
+            animationDelay: `${i * 1.2}s`,
+            animationDuration: `${5 + Math.random() * 3}s`
+          }}
+        />
+      ))}
+    </div>
+  );
+};
+
 export const PizzaCarousel: React.FC<PizzaCarouselProps> = ({ pizzas, activeIndex, onPizzaClick }) => {
-  // شعاع دقیق ریل برای حرکت دایره‌ای
   const radius = 850; 
   const total = pizzas.length;
   const angleStep = 360 / total;
   
-  // زمان انتقال ۵ ثانیه برای وقار و سنگینی مکانیکی (Ultra-Smooth)
   const transitionDuration = "5000ms"; 
   const easing = "cubic-bezier(0.16, 1, 0.3, 1)";
-
-  // زاویه چرخش کل ریل
   const parentRotation = activeIndex * -angleStep;
 
   return (
     <div className="relative w-full h-full flex items-center overflow-visible select-none">
-      {/* 
-        مرکز دوران مهندسی شده:
-        دقیقاً در ارتفاع ۵۰٪ فیکس شده است.
-      */}
       <div 
         className="absolute left-[-400px] top-1/2 w-1 h-1 bg-transparent"
         style={{ transform: 'translateY(-50%)' }}
       >
-        {/* مسیر دایره‌ای با استایل خط گچی کارتونی */}
         <svg 
           className="absolute pointer-events-none overflow-visible" 
           width={radius * 2} 
@@ -52,19 +67,8 @@ export const PizzaCarousel: React.FC<PizzaCarouselProps> = ({ pizzas, activeInde
               <feTurbulence type="fractalNoise" baseFrequency="0.5" numOctaves="3" result="noise" />
               <feDisplacementMap in="SourceGraphic" in2="noise" scale="3" />
             </filter>
-            <marker
-              id="arrowhead"
-              markerWidth="10"
-              markerHeight="7"
-              refX="0"
-              refY="3.5"
-              orient="auto"
-            >
-              <polygon points="0 0, 10 3.5, 0 7" fill="rgba(0,0,0,0.15)" />
-            </marker>
           </defs>
           
-          {/* دایره اصلی مسیر */}
           <circle 
             cx="0" 
             cy="0" 
@@ -78,7 +82,6 @@ export const PizzaCarousel: React.FC<PizzaCarouselProps> = ({ pizzas, activeInde
             style={{ transform: `translate(${radius}px, ${radius}px)` }}
           />
 
-          {/* فلش‌های جهت‌نما پاد ساعت‌گرد */}
           {[0, 45, 90, 135, 180].map((angle) => (
             <g key={angle} style={{ transform: `translate(${radius}px, ${radius}px) rotate(${angle}deg)` }}>
               <path
@@ -97,20 +100,13 @@ export const PizzaCarousel: React.FC<PizzaCarouselProps> = ({ pizzas, activeInde
         {pizzas.map((pizza, index) => {
           const angle = index * angleStep;
           const isActive = index === activeIndex;
-
-          /* 
-             فرمول مهندسی تراز مطلق:
-             ترکیب چرخش والد و فرزند برای رسیدن به نقطه فرود دقیقاً یکسان (Y=0).
-          */
           const currentRotation = angle + parentRotation;
 
           return (
             <div
               key={pizza.id}
               onClick={() => onPizzaClick(index)}
-              className={cn(
-                "absolute top-0 left-0 cursor-pointer"
-              )}
+              className="absolute top-0 left-0 cursor-pointer"
               style={{
                 transform: `
                   rotate(${currentRotation}deg) 
@@ -127,6 +123,9 @@ export const PizzaCarousel: React.FC<PizzaCarouselProps> = ({ pizzas, activeInde
                 transition: `transform ${transitionDuration} ${easing}`
               }}>
                 <div className="relative w-[520px] h-[520px]">
+                  {/* افکت بخار */}
+                  <SteamEffect isActive={isActive} />
+                  
                   <Image
                     src={pizza.image}
                     alt={pizza.name}
