@@ -53,37 +53,3 @@
 .animate-spin-slow {
   animation: spin-slow 60s linear infinite;
 }
-
-/* Steam Effect Animations */
-@keyframes steam-rise {
-  0% {
-    transform: translateY(0) scale(1) translateX(0);
-    opacity: 0;
-  }
-  20% {
-    opacity: 0.6;
-  }
-  100% {
-    transform: translateY(-180px) scale(3) translateX(30px);
-    opacity: 0;
-  }
-}
-
-@keyframes steam-sway {
-  0%, 100% { transform: translateX(0); }
-  50% { transform: translateX(15px); }
-}
-
-.steam-particle {
-  position: absolute;
-  /* خاکستری بسیار ملایم برای دیده شدن در صفحه سفید */
-  background: radial-gradient(circle, rgba(180, 180, 180, 0.4) 0%, rgba(200, 200, 200, 0) 70%);
-  border-radius: 50%;
-  filter: blur(15px);
-  pointer-events: none;
-  opacity: 0;
-}
-
-.animate-steam {
-  animation: steam-rise 5s ease-out infinite;
-}

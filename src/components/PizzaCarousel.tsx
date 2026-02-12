@@ -11,31 +11,6 @@ interface PizzaCarouselProps {
   onPizzaClick: (index: number) => void;
 }
 
-const SteamEffect = ({ isActive }: { isActive: boolean }) => {
-  return (
-    <div className={cn(
-      "absolute inset-0 z-30 pointer-events-none transition-opacity duration-1000",
-      isActive ? "opacity-100" : "opacity-40"
-    )}>
-      {/* افزایش تعداد ذرات برای بخار غلیظ‌تر */}
-      {[...Array(10)].map((_, i) => (
-        <div
-          key={i}
-          className="steam-particle animate-steam"
-          style={{
-            width: `${60 + Math.random() * 60}px`,
-            height: `${60 + Math.random() * 60}px`,
-            left: `${25 + Math.random() * 50}%`,
-            top: `${25 + Math.random() * 50}%`,
-            animationDelay: `${i * 0.8}s`,
-            animationDuration: `${4 + Math.random() * 3}s`
-          }}
-        />
-      ))}
-    </div>
-  );
-};
-
 export const PizzaCarousel: React.FC<PizzaCarouselProps> = ({ pizzas, activeIndex, onPizzaClick }) => {
   const radius = 850; 
   const total = pizzas.length;
@@ -123,9 +98,6 @@ export const PizzaCarousel: React.FC<PizzaCarouselProps> = ({ pizzas, activeInde
                 transition: `transform ${transitionDuration} ${easing}`
               }}>
                 <div className="relative w-[520px] h-[520px]">
-                  {/* افکت بخار غلیظ‌تر */}
-                  <SteamEffect isActive={isActive} />
-                  
                   <Image
                     src={pizza.image}
                     alt={pizza.name}
