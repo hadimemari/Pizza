@@ -27,7 +27,7 @@ export default function RootLayout({
         <link href="https://fonts.googleapis.com/css2?family=Lalezar&family=Vazirmatn:wght@100;400;700;900&display=swap" rel="stylesheet" />
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" />
       </head>
-      <body className="font-lalezar antialiased selection:bg-primary selection:text-white overflow-x-hidden">
+      <body className="font-lalezar antialiased select-none overflow-x-hidden">
         {children}
       </body>
     </html>

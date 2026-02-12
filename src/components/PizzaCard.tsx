@@ -49,10 +49,10 @@ export const PizzaCard: React.FC<PizzaCardProps> = ({ pizza, visible }) => {
         isTransitioning ? "opacity-40 translate-x-4" : "opacity-100 translate-x-0"
       )}
     >
-      {/* Modern Mouse-Follow Glow Effect */}
+      {/* Modern Mouse-Follow Glow Effect - 5% Increased Opacity (20% -> 25%) */}
       <div 
         className={cn(
-          "absolute pointer-events-none transition-opacity duration-700 ease-in-out bg-primary/20 blur-[100px] rounded-full w-[300px] h-[300px] -z-10",
+          "absolute pointer-events-none transition-opacity duration-700 ease-in-out bg-primary/25 blur-[100px] rounded-full w-[300px] h-[300px] -z-10",
           isHovering ? "opacity-100" : "opacity-0"
         )}
         style={{
