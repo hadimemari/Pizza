@@ -16,7 +16,7 @@ export default function Home() {
   return (
     <main className="relative min-h-screen w-full bg-white overflow-hidden font-lalezar text-foreground">
       {/* Header */}
-      <header className="absolute top-0 left-0 w-full px-6 md:px-8 py-4 md:py-6 flex items-center justify-between z-50 bg-white/50 backdrop-blur-sm md:bg-transparent">
+      <header className="absolute top-0 left-0 w-full px-6 md:px-8 py-4 md:py-6 flex items-center justify-between z-50 bg-white/50 backdrop-blur-sm lg:bg-transparent">
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 md:w-10 md:h-10 bg-primary rounded-xl flex items-center justify-center text-white font-black text-lg md:text-xl shadow-lg shadow-primary/20">
             پ
@@ -26,7 +26,7 @@ export default function Home() {
           </span>
         </div>
 
-        <nav className="hidden md:flex items-center gap-8">
+        <nav className="hidden lg:flex items-center gap-8">
           <button className="text-sm font-bold hover:text-primary transition-colors">داستان ما</button>
           <button className="text-sm font-bold hover:text-primary transition-colors">منو</button>
           <button className="text-sm font-bold hover:text-primary transition-colors">شعب</button>
@@ -44,16 +44,16 @@ export default function Home() {
               ۳
             </div>
           </div>
-          <Button variant="ghost" size="icon" className="md:hidden">
+          <Button variant="ghost" size="icon" className="lg:hidden">
             <Menu className="w-5 h-5" />
           </Button>
         </div>
       </header>
 
       {/* Hero Content Area */}
-      <div className="relative h-screen w-full flex flex-col md:flex-row items-center pt-20 md:pt-0">
+      <div className="relative h-screen w-full flex flex-col lg:flex-row items-center pt-20 lg:pt-0">
         {/* Carousel Section */}
-        <div className="w-full h-[40vh] md:w-[60%] md:h-full flex items-center z-10 overflow-visible">
+        <div className="w-full h-[45vh] md:h-[50vh] lg:w-[60%] lg:h-full flex items-center z-10 overflow-visible">
           <PizzaCarousel 
             pizzas={PIZZAS} 
             activeIndex={activeIndex} 
@@ -62,7 +62,7 @@ export default function Home() {
         </div>
 
         {/* Info Card Section */}
-        <div className="w-full h-[60vh] md:w-[40%] flex justify-center items-start md:items-center px-6 md:pr-16 z-20 overflow-y-auto pb-32 md:pb-0">
+        <div className="w-full flex-1 lg:w-[40%] flex justify-center items-start lg:items-center px-6 lg:pr-16 z-20 overflow-y-auto pb-32 lg:pb-0">
           <PizzaCard 
             pizza={PIZZAS[activeIndex]} 
             visible={true}
@@ -71,15 +71,15 @@ export default function Home() {
       </div>
 
       {/* Bottom Controls Container */}
-      <div className="fixed bottom-0 md:bottom-10 left-0 md:left-10 w-full md:w-auto z-40 flex flex-col items-start gap-4 bg-white/80 md:bg-transparent backdrop-blur-md md:backdrop-blur-none p-4 md:p-0 border-t border-black/5 md:border-none">
-        <div className="w-full md:w-auto overflow-x-auto no-scrollbar">
+      <div className="fixed bottom-0 lg:bottom-10 left-0 lg:left-10 w-full lg:w-auto z-40 flex flex-col items-start gap-4 bg-white/80 lg:bg-transparent backdrop-blur-md lg:backdrop-blur-none p-4 lg:p-0 border-t border-black/5 lg:border-none">
+        <div className="w-full lg:w-auto overflow-x-auto no-scrollbar">
           <PizzaThumbnails 
             pizzas={PIZZAS} 
             activeIndex={activeIndex} 
             onSelect={setActiveIndex} 
           />
         </div>
-        <div className="ml-2 hidden md:block">
+        <div className="ml-2 hidden lg:block">
           <CategoryNavigator activeId="pizzas" />
         </div>
       </div>

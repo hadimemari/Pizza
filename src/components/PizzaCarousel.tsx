@@ -13,37 +13,45 @@ interface PizzaCarouselProps {
 }
 
 export const PizzaCarousel: React.FC<PizzaCarouselProps> = ({ pizzas, activeIndex, onPizzaClick }) => {
-  const [isMobile, setIsMobile] = useState(false);
+  const [viewport, setViewport] = useState<'mobile' | 'tablet' | 'desktop'>('desktop');
 
   useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth < 768);
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
+    const handleResize = () => {
+      const width = window.innerWidth;
+      if (width < 768) setViewport('mobile');
+      else if (width < 1024) setViewport('tablet');
+      else setViewport('desktop');
+    };
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // محاسبات مهندسی برای تراز دقیق
-  const radius = isMobile ? 400 : 850; 
+  // محاسبات دقیق مهندسی برای هر پورت نمایش
+  const radius = viewport === 'mobile' ? 380 : viewport === 'tablet' ? 550 : 850;
+  const pizzaSize = viewport === 'mobile' ? 240 : viewport === 'tablet' ? 350 : 520;
+  
   const total = pizzas.length;
   const angleStep = 360 / total;
-  
   const transitionDuration = "5000ms"; 
   const easing = "cubic-bezier(0.16, 1, 0.3, 1)";
+  
   const parentRotation = activeIndex * -angleStep;
 
-  // مرکز دایره در موبایل وسط صفحه و در دسکتاپ سمت چپ کادر
-  const centerLeft = isMobile ? '50%' : '-400px';
-  const centerTop = isMobile ? '-100px' : '50%';
+  // مرکز دایره برای ۳ حالت مختلف
+  const getCenterStyles = () => {
+    if (viewport === 'mobile') return { left: '50%', top: '-80px', transform: 'translateX(-50%)' };
+    if (viewport === 'tablet') return { left: '50%', top: '-120px', transform: 'translateX(-50%)' };
+    return { left: '-400px', top: '50%', transform: 'translateY(-50%)' };
+  };
+
+  const centerStyles = getCenterStyles();
 
   return (
-    <div className="relative w-full h-full flex items-center justify-center md:justify-start overflow-visible select-none">
+    <div className="relative w-full h-full flex items-center justify-center lg:justify-start overflow-visible select-none">
       <div 
         className="absolute w-1 h-1 bg-transparent"
-        style={{ 
-          left: centerLeft, 
-          top: centerTop,
-          transform: isMobile ? 'translateX(-50%)' : 'translateY(-50%)'
-        }}
+        style={centerStyles}
       >
         {/* Chalk Line Path */}
         <svg 
@@ -96,8 +104,7 @@ export const PizzaCarousel: React.FC<PizzaCarouselProps> = ({ pizzas, activeInde
           const angle = index * angleStep;
           const isActive = index === activeIndex;
           
-          // فرمول مهندسی برای تراز دقیق در همان نقطه Pizza 1
-          // چرخش والد + چرخش معکوس فرزند = تراز صفر
+          // فرمول مهندسی برای تراز ۱۰۰٪ دقیق در یک نقطه ثابت
           const currentRotation = angle + parentRotation;
 
           return (
@@ -117,13 +124,10 @@ export const PizzaCarousel: React.FC<PizzaCarouselProps> = ({ pizzas, activeInde
               }}
             >
               <div className="relative" style={{
-                transform: isActive ? 'scale(1.1)' : 'scale(0.8)',
+                transform: isActive ? 'scale(1.1)' : 'scale(0.85)',
                 transition: `transform ${transitionDuration} ${easing}`
               }}>
-                <div className={cn(
-                  "relative",
-                  isMobile ? "w-[280px] h-[280px]" : "w-[520px] h-[520px]"
-                )}>
+                <div className="relative" style={{ width: pizzaSize, height: pizzaSize }}>
                   <Image
                     src={pizza.image}
                     alt={pizza.name}
