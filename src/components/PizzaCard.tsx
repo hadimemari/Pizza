@@ -40,7 +40,6 @@ export const PizzaCard: React.FC<PizzaCardProps> = ({ pizza, visible, onOrder })
     });
   };
 
-  // محاسبه میانگین امتیاز
   const averageRating = useMemo(() => {
     if (!displayPizza.reviews || displayPizza.reviews.length === 0) return 5;
     const sum = displayPizza.reviews.reduce((acc, r) => acc + r.rating, 0);
@@ -55,7 +54,7 @@ export const PizzaCard: React.FC<PizzaCardProps> = ({ pizza, visible, onOrder })
         onMouseEnter={() => setIsHovering(true)}
         onMouseLeave={() => setIsHovering(false)}
         className={cn(
-          "p-6 lg:p-12 rounded-[2rem] lg:rounded-[4rem] transform w-full max-w-[500px] flex flex-col justify-between overflow-hidden relative bg-white/60 backdrop-blur-xl border border-black/5 shadow-2xl shadow-black/5 transition-all duration-700",
+          "p-6 lg:p-10 rounded-[2rem] lg:rounded-[3.5rem] transform w-full max-w-[500px] flex flex-col justify-between overflow-hidden relative bg-white/60 backdrop-blur-xl border border-black/5 shadow-2xl shadow-black/5 transition-all duration-700",
           isTransitioning ? "opacity-40 translate-x-4" : "opacity-100 translate-x-0"
         )}
       >
@@ -71,8 +70,8 @@ export const PizzaCard: React.FC<PizzaCardProps> = ({ pizza, visible, onOrder })
           }}
         />
 
-        <div className="space-y-4 lg:space-y-8 relative z-10">
-          <div className="space-y-2 lg:space-y-4">
+        <div className="space-y-4 lg:space-y-6 relative z-10">
+          <div className="space-y-2 lg:space-y-3">
             <div className="flex items-center gap-2">
               <div className="flex text-primary">
                 {[...Array(5)].map((_, i) => (
@@ -85,21 +84,21 @@ export const PizzaCard: React.FC<PizzaCardProps> = ({ pizza, visible, onOrder })
               <span className="text-[10px] lg:text-xs font-bold text-muted-foreground tracking-widest uppercase">طعم اصیل پیتزا موشن</span>
             </div>
             
-            <div className="space-y-1 lg:space-y-2">
-              <h2 className="text-2xl sm:text-3xl lg:text-6xl font-black text-foreground uppercase tracking-tighter leading-[1] lg:leading-[0.9]">
+            <div className="space-y-1">
+              <h2 className="text-2xl sm:text-3xl lg:text-5xl font-black text-foreground uppercase tracking-tighter leading-tight">
                 {displayPizza.name}
               </h2>
-              <p className="text-primary font-black text-xl sm:text-2xl lg:text-4xl mt-1 lg:mt-4">{displayPizza.price}</p>
+              <p className="text-primary font-black text-xl sm:text-2xl lg:text-3xl mt-1">{displayPizza.price}</p>
             </div>
           </div>
 
-          <p className="text-muted-foreground/90 text-xs sm:text-sm lg:text-xl leading-relaxed font-medium min-h-[60px] lg:min-h-[100px]">
+          <p className="text-muted-foreground/90 text-xs sm:text-sm lg:text-lg leading-relaxed font-medium min-h-[60px] lg:min-h-[80px]">
             {displayPizza.description}
           </p>
 
           <button 
             onClick={() => setIsReviewsOpen(true)}
-            className="flex items-center gap-3 bg-black/5 px-4 py-2.5 rounded-full text-xs font-bold hover:bg-primary/10 hover:text-primary transition-all group w-fit"
+            className="flex items-center gap-3 bg-black/5 px-4 py-2 rounded-full text-xs font-bold hover:bg-primary/10 hover:text-primary transition-all group w-fit"
           >
             <div className="flex items-center gap-2">
               <MessageSquare className="w-4 h-4 transition-transform group-hover:scale-110" />
@@ -110,8 +109,8 @@ export const PizzaCard: React.FC<PizzaCardProps> = ({ pizza, visible, onOrder })
             </span>
           </button>
 
-          <div className="space-y-4 lg:space-y-8">
-            <div className="space-y-2 lg:space-y-3">
+          <div className="space-y-4 lg:space-y-6">
+            <div className="space-y-2">
               <div className="flex justify-between text-[10px] lg:text-xs font-bold text-muted-foreground uppercase tracking-widest">
                 <span>میزان کشسانی پنیر</span>
                 <span className="font-mono">{displayPizza.cheesiness}%</span>
@@ -119,15 +118,15 @@ export const PizzaCard: React.FC<PizzaCardProps> = ({ pizza, visible, onOrder })
               <Progress value={displayPizza.cheesiness} className="h-1 lg:h-1.5 bg-black/5" />
             </div>
 
-            <div className="pt-1 lg:pt-2 space-y-2 lg:space-y-4">
+            <div className="space-y-2 lg:space-y-3">
               <h4 className="text-[10px] lg:text-xs font-bold text-muted-foreground uppercase tracking-widest">مواد تشکیل دهنده</h4>
               <div className="flex flex-wrap gap-1.5 lg:gap-2">
                 {displayPizza.ingredients.map((ing) => (
                   <div 
                     key={ing} 
-                    className="flex items-center gap-1.5 lg:gap-2 px-2.5 lg:px-4 py-1 lg:py-2 rounded-full bg-black/5 text-[9px] lg:text-xs font-bold hover:bg-white hover:shadow-sm transition-all"
+                    className="flex items-center gap-1.5 lg:gap-2 px-2.5 lg:px-3 py-1 lg:py-1.5 rounded-full bg-black/5 text-[9px] lg:text-xs font-bold hover:bg-white hover:shadow-sm transition-all"
                   >
-                    <Leaf className="w-2.5 h-2.5 lg:w-3.5 lg:h-3.5 text-green-600" />
+                    <Leaf className="w-2.5 h-2.5 lg:w-3 h-3 text-green-600" />
                     {ing}
                   </div>
                 ))}
@@ -136,12 +135,12 @@ export const PizzaCard: React.FC<PizzaCardProps> = ({ pizza, visible, onOrder })
           </div>
         </div>
 
-        <div className="pt-6 lg:pt-8 relative z-10">
+        <div className="pt-6 lg:pt-8 pb-2 relative z-10">
           <Button 
             onClick={() => onOrder(displayPizza)}
-            className="w-full h-11 lg:h-16 rounded-xl lg:rounded-2xl bg-black hover:bg-primary text-white text-base lg:text-xl font-bold group shadow-xl transition-all duration-700"
+            className="w-full h-11 lg:h-14 rounded-xl lg:rounded-2xl bg-black hover:bg-primary text-white text-base lg:text-lg font-bold group shadow-xl transition-all duration-700"
           >
-            <ShoppingCart className="mr-3 w-4 h-4 lg:w-6 lg:h-6 transition-transform group-hover:translate-x-1" />
+            <ShoppingCart className="mr-3 w-4 h-4 lg:w-5 lg:h-5 transition-transform group-hover:translate-x-1" />
             سفارش این برش لذیذ
           </Button>
         </div>

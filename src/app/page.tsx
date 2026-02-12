@@ -95,7 +95,7 @@ export default function Home() {
         </header>
 
         {/* Hero Content Area */}
-        <div className="relative h-screen w-full flex flex-col lg:flex-row items-center pt-24 lg:pt-28">
+        <div className="relative h-screen w-full flex flex-col lg:flex-row items-center pt-24 lg:pt-32">
           <div className="w-full h-[40vh] md:h-[50vh] lg:w-[60%] lg:h-full flex items-center z-10 overflow-visible">
             <PizzaCarousel 
               pizzas={PIZZAS} 
@@ -104,7 +104,7 @@ export default function Home() {
             />
           </div>
 
-          <div className="w-full flex-1 lg:w-[40%] flex justify-center items-start lg:items-center px-6 lg:pr-16 z-20 overflow-y-auto pb-48 lg:pb-0">
+          <div className="w-full flex-1 lg:w-[40%] flex justify-center items-start lg:items-center px-6 lg:pr-16 z-20 overflow-y-auto pb-48 lg:pb-0 h-full lg:h-auto">
             <PizzaCard 
               pizza={PIZZAS[activeIndex]} 
               visible={true}
