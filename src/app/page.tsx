@@ -67,7 +67,7 @@ export default function Home() {
       {/* Main Content with Transition */}
       <div className={`transition-all duration-1000 ease-in-out ${isLoading ? 'opacity-0 scale-95 blur-sm' : 'opacity-100 scale-100 blur-0'}`}>
         {/* Header */}
-        <header className="absolute top-0 left-0 w-full px-6 md:px-8 py-4 md:py-6 flex items-center justify-between z-50 bg-white/50 backdrop-blur-sm lg:bg-transparent">
+        <header className="fixed top-0 left-0 w-full px-6 md:px-8 py-4 md:py-6 flex items-center justify-between z-50 bg-white/50 backdrop-blur-sm">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 md:w-10 md:h-10 bg-primary rounded-xl flex items-center justify-center text-white font-black text-lg md:text-xl shadow-lg shadow-primary/20">
               پ
@@ -114,7 +114,7 @@ export default function Home() {
           className="relative h-screen w-full transition-transform duration-1000 cubic-bezier(0.16, 1, 0.3, 1)"
           style={{ transform: `translateY(-${categoryIndex * 100}%)` }}
         >
-          {CATEGORIES.map((cat, idx) => (
+          {CATEGORIES.map((cat) => (
             <div 
               key={cat.id} 
               className="relative h-screen w-full flex flex-col lg:flex-row items-center pt-24 lg:pt-32"
@@ -161,12 +161,12 @@ export default function Home() {
 
         {/* Vertical Navigation Dot Indicator - Desktop Only */}
         <div className="fixed right-6 top-1/2 -translate-y-1/2 hidden lg:flex flex-col gap-4 z-40">
-          {currentCategoryItems.map((_, i) => (
+          {CATEGORIES.map((cat, i) => (
             <button
-              key={i}
-              onClick={() => handleIndexChange(i)}
+              key={cat.id}
+              onClick={() => setActiveCategoryId(cat.id)}
               className={`w-1.5 transition-all duration-1000 rounded-full ${
-                i === activeIndex ? 'h-12 bg-primary' : 'h-3 bg-black/10 hover:bg-black/20'
+                activeCategoryId === cat.id ? 'h-12 bg-primary' : 'h-3 bg-black/10 hover:bg-black/20'
               }`}
             />
           ))}
