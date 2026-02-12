@@ -19,7 +19,6 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // شبیه‌سازی لود شدن دارایی‌ها و آماده‌سازی صفحه
     const timer = setTimeout(() => {
       setIsLoading(false);
     }, 2500);
@@ -96,7 +95,7 @@ export default function Home() {
         </header>
 
         {/* Hero Content Area */}
-        <div className="relative h-screen w-full flex flex-col lg:flex-row items-center pt-20 lg:pt-0">
+        <div className="relative h-screen w-full flex flex-col lg:flex-row items-center pt-24 lg:pt-28">
           <div className="w-full h-[40vh] md:h-[50vh] lg:w-[60%] lg:h-full flex items-center z-10 overflow-visible">
             <PizzaCarousel 
               pizzas={PIZZAS} 
