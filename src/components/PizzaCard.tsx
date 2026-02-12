@@ -141,7 +141,7 @@ export const PizzaCard: React.FC<PizzaCardProps> = ({ pizza, visible, onOrder })
             className="w-full h-11 lg:h-14 rounded-xl lg:rounded-2xl bg-black hover:bg-primary text-white text-base lg:text-lg font-bold group shadow-xl transition-all duration-700"
           >
             <ShoppingCart className="mr-3 w-4 h-4 lg:w-5 lg:h-5 transition-transform group-hover:translate-x-1" />
-            سفارش این برش لذیذ
+            سفارش
           </Button>
         </div>
       </div>
