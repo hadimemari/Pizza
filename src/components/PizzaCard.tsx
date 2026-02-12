@@ -9,45 +9,61 @@ import { Button } from '@/components/ui/button';
 import { Leaf, ShoppingCart, Star, MessageSquare } from 'lucide-react';
 import { ReviewsDialog } from './ReviewsDialog';
 
-interface PizzaCardProps {
-  pizza: Pizza;
-  visible: boolean;
-  onOrder: (pizza: Pizza) => void;
-}
-
 const IndustrialLamp = ({ isOn }: { isOn: boolean }) => {
   return (
-    <div className="flex flex-col items-center mb-6 relative">
+    <div className="flex flex-col items-center mb-10 relative">
       {/* Wire */}
-      <div className="w-[1.5px] h-12 bg-black/40 relative">
-        <div className="absolute top-0 w-full h-full bg-gradient-to-b from-black/0 to-black/40" />
+      <div className="w-[1px] h-10 bg-black/40 relative">
+        <div className="absolute top-0 w-full h-full bg-gradient-to-b from-black/0 to-black/60" />
       </div>
       
-      {/* Fixture */}
-      <div className="w-4 h-5 bg-zinc-800 rounded-sm border-b border-zinc-700 shadow-sm" />
-      
-      {/* Bulb & Glow Container */}
-      <div className="relative">
-        {/* Bulb Body */}
-        <div className={cn(
-          "w-3 h-4 rounded-full transition-all duration-700 mt-[-2px] border",
-          isOn 
-            ? "bg-amber-200 border-amber-300 shadow-[0_0_15px_rgba(251,191,36,0.6)]" 
-            : "bg-zinc-700 border-zinc-600 shadow-inner"
-        )} />
+      {/* Lamp Shade (The "Hat") */}
+      <div className="relative flex flex-col items-center">
+        {/* Top Connector */}
+        <div className="w-3 h-2 bg-zinc-800 rounded-t-sm" />
         
-        {/* Cinematic Light Cone & Glow */}
+        {/* Main Shade Body */}
         <div className={cn(
-          "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 rounded-full pointer-events-none transition-all duration-1000 ease-in-out mix-blend-screen",
-          isOn 
-            ? "opacity-100 scale-100 bg-amber-500/20 blur-3xl animate-pulse" 
-            : "opacity-0 scale-50"
-        )} style={{ animationDuration: '4s' }} />
+          "w-16 h-8 bg-zinc-900 rounded-[100%_100%_10%_10%] relative z-20 border-b border-zinc-700 shadow-xl transition-all duration-700",
+          isOn ? "shadow-[0_4px_10px_rgba(0,0,0,0.3)]" : "opacity-90"
+        )}>
+          {/* Inner Light Source - Visible under the shade */}
+          <div className={cn(
+            "absolute bottom-0 left-1/2 -translate-x-1/2 w-6 h-2 rounded-full blur-[2px] transition-all duration-700",
+            isOn ? "bg-amber-100 opacity-100" : "bg-zinc-800 opacity-50"
+          )} />
+        </div>
 
-        {/* Status Label */}
+        {/* Cinematic Light Cone & Spotlight Effect */}
         <div className={cn(
-          "absolute top-8 left-1/2 -translate-x-1/2 whitespace-nowrap text-[8px] font-black uppercase tracking-[0.2em] transition-all duration-500",
-          isOn ? "text-amber-600 opacity-60" : "text-zinc-400 opacity-30"
+          "absolute top-6 left-1/2 -translate-x-1/2 w-48 h-64 pointer-events-none transition-all duration-1000 ease-in-out z-10",
+          isOn ? "opacity-100" : "opacity-0 scale-95"
+        )}>
+          {/* Focused Cone Gradient */}
+          <div 
+            className="w-full h-full"
+            style={{
+              background: 'radial-gradient(circle at top, rgba(251, 191, 36, 0.25) 0%, rgba(251, 191, 36, 0.05) 40%, transparent 70%)',
+              clipPath: 'polygon(35% 0%, 65% 0%, 100% 100%, 0% 100%)',
+              filter: 'blur(15px)'
+            }}
+          />
+          
+          {/* Central Bright Beam */}
+          <div 
+            className="absolute top-0 left-1/2 -translate-x-1/2 w-20 h-full opacity-30"
+            style={{
+              background: 'linear-gradient(to bottom, rgba(251, 191, 36, 0.4) 0%, transparent 100%)',
+              clipPath: 'polygon(45% 0%, 55% 0%, 100% 100%, 0% 100%)',
+              filter: 'blur(8px)'
+            }}
+          />
+        </div>
+
+        {/* Status Label - Subtle text under the light */}
+        <div className={cn(
+          "absolute top-10 left-1/2 -translate-x-1/2 whitespace-nowrap text-[7px] font-black uppercase tracking-[0.3em] transition-all duration-500 z-30",
+          isOn ? "text-amber-600/60" : "text-zinc-500/30"
         )}>
           {isOn ? "Available Now" : "Out of Stock"}
         </div>
@@ -114,7 +130,7 @@ export const PizzaCard: React.FC<PizzaCardProps> = ({ pizza, visible, onOrder })
 
         <div className="space-y-4 lg:space-y-6 relative z-10">
           <div className="space-y-2 lg:space-y-3 flex flex-col items-center text-center">
-            {/* Cinematic Industrial Lamp */}
+            {/* Cinematic Industrial Lamp with Shade */}
             <IndustrialLamp isOn={displayPizza.isAvailable} />
 
             <div className="flex items-center gap-2 mt-2">
@@ -129,10 +145,10 @@ export const PizzaCard: React.FC<PizzaCardProps> = ({ pizza, visible, onOrder })
               <span className="text-[10px] lg:text-xs font-bold text-muted-foreground tracking-widest uppercase">طعم اصیل پیتزا موشن</span>
             </div>
             
-            <div className="space-y-1">
+            <div className="space-y-1 relative">
               <h2 className={cn(
                 "text-2xl sm:text-3xl lg:text-5xl font-black text-foreground uppercase tracking-tighter leading-tight transition-all duration-700",
-                displayPizza.isAvailable ? "drop-shadow-[0_10px_15px_rgba(251,191,36,0.3)]" : ""
+                displayPizza.isAvailable ? "drop-shadow-[0_10px_30px_rgba(251,191,36,0.4)]" : ""
               )}>
                 {displayPizza.name}
               </h2>
