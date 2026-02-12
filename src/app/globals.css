@@ -61,10 +61,10 @@
     opacity: 0;
   }
   20% {
-    opacity: 0.4;
+    opacity: 0.6;
   }
   100% {
-    transform: translateY(-150px) scale(2.5) translateX(20px);
+    transform: translateY(-180px) scale(3) translateX(30px);
     opacity: 0;
   }
 }
@@ -76,13 +76,14 @@
 
 .steam-particle {
   position: absolute;
-  background: radial-gradient(circle, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0) 70%);
+  /* خاکستری بسیار ملایم برای دیده شدن در صفحه سفید */
+  background: radial-gradient(circle, rgba(180, 180, 180, 0.4) 0%, rgba(200, 200, 200, 0) 70%);
   border-radius: 50%;
-  filter: blur(12px);
+  filter: blur(15px);
   pointer-events: none;
   opacity: 0;
 }
 
 .animate-steam {
-  animation: steam-rise 6s ease-out infinite;
+  animation: steam-rise 5s ease-out infinite;
 }

@@ -15,20 +15,20 @@ const SteamEffect = ({ isActive }: { isActive: boolean }) => {
   return (
     <div className={cn(
       "absolute inset-0 z-30 pointer-events-none transition-opacity duration-1000",
-      isActive ? "opacity-100" : "opacity-30"
+      isActive ? "opacity-100" : "opacity-40"
     )}>
-      {/* ذرات بخار با زمان‌بندی‌های متفاوت */}
-      {[...Array(6)].map((_, i) => (
+      {/* افزایش تعداد ذرات برای بخار غلیظ‌تر */}
+      {[...Array(10)].map((_, i) => (
         <div
           key={i}
           className="steam-particle animate-steam"
           style={{
-            width: `${40 + Math.random() * 40}px`,
-            height: `${40 + Math.random() * 40}px`,
-            left: `${30 + Math.random() * 40}%`,
-            top: `${30 + Math.random() * 40}%`,
-            animationDelay: `${i * 1.2}s`,
-            animationDuration: `${5 + Math.random() * 3}s`
+            width: `${60 + Math.random() * 60}px`,
+            height: `${60 + Math.random() * 60}px`,
+            left: `${25 + Math.random() * 50}%`,
+            top: `${25 + Math.random() * 50}%`,
+            animationDelay: `${i * 0.8}s`,
+            animationDuration: `${4 + Math.random() * 3}s`
           }}
         />
       ))}
@@ -82,7 +82,7 @@ export const PizzaCarousel: React.FC<PizzaCarouselProps> = ({ pizzas, activeInde
             style={{ transform: `translate(${radius}px, ${radius}px)` }}
           />
 
-          {[0, 45, 90, 135, 180].map((angle) => (
+          {[0, 45, 90, 135, 180, 225, 270, 315].map((angle) => (
             <g key={angle} style={{ transform: `translate(${radius}px, ${radius}px) rotate(${angle}deg)` }}>
               <path
                 d={`M ${radius - 20} -40 L ${radius} -60 L ${radius + 20} -40`}
@@ -123,7 +123,7 @@ export const PizzaCarousel: React.FC<PizzaCarouselProps> = ({ pizzas, activeInde
                 transition: `transform ${transitionDuration} ${easing}`
               }}>
                 <div className="relative w-[520px] h-[520px]">
-                  {/* افکت بخار */}
+                  {/* افکت بخار غلیظ‌تر */}
                   <SteamEffect isActive={isActive} />
                   
                   <Image
