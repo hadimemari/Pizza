@@ -27,20 +27,22 @@ export const PizzaCarousel: React.FC<PizzaCarouselProps> = ({ pizzas, activeInde
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // محاسبات دقیق مهندسی برای هر پورت نمایش
-  const radius = viewport === 'mobile' ? 380 : viewport === 'tablet' ? 550 : 850;
-  const pizzaSize = viewport === 'mobile' ? 240 : viewport === 'tablet' ? 350 : 520;
+  // محاسبات دقیق مهندسی برای هر دستگاه
+  const radius = viewport === 'mobile' ? 320 : viewport === 'tablet' ? 550 : 850;
+  const pizzaSize = viewport === 'mobile' ? 220 : viewport === 'tablet' ? 350 : 520;
   
   const total = pizzas.length;
   const angleStep = 360 / total;
   const transitionDuration = "5000ms"; 
   const easing = "cubic-bezier(0.16, 1, 0.3, 1)";
   
-  const parentRotation = activeIndex * -angleStep;
+  // در موبایل چرخش ساعت‌گرد (activeIndex * angleStep) و در بقیه پاد ساعت‌گرد
+  const parentRotation = viewport === 'mobile' 
+    ? activeIndex * angleStep 
+    : activeIndex * -angleStep;
 
-  // مرکز دایره برای ۳ حالت مختلف
   const getCenterStyles = () => {
-    if (viewport === 'mobile') return { left: '50%', top: '-80px', transform: 'translateX(-50%)' };
+    if (viewport === 'mobile') return { left: '50%', top: '350px', transform: 'translateX(-50%)' };
     if (viewport === 'tablet') return { left: '50%', top: '-120px', transform: 'translateX(-50%)' };
     return { left: '-400px', top: '50%', transform: 'translateY(-50%)' };
   };
@@ -78,20 +80,20 @@ export const PizzaCarousel: React.FC<PizzaCarouselProps> = ({ pizzas, activeInde
             r={radius} 
             fill="none" 
             stroke="black" 
-            strokeWidth="3" 
-            strokeDasharray="20 30" 
+            strokeWidth="2" 
+            strokeDasharray="15 25" 
             filter="url(#chalk-effect)"
             className="opacity-10"
             style={{ transform: `translate(${radius}px, ${radius}px)` }}
           />
 
-          {[0, 45, 90, 135, 180, 225, 270, 315].map((angle) => (
+          {[0, 90, 180, 270].map((angle) => (
             <g key={angle} style={{ transform: `translate(${radius}px, ${radius}px) rotate(${angle}deg)` }}>
               <path
-                d={`M ${radius - 20} -40 L ${radius} -60 L ${radius + 20} -40`}
+                d={`M ${radius - 15} -30 L ${radius} -45 L ${radius + 15} -30`}
                 fill="none"
                 stroke="black"
-                strokeWidth="3"
+                strokeWidth="2"
                 strokeLinecap="round"
                 filter="url(#chalk-effect)"
                 className="opacity-10"
@@ -101,10 +103,11 @@ export const PizzaCarousel: React.FC<PizzaCarouselProps> = ({ pizzas, activeInde
         </svg>
 
         {pizzas.map((pizza, index) => {
-          const angle = index * angleStep;
+          const angle = viewport === 'mobile' 
+            ? index * -angleStep - 90 // در موبایل شروع از بالا (ساعت ۱۲)
+            : index * angleStep;
+
           const isActive = index === activeIndex;
-          
-          // فرمول مهندسی برای تراز ۱۰۰٪ دقیق در یک نقطه ثابت
           const currentRotation = angle + parentRotation;
 
           return (

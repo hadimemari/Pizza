@@ -53,7 +53,7 @@ export default function Home() {
       {/* Hero Content Area */}
       <div className="relative h-screen w-full flex flex-col lg:flex-row items-center pt-20 lg:pt-0">
         {/* Carousel Section */}
-        <div className="w-full h-[45vh] md:h-[50vh] lg:w-[60%] lg:h-full flex items-center z-10 overflow-visible">
+        <div className="w-full h-[40vh] md:h-[50vh] lg:w-[60%] lg:h-full flex items-center z-10 overflow-visible">
           <PizzaCarousel 
             pizzas={PIZZAS} 
             activeIndex={activeIndex} 
@@ -62,7 +62,7 @@ export default function Home() {
         </div>
 
         {/* Info Card Section */}
-        <div className="w-full flex-1 lg:w-[40%] flex justify-center items-start lg:items-center px-6 lg:pr-16 z-20 overflow-y-auto pb-32 lg:pb-0">
+        <div className="w-full flex-1 lg:w-[40%] flex justify-center items-start lg:items-center px-6 lg:pr-16 z-20 overflow-y-auto pb-48 lg:pb-0">
           <PizzaCard 
             pizza={PIZZAS[activeIndex]} 
             visible={true}
@@ -71,7 +71,7 @@ export default function Home() {
       </div>
 
       {/* Bottom Controls Container */}
-      <div className="fixed bottom-0 lg:bottom-10 left-0 lg:left-10 w-full lg:w-auto z-40 flex flex-col items-start gap-4 bg-white/80 lg:bg-transparent backdrop-blur-md lg:backdrop-blur-none p-4 lg:p-0 border-t border-black/5 lg:border-none">
+      <div className="fixed bottom-0 lg:bottom-10 left-0 lg:left-10 w-full lg:w-auto z-40 flex flex-col items-center lg:items-start gap-3 bg-white/90 lg:bg-transparent backdrop-blur-md lg:backdrop-blur-none p-4 lg:p-0 border-t border-black/5 lg:border-none">
         <div className="w-full lg:w-auto overflow-x-auto no-scrollbar">
           <PizzaThumbnails 
             pizzas={PIZZAS} 
@@ -79,7 +79,7 @@ export default function Home() {
             onSelect={setActiveIndex} 
           />
         </div>
-        <div className="ml-2 hidden lg:block">
+        <div className="lg:ml-2">
           <CategoryNavigator activeId="pizzas" />
         </div>
       </div>
@@ -90,7 +90,7 @@ export default function Home() {
           <button
             key={i}
             onClick={() => setActiveIndex(i)}
-            className={`w-1.5 transition-all duration-500 rounded-full ${
+            className={`w-1.5 transition-all duration-1000 rounded-full ${
               i === activeIndex ? 'h-12 bg-primary' : 'h-3 bg-black/10 hover:bg-black/20'
             }`}
           />
