@@ -99,10 +99,15 @@ export const PizzaCard: React.FC<PizzaCardProps> = ({ pizza, visible, onOrder })
 
           <button 
             onClick={() => setIsReviewsOpen(true)}
-            className="flex items-center gap-2 bg-black/5 px-4 py-2 rounded-full text-xs font-bold hover:bg-primary/10 hover:text-primary transition-all group"
+            className="flex items-center gap-3 bg-black/5 px-4 py-2.5 rounded-full text-xs font-bold hover:bg-primary/10 hover:text-primary transition-all group w-fit"
           >
-            <MessageSquare className="w-4 h-4 transition-transform group-hover:scale-110" />
-            <span>{displayPizza.reviews.length} نظر ثبت شده</span>
+            <div className="flex items-center gap-2">
+              <MessageSquare className="w-4 h-4 transition-transform group-hover:scale-110" />
+              <span>نظرات</span>
+            </div>
+            <span className="bg-primary text-white px-2 py-0.5 rounded-lg text-[10px] min-w-[22px] text-center shadow-sm shadow-primary/20">
+              {displayPizza.reviews.length}
+            </span>
           </button>
 
           <div className="space-y-4 lg:space-y-8">
