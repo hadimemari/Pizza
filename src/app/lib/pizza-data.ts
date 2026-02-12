@@ -17,10 +17,11 @@ export interface Pizza {
   image: string;
   category: string;
   reviews: Review[];
+  isAvailable: boolean;
 }
 
 export const PIZZAS: Pizza[] = [
-  // پیتزاها - مسیر تصاویر: public/images/pizzas/
+  // پیتزاها
   {
     id: "1",
     name: "مارگاریتا کلاسیک",
@@ -30,6 +31,7 @@ export const PIZZAS: Pizza[] = [
     description: "کلاسیک بی نظیر ایتالیایی با موزارلای تازه و برگ‌های معطر ریحان که روی خمیری ترد و نازک چیده شده است.",
     image: "/images/pizzas/1.png",
     category: "pizzas",
+    isAvailable: true,
     reviews: [
       { id: "r1", userName: "امیررضا", rating: 5, comment: "واقعاً طعم اصیلی داشت، ممنون از پیتزا موشن.", date: "۱۴۰۲/۱۰/۱۲" },
       { id: "r2", userName: "سارا", rating: 4, comment: "پنیرش خیلی کشسان و لذیذ بود.", date: "۱۴۰۲/۱۰/۱۵" }
@@ -44,11 +46,12 @@ export const PIZZAS: Pizza[] = [
     description: "رویای عاشقان گوشت با پپرونی ترد و پنیر دوبل کشسان که با هر گاز، طعمی تند و به یاد ماندنی را تجربه می‌کنید.",
     image: "/images/pizzas/2.png",
     category: "pizzas",
+    isAvailable: true,
     reviews: [
       { id: "r3", userName: "رضا", rating: 5, comment: "بهترین پپرونی که تا حالا خوردم! تندی‌اش عالیه.", date: "۱۴۰۲/۱۱/۰۵" }
     ]
   },
-  // کالزونه - مسیر تصاویر: public/images/calzones/
+  // کالزونه
   {
     id: "c1",
     name: "کالزونه گوشت و قارچ",
@@ -58,6 +61,7 @@ export const PIZZAS: Pizza[] = [
     description: "یک پیراشکی غول‌آسا پر از مواد گوشتی و پنیر فراوان که در تنور سنگی برشته شده است.",
     image: "/images/calzones/c1.png",
     category: "calzones",
+    isAvailable: true,
     reviews: []
   },
   {
@@ -69,9 +73,10 @@ export const PIZZAS: Pizza[] = [
     description: "ترکیب خوشمزه سبزیجات تازه و پنیرهای معطر در دل یک خمیر ترد و داغ.",
     image: "/images/calzones/c2.png",
     category: "calzones",
+    isAvailable: false,
     reviews: []
   },
-  // سالادها - مسیر تصاویر: public/images/sides/
+  // سالادها
   {
     id: "s1",
     name: "سالاد سزار ویژه",
@@ -81,6 +86,7 @@ export const PIZZAS: Pizza[] = [
     description: "سالاد سزار کلاسیک با فیله مرغ گریل شده و سس دست‌ساز سرآشپز.",
     image: "/images/sides/s1.png",
     category: "sides",
+    isAvailable: true,
     reviews: []
   },
   {
@@ -92,9 +98,10 @@ export const PIZZAS: Pizza[] = [
     description: "یک سالاد مدیترانه‌ای خنک و ترش که همراه عالی برای پیتزاهای شماست.",
     image: "/images/sides/s2.png",
     category: "sides",
+    isAvailable: true,
     reviews: []
   },
-  // نوشیدنی‌ها - مسیر تصاویر: public/images/beverages/
+  // نوشیدنی‌ها
   {
     id: "b1",
     name: "موخیتو طبیعی",
@@ -104,6 +111,7 @@ export const PIZZAS: Pizza[] = [
     description: "نوشیدنی خنک و دست‌ساز با طعم نعناع و لیموی تازه.",
     image: "/images/beverages/b1.png",
     category: "beverages",
+    isAvailable: true,
     reviews: []
   },
   {
@@ -115,6 +123,7 @@ export const PIZZAS: Pizza[] = [
     description: "آبمیوه ۱۰۰٪ طبیعی تهیه شده از میوه‌های تازه فصل.",
     image: "/images/beverages/b2.png",
     category: "beverages",
+    isAvailable: false,
     reviews: []
   }
 ];
