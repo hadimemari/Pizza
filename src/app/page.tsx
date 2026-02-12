@@ -110,37 +110,34 @@ export default function Home() {
           </div>
         </header>
 
-        {/* Cinematic Vertical World Container - 150vh spacing for cinematic distance */}
+        {/* Cinematic Vertical World Container */}
         <div 
           className="relative w-full transition-transform duration-1000 cubic-bezier(0.16, 1, 0.3, 1)"
-          style={{ transform: `translateY(-${categoryIndex * 150}vh)` }}
+          style={{ transform: `translateY(-${categoryIndex * 100}vh)` }}
         >
           {CATEGORIES.map((cat) => (
             <div 
               key={cat.id} 
-              className="relative h-[150vh] w-full flex flex-col lg:flex-row items-center justify-center lg:justify-start"
+              className="relative h-screen w-full flex flex-col lg:flex-row items-center justify-center"
             >
-              {/* Vertical Center Alignment for the items in the current screen viewport */}
-              <div className="h-screen w-full flex flex-col lg:flex-row items-center justify-center">
-                <div className="w-full h-[45vh] md:h-[50vh] lg:w-[60%] lg:h-full flex items-center z-10 overflow-visible relative">
-                  <PizzaCarousel 
-                    pizzas={PIZZAS.filter(item => item.category === cat.id)} 
-                    activeIndex={activeIndices[cat.id] || 0} 
-                    onPizzaClick={(i) => {
-                      setActiveIndices(prev => ({ ...prev, [cat.id]: i }));
-                    }} 
-                  />
-                </div>
+              <div className="w-full h-[45vh] md:h-[50vh] lg:w-[60%] lg:h-full flex items-center z-10 overflow-visible relative">
+                <PizzaCarousel 
+                  pizzas={PIZZAS.filter(item => item.category === cat.id)} 
+                  activeIndex={activeIndices[cat.id] || 0} 
+                  onPizzaClick={(i) => {
+                    setActiveIndices(prev => ({ ...prev, [cat.id]: i }));
+                  }} 
+                />
+              </div>
 
-                <div className="w-full flex-1 lg:w-[40%] flex justify-center items-center px-6 lg:pr-16 z-20">
-                  {activeCategoryId === cat.id && (
-                    <PizzaCard 
-                      pizza={PIZZAS.filter(item => item.category === cat.id)[activeIndices[cat.id] || 0]} 
-                      visible={true}
-                      onOrder={handleOrder}
-                    />
-                  )}
-                </div>
+              <div className="w-full flex-1 lg:w-[40%] flex justify-center items-center px-6 lg:pr-16 z-20">
+                {activeCategoryId === cat.id && (
+                  <PizzaCard 
+                    pizza={PIZZAS.filter(item => item.category === cat.id)[activeIndices[cat.id] || 0]} 
+                    visible={true}
+                    onOrder={handleOrder}
+                  />
+                )}
               </div>
             </div>
           ))}
