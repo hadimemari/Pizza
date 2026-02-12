@@ -6,32 +6,32 @@ import { Pizza } from '@/app/lib/pizza-data';
 import { cn } from '@/lib/utils';
 import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
-import { Leaf, ShoppingCart, Star, MessageSquare, ArrowRight, User, MessageCircle } from 'lucide-react';
+import { Leaf, ShoppingCart, Star, MessageSquare, ArrowRight, User, MessageCircle, ArrowLeft } from 'lucide-react';
 import { ScrollArea } from "@/components/ui/scroll-area";
 
 const IndustrialLamp = ({ isOn }: { isOn: boolean }) => {
   return (
-    <div className="flex flex-col items-center mb-6 relative">
-      <div className="w-[1px] h-8 bg-black/40 relative">
+    <div className="flex flex-col items-center mb-4 lg:mb-6 relative">
+      <div className="w-[1px] h-6 lg:h-8 bg-black/40 relative">
         <div className="absolute top-0 w-full h-full bg-gradient-to-b from-black/0 to-black/60" />
       </div>
       
       <div className="relative flex flex-col items-center">
-        <div className="w-4 h-2 bg-zinc-800 rounded-t-sm border-b border-zinc-700" />
+        <div className="w-3 h-1.5 lg:w-4 h-2 bg-zinc-800 rounded-t-sm border-b border-zinc-700" />
         
         <div className={cn(
-          "w-20 h-10 bg-zinc-900 rounded-[100%_100%_15%_15%] relative z-20 border-b-2 border-zinc-800 shadow-2xl transition-all duration-700",
+          "w-16 h-8 lg:w-20 lg:h-10 bg-zinc-900 rounded-[100%_100%_15%_15%] relative z-20 border-b-2 border-zinc-800 shadow-2xl transition-all duration-700",
           isOn ? "shadow-[0_10px_40px_rgba(251,191,36,0.15)]" : "opacity-95"
         )}>
           <div className={cn(
-            "absolute bottom-0 left-1/2 -translate-x-1/2 w-10 h-3 rounded-full blur-[4px] transition-all duration-700",
+            "absolute bottom-0 left-1/2 -translate-x-1/2 w-8 h-2 lg:w-10 lg:h-3 rounded-full blur-[4px] transition-all duration-700",
             isOn ? "bg-amber-100/80 opacity-100" : "bg-zinc-800 opacity-40"
           )} />
           <div className="absolute inset-0 rounded-[100%_100%_15%_15%] border-t border-white/5 pointer-events-none" />
         </div>
 
         <div className={cn(
-          "absolute top-8 left-1/2 -translate-x-1/2 w-72 h-80 pointer-events-none transition-all duration-1000 ease-in-out z-10",
+          "absolute top-6 lg:top-8 left-1/2 -translate-x-1/2 w-64 h-72 lg:w-72 lg:h-80 pointer-events-none transition-all duration-1000 ease-in-out z-10",
           isOn ? "opacity-100 scale-100" : "opacity-0 scale-90"
         )}>
           <div 
@@ -45,7 +45,7 @@ const IndustrialLamp = ({ isOn }: { isOn: boolean }) => {
         </div>
 
         <div className={cn(
-          "absolute top-12 left-1/2 -translate-x-1/2 whitespace-nowrap text-[8px] font-black uppercase tracking-[0.4em] transition-all duration-500 z-30",
+          "absolute top-10 lg:top-12 left-1/2 -translate-x-1/2 whitespace-nowrap text-[7px] lg:text-[8px] font-black uppercase tracking-[0.4em] transition-all duration-500 z-30",
           isOn ? "text-amber-500 shadow-sm" : "text-zinc-600 opacity-40"
         )}>
           {isOn ? "موجود در تنور" : "فعلاً تمام شده"}
@@ -63,6 +63,7 @@ export const PizzaCard: React.FC<{ pizza: Pizza; visible: boolean; onOrder: (piz
   const [isHovering, setIsHovering] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
 
+  // Reset reviews view when pizza changes
   useEffect(() => {
     setIsTransitioning(true);
     const timer = setTimeout(() => {
@@ -72,6 +73,22 @@ export const PizzaCard: React.FC<{ pizza: Pizza; visible: boolean; onOrder: (piz
     }, 400);
     return () => clearTimeout(timer);
   }, [pizza]);
+
+  // Click outside to close reviews
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (showReviews && cardRef.current && !cardRef.current.contains(event.target as Node)) {
+        setShowReviews(false);
+      }
+    };
+
+    if (showReviews) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showReviews]);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!cardRef.current) return;
@@ -95,7 +112,7 @@ export const PizzaCard: React.FC<{ pizza: Pizza; visible: boolean; onOrder: (piz
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => setIsHovering(false)}
       className={cn(
-        "rounded-[2.5rem] lg:rounded-[4rem] transform w-full max-w-[500px] h-[600px] lg:h-[700px] flex flex-col overflow-hidden relative bg-white/70 backdrop-blur-2xl border border-black/5 shadow-2xl shadow-black/5 transition-all duration-700",
+        "rounded-[2.5rem] lg:rounded-[4rem] transform w-full max-w-[90vw] sm:max-w-[450px] lg:max-w-[500px] h-[550px] sm:h-[600px] lg:h-[700px] flex flex-col overflow-hidden relative bg-white/70 backdrop-blur-2xl border border-black/5 shadow-2xl shadow-black/5 transition-all duration-700",
         isTransitioning ? "opacity-40 translate-x-4 blur-sm" : "opacity-100 translate-x-0"
       )}
     >
@@ -120,7 +137,7 @@ export const PizzaCard: React.FC<{ pizza: Pizza; visible: boolean; onOrder: (piz
         )}
       >
         {/* VIEW 1: PIZZA INFO */}
-        <div className="w-1/2 h-full flex flex-col p-6 lg:p-10 justify-between">
+        <div className="w-1/2 h-full flex flex-col p-5 sm:p-6 lg:p-10 justify-between">
           <div className="space-y-4 lg:space-y-6 relative z-10">
             <div className="space-y-2 lg:space-y-4 flex flex-col items-center text-center">
               <IndustrialLamp isOn={displayPizza.isAvailable} />
@@ -139,7 +156,7 @@ export const PizzaCard: React.FC<{ pizza: Pizza; visible: boolean; onOrder: (piz
               
               <div className="space-y-1 relative px-4">
                 <h2 className={cn(
-                  "text-2xl sm:text-3xl lg:text-5xl font-black uppercase tracking-tighter leading-tight transition-all duration-1000",
+                  "text-xl sm:text-2xl lg:text-5xl font-black uppercase tracking-tighter leading-tight transition-all duration-1000",
                   displayPizza.isAvailable 
                     ? "text-foreground drop-shadow-[0_15px_35px_rgba(251,191,36,0.3)] scale-100 opacity-100" 
                     : "text-zinc-400 grayscale opacity-30 scale-95 blur-[0.5px]"
@@ -147,7 +164,7 @@ export const PizzaCard: React.FC<{ pizza: Pizza; visible: boolean; onOrder: (piz
                   {displayPizza.name}
                 </h2>
                 <p className={cn(
-                  "font-black text-xl sm:text-2xl lg:text-3xl mt-2 transition-all duration-700",
+                  "font-black text-lg sm:text-xl lg:text-3xl mt-1 transition-all duration-700",
                   displayPizza.isAvailable ? "text-primary" : "text-zinc-400"
                 )}>
                   {displayPizza.price}
@@ -156,7 +173,7 @@ export const PizzaCard: React.FC<{ pizza: Pizza; visible: boolean; onOrder: (piz
             </div>
 
             <p className={cn(
-              "text-xs sm:text-sm lg:text-base leading-relaxed font-medium text-center px-4 transition-all duration-700",
+              "text-[11px] sm:text-sm lg:text-base leading-relaxed font-medium text-center px-2 sm:px-4 transition-all duration-700",
               displayPizza.isAvailable ? "text-muted-foreground/90" : "text-zinc-400/50"
             )}>
               {displayPizza.description}
@@ -164,7 +181,10 @@ export const PizzaCard: React.FC<{ pizza: Pizza; visible: boolean; onOrder: (piz
 
             <div className="flex justify-center">
               <button 
-                onClick={() => setShowReviews(true)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setShowReviews(true);
+                }}
                 className="flex items-center gap-3 bg-black/5 px-4 py-2 rounded-full text-xs font-bold hover:bg-primary/10 hover:text-primary transition-all group w-fit"
               >
                 <div className="flex items-center gap-2">
@@ -179,7 +199,7 @@ export const PizzaCard: React.FC<{ pizza: Pizza; visible: boolean; onOrder: (piz
 
             <div className="space-y-4 lg:space-y-6">
               <div className="space-y-2">
-                <div className="flex justify-between text-[10px] lg:text-xs font-bold text-muted-foreground uppercase tracking-widest">
+                <div className="flex justify-between text-[9px] lg:text-xs font-bold text-muted-foreground uppercase tracking-widest">
                   <span>میزان کشسانی پنیر</span>
                   <span className="font-mono">{displayPizza.cheesiness}%</span>
                 </div>
@@ -187,13 +207,13 @@ export const PizzaCard: React.FC<{ pizza: Pizza; visible: boolean; onOrder: (piz
               </div>
 
               <div className="space-y-2 lg:space-y-3">
-                <h4 className="text-[10px] lg:text-xs font-bold text-muted-foreground uppercase tracking-widest">مواد تشکیل دهنده</h4>
+                <h4 className="text-[9px] lg:text-xs font-bold text-muted-foreground uppercase tracking-widest text-center lg:text-right">مواد تشکیل دهنده</h4>
                 <div className="flex flex-wrap justify-center gap-1.5 lg:gap-2">
                   {displayPizza.ingredients.map((ing) => (
                     <div 
                       key={ing} 
                       className={cn(
-                        "flex items-center gap-1.5 lg:gap-2 px-2.5 lg:px-3 py-1 lg:py-1.5 rounded-full text-[9px] lg:text-xs font-bold transition-all",
+                        "flex items-center gap-1.5 lg:gap-2 px-2.5 lg:px-3 py-1 lg:py-1.5 rounded-full text-[8px] lg:text-xs font-bold transition-all",
                         displayPizza.isAvailable 
                           ? "bg-black/5 hover:bg-white hover:shadow-sm" 
                           : "bg-zinc-100 text-zinc-400"
@@ -208,12 +228,15 @@ export const PizzaCard: React.FC<{ pizza: Pizza; visible: boolean; onOrder: (piz
             </div>
           </div>
 
-          <div className="pt-6 pb-2 relative z-10">
+          <div className="pt-4 lg:pt-6 pb-2 relative z-10">
             <Button 
-              onClick={() => onOrder(displayPizza)}
+              onClick={(e) => {
+                e.stopPropagation();
+                onOrder(displayPizza);
+              }}
               disabled={!displayPizza.isAvailable}
               className={cn(
-                "w-full h-12 lg:h-14 rounded-xl lg:rounded-2xl text-white text-base lg:text-lg font-bold group shadow-xl transition-all duration-700",
+                "w-full h-11 sm:h-12 lg:h-14 rounded-xl lg:rounded-2xl text-white text-sm sm:text-base lg:text-lg font-bold group shadow-xl transition-all duration-700",
                 displayPizza.isAvailable 
                   ? "bg-black hover:bg-primary" 
                   : "bg-zinc-400 cursor-not-allowed grayscale"
@@ -226,23 +249,26 @@ export const PizzaCard: React.FC<{ pizza: Pizza; visible: boolean; onOrder: (piz
         </div>
 
         {/* VIEW 2: REVIEWS (SLIDE-IN) */}
-        <div className="w-1/2 h-full flex flex-col p-6 lg:p-10 bg-white/40">
-          <header className="flex items-center justify-between mb-6">
+        <div className="w-1/2 h-full flex flex-col p-5 sm:p-6 lg:p-10 bg-white/40">
+          <header className="flex items-center justify-between mb-4 lg:mb-6">
             <button 
-              onClick={() => setShowReviews(false)}
-              className="flex items-center gap-2 text-primary font-bold text-sm hover:translate-x-1 transition-transform"
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowReviews(false);
+              }}
+              className="flex items-center gap-2 text-primary font-bold text-xs sm:text-sm hover:translate-x-1 transition-transform bg-primary/10 px-3 py-1.5 rounded-full"
             >
-              <ArrowRight className="w-5 h-5" />
-              <span>بازگشت به جزئیات</span>
+              <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
+              <span>بازگشت</span>
             </button>
             <div className="flex flex-col items-end">
-              <span className="text-xs font-black uppercase text-muted-foreground">نظرات کاربران</span>
-              <span className="text-[10px] font-bold text-primary">{displayPizza.name}</span>
+              <span className="text-[10px] sm:text-xs font-black uppercase text-muted-foreground">نظرات کاربران</span>
+              <span className="text-[8px] sm:text-[10px] font-bold text-primary truncate max-w-[120px]">{displayPizza.name}</span>
             </div>
           </header>
 
           <ScrollArea className="flex-1 -mr-2 pr-4 ml-[-1rem]">
-            <div className="space-y-4">
+            <div className="space-y-4 pb-4">
               {displayPizza.reviews.length > 0 ? (
                 displayPizza.reviews.map((review) => (
                   <div 
@@ -255,35 +281,35 @@ export const PizzaCard: React.FC<{ pizza: Pizza; visible: boolean; onOrder: (piz
                           <User className="w-4 h-4" />
                         </div>
                         <div className="flex flex-col">
-                          <span className="font-bold text-xs">{review.userName}</span>
-                          <span className="text-[8px] text-muted-foreground">{review.date}</span>
+                          <span className="font-bold text-[10px] sm:text-xs">{review.userName}</span>
+                          <span className="text-[7px] sm:text-[8px] text-muted-foreground">{review.date}</span>
                         </div>
                       </div>
                       <div className="flex gap-0.5">
                         {[...Array(5)].map((_, i) => (
                           <Star 
                             key={i} 
-                            className={`w-2.5 h-2.5 ${i < review.rating ? 'fill-primary text-primary' : 'text-black/10'}`} 
+                            className={`w-2 h-2 sm:w-2.5 sm:h-2.5 ${i < review.rating ? 'fill-primary text-primary' : 'text-black/10'}`} 
                           />
                         ))}
                       </div>
                     </div>
-                    <p className="text-[10px] lg:text-xs text-muted-foreground leading-relaxed font-medium">
+                    <p className="text-[9px] sm:text-[10px] lg:text-xs text-muted-foreground leading-relaxed font-medium">
                       {review.comment}
                     </p>
                   </div>
                 ))
               ) : (
-                <div className="flex flex-col items-center justify-center py-20 text-muted-foreground">
-                  <MessageCircle className="w-12 h-12 mb-4 opacity-20" />
-                  <p className="text-sm">هنوز نظری ثبت نشده است.</p>
+                <div className="flex flex-col items-center justify-center py-16 lg:py-20 text-muted-foreground">
+                  <MessageCircle className="w-8 h-8 sm:w-12 sm:h-12 mb-4 opacity-20" />
+                  <p className="text-xs sm:text-sm">هنوز نظری ثبت نشده است.</p>
                 </div>
               )}
             </div>
           </ScrollArea>
           
-          <div className="mt-6 pt-4 border-t border-black/5">
-            <div className="flex items-center justify-between text-xs font-bold text-muted-foreground">
+          <div className="mt-4 lg:mt-6 pt-4 border-t border-black/5">
+            <div className="flex items-center justify-between text-[10px] sm:text-xs font-bold text-muted-foreground">
               <span>میانگین امتیاز</span>
               <div className="flex items-center gap-1 text-primary">
                 <Star className="w-3 h-3 fill-current" />

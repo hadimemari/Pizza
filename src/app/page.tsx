@@ -118,9 +118,9 @@ export default function Home() {
           {CATEGORIES.map((cat) => (
             <div 
               key={cat.id} 
-              className="relative h-screen w-full flex flex-col lg:flex-row items-center justify-center pt-20 lg:pt-0"
+              className="relative h-screen w-full flex flex-col lg:flex-row items-center justify-center pt-24 lg:pt-0"
             >
-              <div className="w-full h-[45vh] md:h-[50vh] lg:w-[60%] lg:h-full flex items-center z-10 overflow-visible relative">
+              <div className="w-full h-[40vh] sm:h-[45vh] lg:w-[60%] lg:h-full flex items-center z-10 overflow-visible relative">
                 <PizzaCarousel 
                   pizzas={PIZZAS.filter(item => item.category === cat.id)} 
                   activeIndex={activeIndices[cat.id] || 0} 
@@ -130,7 +130,7 @@ export default function Home() {
                 />
               </div>
 
-              <div className="w-full flex-1 lg:w-[40%] flex justify-center items-center px-6 lg:pr-16 z-20">
+              <div className="w-full flex-1 lg:w-[40%] flex justify-center items-center px-4 sm:px-6 lg:pr-16 z-20">
                 {activeCategoryId === cat.id && (
                   <PizzaCard 
                     pizza={PIZZAS.filter(item => item.category === cat.id)[activeIndices[cat.id] || 0]} 
