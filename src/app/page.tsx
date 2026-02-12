@@ -61,12 +61,12 @@ export default function Home() {
   const categoryIndex = CATEGORIES.findIndex(cat => cat.id === activeCategoryId);
 
   return (
-    <main className="relative min-h-screen w-full bg-white overflow-hidden font-lalezar text-foreground select-none">
+    <main className="relative h-screen w-full bg-white overflow-hidden font-lalezar text-foreground select-none">
       {/* Loading Screen Overlay */}
       {isLoading && <LoadingScreen />}
 
       {/* Main Content with Transition */}
-      <div className={`transition-all duration-1000 ease-in-out ${isLoading ? 'opacity-0 scale-95 blur-sm' : 'opacity-100 scale-100 blur-0'}`}>
+      <div className={`h-full w-full transition-all duration-1000 ease-in-out ${isLoading ? 'opacity-0 scale-95 blur-sm' : 'opacity-100 scale-100 blur-0'}`}>
         {/* Header */}
         <header className="fixed top-0 left-0 w-full px-6 md:px-8 py-4 md:py-6 flex items-center justify-between z-50 bg-white/50 backdrop-blur-sm">
           <div className="flex items-center gap-3">
@@ -118,7 +118,7 @@ export default function Home() {
           {CATEGORIES.map((cat) => (
             <div 
               key={cat.id} 
-              className="relative h-screen w-full flex flex-col lg:flex-row items-center justify-center"
+              className="relative h-screen w-full flex flex-col lg:flex-row items-center justify-center pt-20 lg:pt-0"
             >
               <div className="w-full h-[45vh] md:h-[50vh] lg:w-[60%] lg:h-full flex items-center z-10 overflow-visible relative">
                 <PizzaCarousel 
