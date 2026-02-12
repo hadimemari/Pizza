@@ -27,23 +27,24 @@ export const PizzaCarousel: React.FC<PizzaCarouselProps> = ({ pizzas, activeInde
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // محاسبات دقیق مهندسی برای هر دستگاه
-  const radius = viewport === 'mobile' ? 320 : viewport === 'tablet' ? 550 : 850;
-  const pizzaSize = viewport === 'mobile' ? 220 : viewport === 'tablet' ? 350 : 520;
+  // Optimized radius and centering for each viewport
+  const radius = viewport === 'mobile' ? 340 : viewport === 'tablet' ? 550 : 850;
+  const pizzaSize = viewport === 'mobile' ? 240 : viewport === 'tablet' ? 350 : 520;
   
   const total = pizzas.length;
   const angleStep = 360 / total;
   const transitionDuration = "5000ms"; 
   const easing = "cubic-bezier(0.16, 1, 0.3, 1)";
   
-  // در موبایل چرخش ساعت‌گرد (activeIndex * angleStep) و در بقیه پاد ساعت‌گرد
+  // Clockwise for mobile, Anti-clockwise for others
   const parentRotation = viewport === 'mobile' 
     ? activeIndex * angleStep 
     : activeIndex * -angleStep;
 
   const getCenterStyles = () => {
-    if (viewport === 'mobile') return { left: '50%', top: '350px', transform: 'translateX(-50%)' };
-    if (viewport === 'tablet') return { left: '50%', top: '-120px', transform: 'translateX(-50%)' };
+    // Ensuring the center of the arc is perfectly balanced
+    if (viewport === 'mobile') return { left: '50%', top: '420px', transform: 'translateX(-50%)' };
+    if (viewport === 'tablet') return { left: '50%', top: '-100px', transform: 'translateX(-50%)' };
     return { left: '-400px', top: '50%', transform: 'translateY(-50%)' };
   };
 
@@ -55,7 +56,7 @@ export const PizzaCarousel: React.FC<PizzaCarouselProps> = ({ pizzas, activeInde
         className="absolute w-1 h-1 bg-transparent"
         style={centerStyles}
       >
-        {/* Chalk Line Path */}
+        {/* Chalk Line Path Decoration */}
         <svg 
           className="absolute pointer-events-none overflow-visible" 
           width={radius * 2} 
@@ -103,8 +104,9 @@ export const PizzaCarousel: React.FC<PizzaCarouselProps> = ({ pizzas, activeInde
         </svg>
 
         {pizzas.map((pizza, index) => {
+          // Calculation for correct positioning (12 o'clock for mobile)
           const angle = viewport === 'mobile' 
-            ? index * -angleStep - 90 // در موبایل شروع از بالا (ساعت ۱۲)
+            ? index * -angleStep - 90 
             : index * angleStep;
 
           const isActive = index === activeIndex;
