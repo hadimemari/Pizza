@@ -19,6 +19,7 @@ export interface Pizza {
 }
 
 export const PIZZAS: Pizza[] = [
+  // پیتزاها
   {
     id: "1",
     name: "مارگاریتا کلاسیک",
@@ -26,7 +27,7 @@ export const PIZZAS: Pizza[] = [
     cheesiness: 85,
     ingredients: ["ریحان تازه", "پنیر موزارلا", "سس گوجه", "روغن زیتون"],
     description: "کلاسیک بی نظیر ایتالیایی با موزارلای تازه و برگ‌های معطر ریحان که روی خمیری ترد و نازک چیده شده است.",
-    image: "/pizzas/margherita.png",
+    image: "https://picsum.photos/seed/margherita/800/800",
     category: "pizzas",
     reviews: [
       { id: "r1", userName: "امیررضا", rating: 5, comment: "واقعاً طعم اصیلی داشت، ممنون از پیتزا موشن.", date: "۱۴۰۲/۱۰/۱۲" },
@@ -40,51 +41,80 @@ export const PIZZAS: Pizza[] = [
     cheesiness: 92,
     ingredients: ["سلامی تند", "پنیر اضافه", "سبزیجات معطر", "آویشن"],
     description: "رویای عاشقان گوشت با پپرونی ترد و پنیر دوبل کشسان که با هر گاز، طعمی تند و به یاد ماندنی را تجربه می‌کنید.",
-    image: "/pizzas/pepperoni.png",
+    image: "https://picsum.photos/seed/pepperoni/800/800",
     category: "pizzas",
     reviews: [
-      { id: "r3", userName: "رضا", rating: 5, comment: "بهترین پپرونی که تا حالا خوردم! تندی‌اش عالیه.", date: "۱۴۰۲/۱۱/۰۵" },
-      { id: "r4", userName: "مریم", rating: 5, comment: "داغ و سریع رسید، عالی بود.", date: "۱۴۰۲/۱۱/۰۸" }
+      { id: "r3", userName: "رضا", rating: 5, comment: "بهترین پپرونی که تا حالا خوردم! تندی‌اش عالیه.", date: "۱۴۰۲/۱۱/۰۵" }
     ]
   },
+  // کالزونه
   {
-    id: "3",
-    name: "سبزیجات رست شده",
-    price: "۱۵۴,۰۰۰ تومان",
-    cheesiness: 70,
-    ingredients: ["فلفل دلمه", "زیتون", "قارچ", "پیاز قرمز"],
-    description: "ترکیبی رنگارنگ از سبزیجات تازه رست شده روی خمیر ترد طلایی، انتخابی سالم و سرشار از طعم‌های طبیعی.",
-    image: "/pizzas/veggie.png",
-    category: "pizzas",
-    reviews: [
-      { id: "r5", userName: "علی", rating: 4, comment: "برای کسانی که پیتزا سنگین دوست ندارند عالیه.", date: "۱۴۰۲/۱۱/۱۰" }
-    ]
+    id: "c1",
+    name: "کالزونه گوشت و قارچ",
+    price: "۱۸۹,۰۰۰ تومان",
+    cheesiness: 95,
+    ingredients: ["گوشت چرخ‌کرده", "قارچ اسلایس", "فلفل دلمه", "پنیر اضافه"],
+    description: "یک پیراشکی غول‌آسا پر از مواد گوشتی و پنیر فراوان که در تنور سنگی برشته شده است.",
+    image: "https://picsum.photos/seed/calzone1/800/800",
+    category: "calzones",
+    reviews: []
   },
   {
-    id: "4",
-    name: "جوجه کباب (BBQ)",
-    price: "۱۷۹,۰۰۰ تومان",
+    id: "c2",
+    name: "کالزونه سبزیجات",
+    price: "۱۶۵,۰۰۰ تومان",
     cheesiness: 80,
-    ingredients: ["جوجه گریل", "سس باربیکیو", "ذرت", "گشنیز"],
-    description: "طعم دودی سس باربیکیو همراه با مرغ گریل شده نرم و لذیذ، تجربه‌ای متفاوت از ترکیب پیتزا و کباب.",
-    image: "/pizzas/bbq.png",
-    category: "pizzas",
-    reviews: [
-      { id: "r6", userName: "پرهام", rating: 5, comment: "سس باربیکیو بی‌نظیر بود.", date: "۱۴۰۲/۱۱/۱۵" }
-    ]
+    ingredients: ["اسفناج", "پنیر فتا", "پیاز کاراملی", "گردو"],
+    description: "ترکیب خوشمزه سبزیجات تازه و پنیرهای معطر در دل یک خمیر ترد و داغ.",
+    image: "https://picsum.photos/seed/calzone2/800/800",
+    category: "calzones",
+    reviews: []
+  },
+  // سالادها
+  {
+    id: "s1",
+    name: "سالاد سزار ویژه",
+    price: "۱۲۵,۰۰۰ تومان",
+    cheesiness: 30,
+    ingredients: ["کاهو رسمی", "مرغ گریل", "پنیر پارمزان", "سس مخصوص"],
+    description: "سالاد سزار کلاسیک با فیله مرغ گریل شده و سس دست‌ساز سرآشپز.",
+    image: "https://picsum.photos/seed/salad1/800/800",
+    category: "sides",
+    reviews: []
   },
   {
-    id: "5",
-    name: "هاوایی استوایی",
-    price: "۱۵۹,۰۰۰ تومان",
-    cheesiness: 75,
-    ingredients: ["آناناس", "ژامبون", "پیاز کاراملی", "عسل"],
-    description: "شیرینی آناناس و شوری ژامبون یک تضاد طعم استوایی بی‌نظیر که ذائقه شما را به سفری در سواحل هاوایی می‌برد.",
-    image: "/pizzas/hawaiian.png",
-    category: "pizzas",
-    reviews: [
-      { id: "r7", userName: "رویا", rating: 3, comment: "طعم خاصی داره که ممکنه همه نپسندن، ولی برای من جالب بود.", date: "۱۴۰۲/۱۱/۲۰" }
-    ]
+    id: "s2",
+    name: "فتوش لبنانی",
+    price: "۹۵,۰۰۰ تومان",
+    cheesiness: 0,
+    ingredients: ["خیار", "گوجه", "نان سوخاری", "سماق"],
+    description: "یک سالاد مدیترانه‌ای خنک و ترش که همراه عالی برای پیتزاهای شماست.",
+    image: "https://picsum.photos/seed/salad2/800/800",
+    category: "sides",
+    reviews: []
+  },
+  // نوشیدنی‌ها
+  {
+    id: "b1",
+    name: "موخیتو طبیعی",
+    price: "۶۵,۰۰۰ تومان",
+    cheesiness: 0,
+    ingredients: ["نعناع تازه", "لیمو", "شکر قهوه‌ای", "سودا"],
+    description: "نوشیدنی خنک و دست‌ساز با طعم نعناع و لیموی تازه.",
+    image: "https://picsum.photos/seed/drink1/800/800",
+    category: "beverages",
+    reviews: []
+  },
+  {
+    id: "b2",
+    name: "آبمیوه فصل",
+    price: "۷۵,۰۰۰ تومان",
+    cheesiness: 0,
+    ingredients: ["میوه تازه"],
+    description: "آبمیوه ۱۰۰٪ طبیعی تهیه شده از میوه‌های تازه فصل.",
+    image: "https://picsum.photos/seed/drink2/800/800",
+    category: "beverages",
+    reviews: []
   }
 ];
 

@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
-import { PIZZAS } from '@/app/lib/pizza-data';
+import React, { useState, useEffect, useMemo } from 'react';
+import { PIZZAS, CATEGORIES } from '@/app/lib/pizza-data';
 import { PizzaCarousel } from '@/components/PizzaCarousel';
 import { PizzaCard } from '@/components/PizzaCard';
 import { PizzaThumbnails } from '@/components/PizzaThumbnails';
@@ -12,7 +12,13 @@ import { Button } from '@/components/ui/button';
 import { ShoppingBag, Menu, User } from 'lucide-react';
 
 export default function Home() {
-  const [activeIndex, setActiveIndex] = useState(0);
+  const [activeCategoryId, setActiveCategoryId] = useState("pizzas");
+  const [activeIndices, setActiveIndices] = useState<Record<string, number>>({
+    pizzas: 0,
+    calzones: 0,
+    sides: 0,
+    beverages: 0
+  });
   const [cartCount, setCartCount] = useState(0);
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [user, setUser] = useState<string | null>(null);
@@ -38,6 +44,21 @@ export default function Home() {
     setUser(userName);
   };
 
+  const currentCategoryItems = useMemo(() => {
+    return PIZZAS.filter(item => item.category === activeCategoryId);
+  }, [activeCategoryId]);
+
+  const activeIndex = activeIndices[activeCategoryId] || 0;
+
+  const handleIndexChange = (index: number) => {
+    setActiveIndices(prev => ({
+      ...prev,
+      [activeCategoryId]: index
+    }));
+  };
+
+  const categoryIndex = CATEGORIES.findIndex(cat => cat.id === activeCategoryId);
+
   return (
     <main className="relative min-h-screen w-full bg-white overflow-hidden font-lalezar text-foreground select-none">
       {/* Loading Screen Overlay */}
@@ -55,12 +76,6 @@ export default function Home() {
               پیتزا<span className="text-primary">موشن</span>
             </span>
           </div>
-
-          <nav className="hidden lg:flex items-center gap-8">
-            <button className="text-sm font-bold hover:text-primary transition-colors">داستان ما</button>
-            <button className="text-sm font-bold hover:text-primary transition-colors">منو</button>
-            <button className="text-sm font-bold hover:text-primary transition-colors">شعب</button>
-          </nav>
 
           <div className="flex items-center gap-2 md:gap-4">
             {user ? (
@@ -94,45 +109,62 @@ export default function Home() {
           </div>
         </header>
 
-        {/* Hero Content Area */}
-        <div className="relative h-screen w-full flex flex-col lg:flex-row items-center pt-24 lg:pt-32">
-          <div className="w-full h-[40vh] md:h-[50vh] lg:w-[60%] lg:h-full flex items-center z-10 overflow-visible">
-            <PizzaCarousel 
-              pizzas={PIZZAS} 
-              activeIndex={activeIndex} 
-              onPizzaClick={setActiveIndex} 
-            />
-          </div>
+        {/* Cinematic Vertical World Container */}
+        <div 
+          className="relative h-screen w-full transition-transform duration-1000 cubic-bezier(0.16, 1, 0.3, 1)"
+          style={{ transform: `translateY(-${categoryIndex * 100}%)` }}
+        >
+          {CATEGORIES.map((cat, idx) => (
+            <div 
+              key={cat.id} 
+              className="relative h-screen w-full flex flex-col lg:flex-row items-center pt-24 lg:pt-32"
+            >
+              <div className="w-full h-[40vh] md:h-[50vh] lg:w-[60%] lg:h-full flex items-center z-10 overflow-visible">
+                <PizzaCarousel 
+                  pizzas={PIZZAS.filter(item => item.category === cat.id)} 
+                  activeIndex={activeIndices[cat.id] || 0} 
+                  onPizzaClick={(i) => {
+                    setActiveIndices(prev => ({ ...prev, [cat.id]: i }));
+                  }} 
+                />
+              </div>
 
-          <div className="w-full flex-1 lg:w-[40%] flex justify-center items-start lg:items-center px-6 lg:pr-16 z-20 overflow-y-auto pb-48 lg:pb-0 h-full lg:h-auto">
-            <PizzaCard 
-              pizza={PIZZAS[activeIndex]} 
-              visible={true}
-              onOrder={handleOrder}
-            />
-          </div>
+              <div className="w-full flex-1 lg:w-[40%] flex justify-center items-start lg:items-center px-6 lg:pr-16 z-20 h-full lg:h-auto">
+                {activeCategoryId === cat.id && (
+                  <PizzaCard 
+                    pizza={PIZZAS.filter(item => item.category === cat.id)[activeIndices[cat.id] || 0]} 
+                    visible={true}
+                    onOrder={handleOrder}
+                  />
+                )}
+              </div>
+            </div>
+          ))}
         </div>
 
-        {/* Bottom Controls Container */}
+        {/* Fixed Bottom Controls */}
         <div className="fixed bottom-0 lg:bottom-10 left-0 lg:left-10 w-full lg:w-auto z-40 flex flex-col items-center lg:items-start gap-3 bg-white/90 lg:bg-transparent backdrop-blur-md lg:backdrop-blur-none p-4 lg:p-0 border-t border-black/5 lg:border-none">
           <div className="w-full lg:w-auto overflow-x-auto no-scrollbar">
             <PizzaThumbnails 
-              pizzas={PIZZAS} 
+              pizzas={currentCategoryItems} 
               activeIndex={activeIndex} 
-              onSelect={setActiveIndex} 
+              onSelect={handleIndexChange} 
             />
           </div>
           <div className="lg:ml-2">
-            <CategoryNavigator activeId="pizzas" />
+            <CategoryNavigator 
+              activeId={activeCategoryId} 
+              onCategoryChange={(id) => setActiveCategoryId(id)}
+            />
           </div>
         </div>
 
         {/* Vertical Navigation Dot Indicator - Desktop Only */}
         <div className="fixed right-6 top-1/2 -translate-y-1/2 hidden lg:flex flex-col gap-4 z-40">
-          {PIZZAS.map((_, i) => (
+          {currentCategoryItems.map((_, i) => (
             <button
               key={i}
-              onClick={() => setActiveIndex(i)}
+              onClick={() => handleIndexChange(i)}
               className={`w-1.5 transition-all duration-1000 rounded-full ${
                 i === activeIndex ? 'h-12 bg-primary' : 'h-3 bg-black/10 hover:bg-black/20'
               }`}

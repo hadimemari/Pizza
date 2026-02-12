@@ -1,4 +1,3 @@
-
 "use client";
 
 import React from 'react';
@@ -8,6 +7,7 @@ import { Pizza, ChefHat, Salad, CupSoda } from 'lucide-react';
 
 interface CategoryNavigatorProps {
   activeId: string;
+  onCategoryChange: (id: string) => void;
 }
 
 const IconMap: Record<string, React.ReactNode> = {
@@ -17,12 +17,13 @@ const IconMap: Record<string, React.ReactNode> = {
   CupSoda: <CupSoda className="w-3.5 h-3.5" />
 };
 
-export const CategoryNavigator: React.FC<CategoryNavigatorProps> = ({ activeId }) => {
+export const CategoryNavigator: React.FC<CategoryNavigatorProps> = ({ activeId, onCategoryChange }) => {
   return (
     <div className="flex items-center gap-1 p-1 rounded-full bg-white/5 backdrop-blur-sm border border-transparent">
       {CATEGORIES.map((cat) => (
         <button
           key={cat.id}
+          onClick={() => onCategoryChange(cat.id)}
           className={cn(
             "flex items-center gap-2 px-3 py-1.5 rounded-full transition-all duration-300 font-bold text-[10px] uppercase tracking-wider",
             activeId === cat.id 
