@@ -53,7 +53,7 @@ export const PizzaCarousel: React.FC<PizzaCarouselProps> = ({ pizzas, activeInde
   return (
     <div className="relative w-full h-full flex items-center justify-center lg:justify-start overflow-visible select-none">
       <div 
-        className="absolute w-1 h-1 bg-transparent"
+        className="absolute w-1 h-1 bg-transparent will-change-transform"
         style={centerStyles}
       >
         {/* Chalk Line Path Decoration */}
@@ -116,7 +116,7 @@ export const PizzaCarousel: React.FC<PizzaCarouselProps> = ({ pizzas, activeInde
             <div
               key={pizza.id}
               onClick={() => onPizzaClick(index)}
-              className="absolute top-0 left-0 cursor-pointer"
+              className="absolute top-0 left-0 cursor-pointer will-change-transform"
               style={{
                 transform: `
                   rotate(${currentRotation}deg) 
@@ -138,7 +138,7 @@ export const PizzaCarousel: React.FC<PizzaCarouselProps> = ({ pizzas, activeInde
                     alt={pizza.name}
                     fill
                     className={cn(
-                      "object-contain pizza-glow animate-spin-slow"
+                      "object-contain pizza-glow animate-spin-slow will-change-transform"
                     )}
                     style={{ 
                       animationDuration: '60s',

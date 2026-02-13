@@ -112,7 +112,7 @@ export default function Home() {
 
         {/* Cinematic Vertical World Container */}
         <div 
-          className="relative w-full transition-transform duration-1000 cubic-bezier(0.16, 1, 0.3, 1)"
+          className="relative w-full transition-transform duration-1000 cubic-bezier(0.16, 1, 0.3, 1) will-change-transform"
           style={{ transform: `translateY(-${categoryIndex * 100}vh)` }}
         >
           {CATEGORIES.map((cat) => (
