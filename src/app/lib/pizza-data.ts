@@ -21,7 +21,7 @@ export interface Pizza {
 }
 
 export const PIZZAS: Pizza[] = [
-  // پیتزاها (pizzas) - 4 آیتم
+  // پیتزاها (pizzas) - 4 آیتم بر اساس p1 تا p4
   {
     id: "1",
     name: "مارگاریتا کلاسیک",
@@ -75,7 +75,7 @@ export const PIZZAS: Pizza[] = [
     isAvailable: true,
     reviews: []
   },
-  // کالزونه (calzones) - 2 آیتم
+  // کالزونه (calzones) - 2 آیتم بر اساس cal1 تا cal2
   {
     id: "c1",
     name: "کالزونه گوشت و قارچ",
@@ -100,7 +100,7 @@ export const PIZZAS: Pizza[] = [
     isAvailable: true,
     reviews: []
   },
-  // سالادها (sides) - 2 آیتم
+  // سالادها (sides) - 2 آیتم بر اساس sal1 تا sal2
   {
     id: "s1",
     name: "سالاد سزار ویژه",
@@ -125,7 +125,7 @@ export const PIZZAS: Pizza[] = [
     isAvailable: true,
     reviews: []
   },
-  // نوشیدنی‌ها (beverages) - 2 آیتم
+  // نوشیدنی‌ها (beverages) - 2 آیتم بر اساس bev1 تا bev2
   {
     id: "b1",
     name: "موخیتو طبیعی",
