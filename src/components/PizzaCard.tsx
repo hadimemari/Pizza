@@ -96,7 +96,7 @@ export const PizzaCard = memo(({ pizza, visible, onOrder }: { pizza: Pizza; visi
       <div 
         ref={cardRef}
         className={cn(
-          "rounded-[3.5rem] w-full max-w-[90vw] sm:max-w-[420px] lg:max-w-[460px] h-[600px] sm:h-[650px] lg:h-[720px] flex flex-col overflow-hidden relative bg-white/40 backdrop-blur-2xl border border-white/20 shadow-[0_30px_100px_rgba(0,0,0,0.05)] transition-all duration-1000 will-change-transform z-10",
+          "rounded-[3.5rem] w-full max-w-[90vw] sm:max-w-[420px] lg:max-w-[460px] h-[600px] sm:h-[650px] lg:h-[760px] flex flex-col overflow-hidden relative bg-white/40 backdrop-blur-2xl border border-white/20 shadow-[0_30px_100px_rgba(0,0,0,0.05)] transition-all duration-1000 will-change-transform z-10",
           !visible ? "opacity-0 scale-95" : "opacity-100 scale-100"
         )}
       >
