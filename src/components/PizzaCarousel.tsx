@@ -27,33 +27,33 @@ export const PizzaCarousel = memo(({ pizzas, activeIndex, onPizzaClick }: PizzaC
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Adaptive values based on viewport
+  // Adaptive values based on viewport for maximum performance/quality balance
   const radius = viewport === 'mobile' ? 340 : viewport === 'tablet' ? 550 : 850;
   const pizzaSize = viewport === 'mobile' ? 240 : viewport === 'tablet' ? 350 : 520;
   
   const total = pizzas.length;
-  const angleStep = 360 / total;
+  const angleStep = total > 0 ? 360 / total : 0;
   const transitionDuration = "1000ms"; 
   const easing = "cubic-bezier(0.16, 1, 0.3, 1)";
   
-  // Mobile uses a different rotation direction for better feel
+  // High-performance rotation logic
   const parentRotation = viewport === 'mobile' 
     ? activeIndex * angleStep 
     : activeIndex * -angleStep;
 
   const getCenterStyles = () => {
-    if (viewport === 'mobile') return { left: '50%', top: '420px', transform: 'translateX(-50%) translateZ(0)' };
-    if (viewport === 'tablet') return { left: '50%', top: '-100px', transform: 'translateX(-50%) translateZ(0)' };
-    return { left: '-400px', top: '50%', transform: 'translateY(-50%) translateZ(0)' };
+    if (viewport === 'mobile') return { left: '50%', top: '420px', transform: 'translateX(-50%) translate3d(0,0,0)' };
+    if (viewport === 'tablet') return { left: '50%', top: '-100px', transform: 'translateX(-50%) translate3d(0,0,0)' };
+    return { left: '-400px', top: '50%', transform: 'translateY(-50%) translate3d(0,0,0)' };
   };
 
   return (
-    <div className="relative w-full h-full flex items-center justify-center lg:justify-start overflow-visible select-none will-change-transform">
+    <div className="relative w-full h-full flex items-center justify-center lg:justify-start overflow-visible select-none gpu-accelerated">
       <div 
         className="absolute w-1 h-1 bg-transparent will-change-transform"
         style={getCenterStyles()}
       >
-        {/* SVG Rail - High Quality on Desktop, Hidden/Simple on Mobile */}
+        {/* SVG Rail - High Quality on Desktop only to save mobile battery/performance */}
         <svg 
           className="absolute pointer-events-none overflow-visible" 
           width={radius * 2} 
@@ -89,6 +89,7 @@ export const PizzaCarousel = memo(({ pizzas, activeIndex, onPizzaClick }: PizzaC
         </svg>
 
         {pizzas.map((pizza, index) => {
+          // Fixed angle logic for small collections (like Salads)
           const angle = viewport === 'mobile' ? index * -angleStep - 90 : index * angleStep;
           const isActive = index === activeIndex;
           const currentRotation = angle + parentRotation;
@@ -104,7 +105,7 @@ export const PizzaCarousel = memo(({ pizzas, activeIndex, onPizzaClick }: PizzaC
                   translateX(${radius}px) 
                   rotate(${-currentRotation}deg)
                   translate(-50%, -50%)
-                  translateZ(0)
+                  translate3d(0, 0, 0)
                 `,
                 transition: `transform ${transitionDuration} ${easing}`,
                 zIndex: isActive ? 40 : 10,

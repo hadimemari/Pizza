@@ -12,7 +12,7 @@ import { LoadingScreen } from '@/components/LoadingScreen';
 import { Button } from '@/components/ui/button';
 import { ShoppingBag, User } from 'lucide-react';
 
-// Memoized Category Section for Performance
+// Memoized Category Section for Hybrid Performance
 const CategorySection = memo(({ 
   cat, 
   isActive, 
@@ -145,7 +145,7 @@ export default function Home() {
         </header>
 
         <div 
-          className="relative w-full transition-transform duration-1000 cubic-bezier(0.16, 1, 0.3, 1) will-change-transform"
+          className="relative w-full transition-transform duration-1000 cubic-bezier(0.16, 1, 0.3, 1) will-change-transform gpu-accelerated"
           style={{ transform: `translate3d(0, -${categoryIndex * 100}vh, 0)` }}
         >
           {CATEGORIES.map((cat) => (

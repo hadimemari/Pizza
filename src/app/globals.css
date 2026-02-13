@@ -67,7 +67,7 @@
   scrollbar-width: none;
 }
 
-/* Optimization Classes */
+/* Optimization Classes for Hybrid Rendering */
 .gpu-accelerated {
   transform: translate3d(0, 0, 0);
   backface-visibility: hidden;
