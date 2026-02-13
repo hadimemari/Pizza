@@ -144,6 +144,7 @@ export default function Home() {
           </div>
         </header>
 
+        {/* Cinematic Vertical Scroller */}
         <div 
           className="relative w-full transition-transform duration-1000 cubic-bezier(0.16, 1, 0.3, 1) will-change-transform gpu-accelerated"
           style={{ transform: `translate3d(0, -${categoryIndex * 100}vh, 0)` }}
@@ -162,6 +163,7 @@ export default function Home() {
           ))}
         </div>
 
+        {/* Global Nav Elements */}
         <div className="fixed bottom-0 lg:bottom-10 left-0 lg:left-10 w-full lg:w-auto z-40 flex flex-col items-center lg:items-start gap-3 bg-white/95 lg:bg-transparent backdrop-blur-xl lg:backdrop-blur-none p-4 lg:p-0 border-t border-black/5 lg:border-none shadow-2xl lg:shadow-none">
           <div className="w-full lg:w-auto overflow-x-auto no-scrollbar">
             <PizzaThumbnails 
@@ -178,6 +180,7 @@ export default function Home() {
           </div>
         </div>
 
+        {/* Vertical Pagination Indicator (Desktop Only) */}
         <div className="fixed right-6 top-1/2 -translate-y-1/2 hidden lg:flex flex-col gap-4 z-40">
           {CATEGORIES.map((cat) => (
             <button

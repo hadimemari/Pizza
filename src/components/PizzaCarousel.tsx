@@ -37,6 +37,7 @@ export const PizzaCarousel = memo(({ pizzas, activeIndex, onPizzaClick }: PizzaC
   const easing = "cubic-bezier(0.16, 1, 0.3, 1)";
   
   // High-performance rotation logic
+  // For mobile, we flip the direction to feel more natural with touch, for desktop we keep the cinematic rail rotation
   const parentRotation = viewport === 'mobile' 
     ? activeIndex * angleStep 
     : activeIndex * -angleStep;

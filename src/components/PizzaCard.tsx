@@ -6,7 +6,7 @@ import { Pizza } from '@/app/lib/pizza-data';
 import { cn } from '@/lib/utils';
 import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
-import { Leaf, ShoppingCart, Star, MessageSquare, ArrowRight, User, MessageCircle } from 'lucide-react';
+import { Leaf, ShoppingCart, Star, MessageSquare } from 'lucide-react';
 import { ScrollArea } from "@/components/ui/scroll-area";
 
 const IndustrialLamp = memo(({ isOn }: { isOn: boolean }) => {
@@ -81,6 +81,7 @@ export const PizzaCard = memo(({ pizza, visible, onOrder }: { pizza: Pizza; visi
           showReviews ? "-translate-x-1/2" : "translate-x-0"
         )}
       >
+        {/* Main Content Side */}
         <div className="w-1/2 h-full flex flex-col p-5 sm:p-6 lg:p-10 justify-between">
           <div className="space-y-4 lg:space-y-6 relative z-10">
             <div className="space-y-2 lg:space-y-4 flex flex-col items-center text-center">
@@ -111,10 +112,15 @@ export const PizzaCard = memo(({ pizza, visible, onOrder }: { pizza: Pizza; visi
             <div className="flex justify-center">
               <button 
                 onClick={() => setShowReviews(true)}
-                className="flex items-center gap-2 bg-black/5 px-4 py-1.5 rounded-full text-xs font-bold hover:bg-primary/10 transition-all"
+                className="flex items-center gap-3 bg-black/5 px-4 py-2 rounded-full text-xs font-bold hover:bg-primary/10 hover:text-primary transition-all group w-fit"
               >
                 <MessageSquare className="w-3.5 h-3.5" />
-                <span>{pizza.reviews.length} نظر</span>
+                <span>
+                  نظرات
+                  <span className="mr-1.5 px-2 py-0.5 rounded-full bg-primary text-white text-[10px] group-hover:scale-110 transition-transform inline-block">
+                    {pizza.reviews.length}
+                  </span>
+                </span>
               </button>
             </div>
 
@@ -150,21 +156,41 @@ export const PizzaCard = memo(({ pizza, visible, onOrder }: { pizza: Pizza; visi
           </Button>
         </div>
 
-        <div className="w-1/2 h-full flex flex-col p-5 sm:p-8 bg-white/50">
-          <button onClick={() => setShowReviews(false)} className="w-fit mb-4 bg-primary/10 text-primary px-4 py-2 rounded-full text-xs font-bold">
-            ← بازگشت
-          </button>
-          <ScrollArea className="flex-1">
-            <div className="space-y-3">
-              {pizza.reviews.map((r) => (
-                <div key={r.id} className="p-3 bg-white/80 rounded-xl border border-black/5">
-                  <div className="flex justify-between mb-1">
-                    <span className="font-bold text-[10px]">{r.userName}</span>
-                    <div className="flex text-primary"><Star className="w-2.5 h-2.5 fill-current" /></div>
+        {/* Reviews Side (Smartphone Slide Feature) */}
+        <div className="w-1/2 h-full flex flex-col p-5 sm:p-8 bg-white/50 backdrop-blur-md">
+          <div className="flex items-center justify-between mb-6">
+            <h3 className="text-xl font-black text-foreground">نظرات مشتریان</h3>
+            <button 
+              onClick={() => setShowReviews(false)} 
+              className="w-10 h-10 flex items-center justify-center bg-black/5 rounded-full hover:bg-primary hover:text-white transition-all"
+            >
+              ←
+            </button>
+          </div>
+          
+          <ScrollArea className="flex-1 pr-2">
+            <div className="space-y-4">
+              {pizza.reviews.length > 0 ? (
+                pizza.reviews.map((r) => (
+                  <div key={r.id} className="p-4 bg-white/80 rounded-2xl border border-black/5 shadow-sm">
+                    <div className="flex justify-between items-center mb-2">
+                      <span className="font-bold text-xs">{r.userName}</span>
+                      <div className="flex text-primary">
+                        {[...Array(r.rating)].map((_, i) => (
+                          <Star key={i} className="w-2.5 h-2.5 fill-current" />
+                        ))}
+                      </div>
+                    </div>
+                    <p className="text-[11px] text-muted-foreground leading-relaxed">{r.comment}</p>
+                    <span className="text-[9px] text-zinc-300 mt-2 block">{r.date}</span>
                   </div>
-                  <p className="text-[9px] text-muted-foreground">{r.comment}</p>
+                ))
+              ) : (
+                <div className="flex flex-col items-center justify-center py-20 text-muted-foreground opacity-30">
+                  <MessageSquare className="w-12 h-12 mb-2" />
+                  <p className="text-sm font-bold">هنوز نظری ثبت نشده است</p>
                 </div>
-              ))}
+              )}
             </div>
           </ScrollArea>
         </div>
