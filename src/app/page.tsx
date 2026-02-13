@@ -70,9 +70,10 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    // Cinematic delay for splash screen
     const timer = setTimeout(() => {
       setIsLoading(false);
-    }, 2500);
+    }, 3500);
     return () => clearTimeout(timer);
   }, []);
 
@@ -104,7 +105,7 @@ export default function Home() {
     <main className="relative h-screen w-full bg-white overflow-hidden font-lalezar text-foreground select-none">
       {isLoading && <LoadingScreen />}
 
-      <div className={`h-full w-full transition-all duration-1000 ease-in-out ${isLoading ? 'opacity-0 scale-95 blur-sm' : 'opacity-100 scale-100 blur-0'}`}>
+      <div className={`h-full w-full transition-all duration-1500 cubic-bezier(0.23, 1, 0.32, 1) ${isLoading ? 'opacity-0 scale-105 blur-2xl' : 'opacity-100 scale-100 blur-0'}`}>
         <header className="fixed top-0 left-0 w-full px-6 md:px-8 py-4 md:py-6 flex items-center justify-between z-50 bg-white/50 backdrop-blur-sm lg:backdrop-blur-md">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 md:w-10 md:h-10 bg-primary rounded-xl flex items-center justify-center text-white font-black text-lg md:text-xl shadow-lg shadow-primary/20">
