@@ -27,6 +27,7 @@ export const PizzaCarousel = memo(({ pizzas, activeIndex, onPizzaClick }: PizzaC
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+  // Adaptive values based on viewport
   const radius = viewport === 'mobile' ? 340 : viewport === 'tablet' ? 550 : 850;
   const pizzaSize = viewport === 'mobile' ? 240 : viewport === 'tablet' ? 350 : 520;
   
@@ -35,6 +36,7 @@ export const PizzaCarousel = memo(({ pizzas, activeIndex, onPizzaClick }: PizzaC
   const transitionDuration = "1000ms"; 
   const easing = "cubic-bezier(0.16, 1, 0.3, 1)";
   
+  // Mobile uses a different rotation direction for better feel
   const parentRotation = viewport === 'mobile' 
     ? activeIndex * angleStep 
     : activeIndex * -angleStep;
@@ -51,6 +53,7 @@ export const PizzaCarousel = memo(({ pizzas, activeIndex, onPizzaClick }: PizzaC
         className="absolute w-1 h-1 bg-transparent will-change-transform"
         style={getCenterStyles()}
       >
+        {/* SVG Rail - High Quality on Desktop, Hidden/Simple on Mobile */}
         <svg 
           className="absolute pointer-events-none overflow-visible" 
           width={radius * 2} 
@@ -62,7 +65,7 @@ export const PizzaCarousel = memo(({ pizzas, activeIndex, onPizzaClick }: PizzaC
             zIndex: 0
           }}
         >
-          {viewport !== 'mobile' && (
+          {viewport === 'desktop' && (
             <defs>
               <filter id="chalk-effect">
                 <feTurbulence type="fractalNoise" baseFrequency="0.5" numOctaves="1" result="noise" />
@@ -79,7 +82,7 @@ export const PizzaCarousel = memo(({ pizzas, activeIndex, onPizzaClick }: PizzaC
             stroke="black" 
             strokeWidth="1.5" 
             strokeDasharray="10 20" 
-            filter={viewport === 'mobile' ? '' : 'url(#chalk-effect)'}
+            filter={viewport === 'desktop' ? 'url(#chalk-effect)' : ''}
             className="opacity-5"
             style={{ transform: `translate(${radius}px, ${radius}px)` }}
           />

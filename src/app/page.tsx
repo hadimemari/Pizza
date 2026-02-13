@@ -10,7 +10,7 @@ import { CategoryNavigator } from '@/components/CategoryNavigator';
 import { AuthDialog } from '@/components/AuthDialog';
 import { LoadingScreen } from '@/components/LoadingScreen';
 import { Button } from '@/components/ui/button';
-import { ShoppingBag, Menu, User } from 'lucide-react';
+import { ShoppingBag, User } from 'lucide-react';
 
 // Memoized Category Section for Performance
 const CategorySection = memo(({ 
