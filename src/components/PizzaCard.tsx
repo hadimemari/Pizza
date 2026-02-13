@@ -46,6 +46,7 @@ IndustrialLamp.displayName = 'IndustrialLamp';
 
 export const PizzaCard = memo(({ pizza, visible, onOrder }: { pizza: Pizza; visible: boolean; onOrder: () => void }) => {
   const [showReviews, setShowReviews] = useState(false);
+  const [mousePos, setMousePos] = useState({ x: 50, y: 50 });
   const cardRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -62,21 +63,47 @@ export const PizzaCard = memo(({ pizza, visible, onOrder }: { pizza: Pizza; visi
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [showReviews]);
 
+  // Mouse move handler for the responsive halo
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!cardRef.current || window.innerWidth < 1024) return;
+    const rect = cardRef.current.getBoundingClientRect();
+    const x = ((e.clientX - rect.left) / rect.width) * 100;
+    const y = ((e.clientY - rect.top) / rect.height) * 100;
+    setMousePos({ x, y });
+  };
+
   const averageRating = useMemo(() => {
     if (!pizza.reviews || pizza.reviews.length === 0) return 5;
     return Math.round(pizza.reviews.reduce((acc, r) => acc + r.rating, 0) / pizza.reviews.length);
   }, [pizza.reviews]);
 
   return (
-    <div className="relative group/card">
-      {/* Cinematic Ambient Halo Glow (Desktop Only) */}
-      <div className="absolute -inset-20 bg-primary/15 rounded-full blur-[100px] opacity-0 group-hover/card:opacity-100 transition-all duration-1000 hidden lg:block pointer-events-none" />
-      <div className="absolute -inset-10 bg-accent/5 rounded-full blur-[80px] opacity-0 group-hover/card:opacity-60 transition-all duration-1000 hidden lg:block delay-100 pointer-events-none" />
+    <div 
+      className="relative group/card perspective-1000"
+      onMouseMove={handleMouseMove}
+    >
+      {/* Dynamic Responsive Mouse-Follow Halo (Desktop Only) */}
+      <div 
+        className="absolute inset-[-120px] pointer-events-none transition-opacity duration-500 opacity-0 group-hover/card:opacity-100 hidden lg:block z-0"
+        style={{
+          background: `radial-gradient(circle at ${mousePos.x}% ${mousePos.y}%, rgba(230, 126, 34, 0.18) 0%, rgba(230, 126, 34, 0.05) 30%, transparent 60%)`,
+          filter: 'blur(40px)',
+          willChange: 'background'
+        }}
+      />
+      <div 
+        className="absolute inset-[-80px] pointer-events-none transition-opacity duration-700 opacity-0 group-hover/card:opacity-60 hidden lg:block z-0"
+        style={{
+          background: `radial-gradient(circle at ${mousePos.x}% ${mousePos.y}%, rgba(255, 255, 255, 0.4) 0%, transparent 40%)`,
+          filter: 'blur(60px)',
+          willChange: 'background'
+        }}
+      />
       
       <div 
         ref={cardRef}
         className={cn(
-          "rounded-[3rem] lg:rounded-[4rem] w-full max-w-[90vw] sm:max-w-[420px] lg:max-w-[480px] h-[580px] sm:h-[620px] lg:h-[720px] flex flex-col overflow-hidden relative bg-white/90 backdrop-blur-2xl border border-black/5 shadow-2xl transition-all duration-700 will-change-transform",
+          "rounded-[3rem] lg:rounded-[3.5rem] w-full max-w-[90vw] sm:max-w-[400px] lg:max-w-[460px] h-[580px] sm:h-[620px] lg:h-[700px] flex flex-col overflow-hidden relative bg-white/90 backdrop-blur-2xl border border-black/5 shadow-2xl transition-all duration-700 will-change-transform z-10",
           !visible ? "opacity-0 scale-95" : "opacity-100 scale-100"
         )}
       >
@@ -87,9 +114,9 @@ export const PizzaCard = memo(({ pizza, visible, onOrder }: { pizza: Pizza; visi
           )}
         >
           {/* Main Content Side */}
-          <div className="w-1/2 h-full flex flex-col p-6 sm:p-8 lg:p-10 justify-between">
-            <div className="space-y-4 lg:space-y-6 relative z-10">
-              <div className="space-y-3 lg:space-y-5 flex flex-col items-center text-center">
+          <div className="w-1/2 h-full flex flex-col p-6 sm:p-8 lg:p-9 justify-between">
+            <div className="space-y-4 lg:space-y-5 relative z-10">
+              <div className="space-y-3 lg:space-y-4 flex flex-col items-center text-center">
                 <IndustrialLamp isOn={pizza.isAvailable} />
                 <div className="flex items-center gap-2">
                   <div className="flex text-primary">
@@ -110,7 +137,7 @@ export const PizzaCard = memo(({ pizza, visible, onOrder }: { pizza: Pizza; visi
                 </p>
               </div>
 
-              <p className="text-xs sm:text-sm lg:text-[15px] leading-relaxed text-center px-4 text-muted-foreground/80 font-medium">
+              <p className="text-xs sm:text-sm lg:text-[14px] leading-relaxed text-center px-4 text-muted-foreground/80 font-medium max-w-[90%] mx-auto">
                 {pizza.description}
               </p>
 
@@ -122,7 +149,7 @@ export const PizzaCard = memo(({ pizza, visible, onOrder }: { pizza: Pizza; visi
                   <MessageSquare className="w-4 h-4" />
                   <span>
                     نظرات
-                    <span className="mr-2 px-2 py-0.5 rounded-full bg-primary text-white text-[10px] group-hover:scale-110 transition-transform inline-block font-black shadow-lg shadow-primary/30">
+                    <span className="mr-2 px-2.5 py-1 rounded-full bg-primary text-white text-[10px] group-hover:scale-110 transition-transform inline-block font-black shadow-lg shadow-primary/30">
                       {pizza.reviews.length}
                     </span>
                   </span>
@@ -152,7 +179,7 @@ export const PizzaCard = memo(({ pizza, visible, onOrder }: { pizza: Pizza; visi
               onClick={onOrder}
               disabled={!pizza.isAvailable}
               className={cn(
-                "w-full h-14 lg:h-16 rounded-2xl lg:rounded-3xl text-white font-black text-base lg:text-lg transition-all mt-4 shadow-xl shadow-black/5",
+                "w-full h-14 lg:h-16 rounded-2xl lg:rounded-[2rem] text-white font-black text-base lg:text-lg transition-all mt-4 shadow-xl shadow-black/5",
                 pizza.isAvailable ? "bg-black hover:bg-primary hover:scale-[1.02] active:scale-95" : "bg-zinc-300"
               )}
             >
@@ -166,7 +193,7 @@ export const PizzaCard = memo(({ pizza, visible, onOrder }: { pizza: Pizza; visi
             <div className="flex items-center justify-between mb-6 lg:mb-8">
               <h3 className="text-xl lg:text-2xl font-black text-foreground">نظرات مشتریان</h3>
               <button 
-                onClick={() => setShowReviews(false)} 
+                onClick={(e) => { e.stopPropagation(); setShowReviews(false); }} 
                 className="w-10 h-10 flex items-center justify-center bg-black/5 rounded-full hover:bg-primary hover:text-white transition-all shadow-sm"
               >
                 ←
