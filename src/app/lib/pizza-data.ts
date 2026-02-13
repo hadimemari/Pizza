@@ -21,7 +21,7 @@ export interface Pizza {
 }
 
 export const PIZZAS: Pizza[] = [
-  // پیتزاها
+  // پیتزاها (pizzas)
   {
     id: "1",
     name: "مارگاریتا کلاسیک",
@@ -51,7 +51,19 @@ export const PIZZAS: Pizza[] = [
       { id: "r3", userName: "رضا", rating: 5, comment: "بهترین پپرونی که تا حالا خوردم! تندی‌اش عالیه.", date: "۱۴۰۲/۱۱/۰۵" }
     ]
   },
-  // کالزونه
+  {
+    id: "3",
+    name: "سبزیجات رست شده",
+    price: "۱۵۵,۰۰۰ تومان",
+    cheesiness: 75,
+    ingredients: ["فلفل دلمه", "قارچ", "ذرت شیرین", "زیتون سیاه"],
+    description: "ترکیب رنگارنگ و سالم از سبزیجات تازه فصل که در دمای بالا رست شده‌اند.",
+    image: "/images/pizzas/3.png",
+    category: "pizzas",
+    isAvailable: true,
+    reviews: []
+  },
+  // کالزونه (calzones)
   {
     id: "c1",
     name: "کالزونه گوشت و قارچ",
@@ -66,17 +78,29 @@ export const PIZZAS: Pizza[] = [
   },
   {
     id: "c2",
-    name: "کالزونه سبزیجات",
+    name: "کالزونه اسفناج و پنیر",
     price: "۱۶۵,۰۰۰ تومان",
     cheesiness: 80,
-    ingredients: ["اسفناج", "پنیر فتا", "پیاز کاراملی", "گردو"],
-    description: "ترکیب خوشمزه سبزیجات تازه و پنیرهای معطر در دل یک خمیر ترد و داغ.",
+    ingredients: ["اسفناج تازه", "پنیر فتا", "پیاز کاراملی", "گردو"],
+    description: "ترکیب خوشمزه سبزیجات معطر و پنیرهای مدیترانه‌ای در دل یک خمیر ترد و داغ.",
     image: "/images/calzones/c2.png",
+    category: "calzones",
+    isAvailable: true,
+    reviews: []
+  },
+  {
+    id: "c3",
+    name: "کالزونه مرغ باربیکیو",
+    price: "۱۷۹,۰۰۰ تومان",
+    cheesiness: 90,
+    ingredients: ["مرغ گریل", "سس باربیکیو", "پیاز قرمز", "پنیر گودا"],
+    description: "طعم دودی و لذیذ مرغ همراه با سس مخصوص در پوششی از خمیر طلایی.",
+    image: "/images/calzones/c3.png",
     category: "calzones",
     isAvailable: false,
     reviews: []
   },
-  // سالادها
+  // سالادها (sides)
   {
     id: "s1",
     name: "سالاد سزار ویژه",
@@ -101,7 +125,19 @@ export const PIZZAS: Pizza[] = [
     isAvailable: true,
     reviews: []
   },
-  // نوشیدنی‌ها
+  {
+    id: "s3",
+    name: "سالاد یونانی",
+    price: "۱۱۰,۰۰۰ تومان",
+    cheesiness: 15,
+    ingredients: ["پنیر فتا", "زیتون کالاماتا", "پونه کوهی", "روغن زیتون"],
+    description: "طعم‌های اصیل یونانی با بهترین روغن زیتون بکر و سبزیجات تازه.",
+    image: "/images/sides/s3.png",
+    category: "sides",
+    isAvailable: true,
+    reviews: []
+  },
+  // نوشیدنی‌ها (beverages)
   {
     id: "b1",
     name: "موخیتو طبیعی",
@@ -116,12 +152,24 @@ export const PIZZAS: Pizza[] = [
   },
   {
     id: "b2",
+    name: "لیموناد خونگی",
+    price: "۵۵,۰۰۰ تومان",
+    cheesiness: 0,
+    ingredients: ["لیمو سنگی", "عسل", "یخ فراوان"],
+    description: "ترکیب ترش و شیرین لیموی تازه برای رفع عطش بعد از یک غذای داغ.",
+    image: "/images/beverages/b2.png",
+    category: "beverages",
+    isAvailable: true,
+    reviews: []
+  },
+  {
+    id: "b3",
     name: "آبمیوه فصل",
     price: "۷۵,۰۰۰ تومان",
     cheesiness: 0,
     ingredients: ["میوه تازه"],
     description: "آبمیوه ۱۰۰٪ طبیعی تهیه شده از میوه‌های تازه فصل.",
-    image: "/images/beverages/b2.png",
+    image: "/images/beverages/b3.png",
     category: "beverages",
     isAvailable: false,
     reviews: []
