@@ -25,15 +25,15 @@ const IndustrialLamp = memo(({ isOn }: { isOn: boolean }) => {
           )} />
         </div>
         <div className={cn(
-          "absolute top-6 lg:top-10 left-1/2 -translate-x-1/2 w-64 h-64 lg:w-[450px] lg:h-[450px] pointer-events-none transition-all duration-1000 ease-in-out z-10 hidden sm:block",
+          "absolute top-6 lg:top-10 left-1/2 -translate-x-1/2 w-[350px] h-[350px] lg:w-[600px] lg:h-[600px] pointer-events-none transition-all duration-1000 ease-in-out z-10 hidden sm:block",
           isOn ? "opacity-100 scale-100" : "opacity-0 scale-95"
         )}>
           <div 
             className="w-full h-full"
             style={{
-              background: 'radial-gradient(circle at top, rgba(230, 126, 34, 0.25) 0%, rgba(230, 126, 34, 0.08) 45%, transparent 75%)',
-              clipPath: 'polygon(10% 0%, 90% 0%, 100% 100%, 0% 100%)',
-              filter: 'blur(40px)'
+              background: 'radial-gradient(circle at top, rgba(230, 126, 34, 0.3) 0%, rgba(230, 126, 34, 0.1) 40%, transparent 70%)',
+              clipPath: 'polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)',
+              filter: 'blur(50px)'
             }}
           />
         </div>
@@ -46,7 +46,8 @@ IndustrialLamp.displayName = 'IndustrialLamp';
 
 export const PizzaCard = memo(({ pizza, visible, onOrder }: { pizza: Pizza; visible: boolean; onOrder: () => void }) => {
   const [showReviews, setShowReviews] = useState(false);
-  const [mousePos, setMousePos] = useState({ x: 50, y: 50 });
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const [isHovered, setIsHovered] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -63,13 +64,13 @@ export const PizzaCard = memo(({ pizza, visible, onOrder }: { pizza: Pizza; visi
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [showReviews]);
 
-  // Mouse move handler for the responsive halo
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!cardRef.current || window.innerWidth < 1024) return;
+    if (!cardRef.current || typeof window === 'undefined' || window.innerWidth < 1024) return;
     const rect = cardRef.current.getBoundingClientRect();
-    const x = ((e.clientX - rect.left) / rect.width) * 100;
-    const y = ((e.clientY - rect.top) / rect.height) * 100;
-    setMousePos({ x, y });
+    setMousePos({
+      x: e.clientX - rect.left,
+      y: e.clientY - rect.top,
+    });
   };
 
   const averageRating = useMemo(() => {
@@ -81,29 +82,43 @@ export const PizzaCard = memo(({ pizza, visible, onOrder }: { pizza: Pizza; visi
     <div 
       className="relative group/card perspective-1000"
       onMouseMove={handleMouseMove}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
     >
-      {/* Dynamic Responsive Mouse-Follow Halo (Desktop Only) */}
-      <div 
-        className="absolute inset-[-120px] pointer-events-none transition-opacity duration-500 opacity-0 group-hover/card:opacity-100 hidden lg:block z-0"
-        style={{
-          background: `radial-gradient(circle at ${mousePos.x}% ${mousePos.y}%, rgba(230, 126, 34, 0.18) 0%, rgba(230, 126, 34, 0.05) 30%, transparent 60%)`,
-          filter: 'blur(40px)',
-          willChange: 'background'
-        }}
-      />
-      <div 
-        className="absolute inset-[-80px] pointer-events-none transition-opacity duration-700 opacity-0 group-hover/card:opacity-60 hidden lg:block z-0"
-        style={{
-          background: `radial-gradient(circle at ${mousePos.x}% ${mousePos.y}%, rgba(255, 255, 255, 0.4) 0%, transparent 40%)`,
-          filter: 'blur(60px)',
-          willChange: 'background'
-        }}
-      />
+      {/* Interactive Liquid Halo (Desktop Only) */}
+      <div className="absolute inset-0 -z-10 pointer-events-none hidden lg:block overflow-visible">
+        <div 
+          className={cn(
+            "absolute w-[500px] h-[500px] -translate-x-1/2 -translate-y-1/2 transition-opacity duration-700 ease-out pointer-events-none",
+            isHovered ? "opacity-100" : "opacity-0"
+          )}
+          style={{
+            left: `${mousePos.x}px`,
+            top: `${mousePos.y}px`,
+            background: 'radial-gradient(circle, rgba(230, 126, 34, 0.15) 0%, rgba(230, 126, 34, 0.05) 40%, transparent 70%)',
+            filter: 'blur(60px)',
+            willChange: 'transform, opacity'
+          }}
+        />
+        <div 
+          className={cn(
+            "absolute w-[300px] h-[300px] -translate-x-1/2 -translate-y-1/2 transition-opacity duration-1000 ease-out pointer-events-none delay-75",
+            isHovered ? "opacity-60" : "opacity-0"
+          )}
+          style={{
+            left: `${mousePos.x}px`,
+            top: `${mousePos.y}px`,
+            background: 'radial-gradient(circle, rgba(255, 255, 255, 0.4) 0%, transparent 60%)',
+            filter: 'blur(40px)',
+            willChange: 'transform, opacity'
+          }}
+        />
+      </div>
       
       <div 
         ref={cardRef}
         className={cn(
-          "rounded-[3rem] lg:rounded-[3.5rem] w-full max-w-[90vw] sm:max-w-[400px] lg:max-w-[460px] h-[580px] sm:h-[620px] lg:h-[700px] flex flex-col overflow-hidden relative bg-white/90 backdrop-blur-2xl border border-black/5 shadow-2xl transition-all duration-700 will-change-transform z-10",
+          "rounded-[3rem] lg:rounded-[3.5rem] w-full max-w-[90vw] sm:max-w-[400px] lg:max-w-[440px] h-[580px] sm:h-[620px] lg:h-[680px] flex flex-col overflow-hidden relative bg-white/85 backdrop-blur-3xl border border-black/5 shadow-2xl transition-all duration-700 will-change-transform z-10",
           !visible ? "opacity-0 scale-95" : "opacity-100 scale-100"
         )}
       >
@@ -114,8 +129,8 @@ export const PizzaCard = memo(({ pizza, visible, onOrder }: { pizza: Pizza; visi
           )}
         >
           {/* Main Content Side */}
-          <div className="w-1/2 h-full flex flex-col p-6 sm:p-8 lg:p-9 justify-between">
-            <div className="space-y-4 lg:space-y-5 relative z-10">
+          <div className="w-1/2 h-full flex flex-col p-6 sm:p-8 lg:p-10 justify-between">
+            <div className="space-y-4 lg:space-y-6 relative z-10">
               <div className="space-y-3 lg:space-y-4 flex flex-col items-center text-center">
                 <IndustrialLamp isOn={pizza.isAvailable} />
                 <div className="flex items-center gap-2">
@@ -128,11 +143,11 @@ export const PizzaCard = memo(({ pizza, visible, onOrder }: { pizza: Pizza; visi
                 </div>
                 <h2 className={cn(
                   "text-2xl sm:text-3xl lg:text-4xl font-black uppercase tracking-tighter transition-all duration-700 leading-tight px-4",
-                  pizza.isAvailable ? "text-foreground" : "text-zinc-400 opacity-40 blur-[1px]"
+                  pizza.isAvailable ? "text-foreground" : "text-zinc-400 grayscale opacity-40 blur-[1.5px]"
                 )}>
                   {pizza.name}
                 </h2>
-                <p className={cn("font-black text-xl lg:text-2xl", pizza.isAvailable ? "text-primary" : "text-zinc-400")}>
+                <p className={cn("font-black text-xl lg:text-2xl", pizza.isAvailable ? "text-primary drop-shadow-[0_2px_10px_rgba(230,126,34,0.2)]" : "text-zinc-400")}>
                   {pizza.price}
                 </p>
               </div>
@@ -144,12 +159,12 @@ export const PizzaCard = memo(({ pizza, visible, onOrder }: { pizza: Pizza; visi
               <div className="flex justify-center">
                 <button 
                   onClick={() => setShowReviews(true)}
-                  className="flex items-center gap-3 bg-black/5 px-5 py-2.5 rounded-full text-xs font-bold hover:bg-primary/10 hover:text-primary transition-all group w-fit"
+                  className="flex items-center gap-3 bg-black/5 px-6 py-2.5 rounded-full text-xs font-bold hover:bg-primary/10 hover:text-primary transition-all group w-fit"
                 >
                   <MessageSquare className="w-4 h-4" />
                   <span>
                     نظرات
-                    <span className="mr-2 px-2.5 py-1 rounded-full bg-primary text-white text-[10px] group-hover:scale-110 transition-transform inline-block font-black shadow-lg shadow-primary/30">
+                    <span className="mr-2 px-3 py-1 rounded-full bg-primary text-white text-[10px] group-hover:scale-110 transition-transform inline-block font-black shadow-lg shadow-primary/30">
                       {pizza.reviews.length}
                     </span>
                   </span>
@@ -180,7 +195,7 @@ export const PizzaCard = memo(({ pizza, visible, onOrder }: { pizza: Pizza; visi
               disabled={!pizza.isAvailable}
               className={cn(
                 "w-full h-14 lg:h-16 rounded-2xl lg:rounded-[2rem] text-white font-black text-base lg:text-lg transition-all mt-4 shadow-xl shadow-black/5",
-                pizza.isAvailable ? "bg-black hover:bg-primary hover:scale-[1.02] active:scale-95" : "bg-zinc-300"
+                pizza.isAvailable ? "bg-black hover:bg-primary hover:scale-[1.02] active:scale-95 shadow-primary/10" : "bg-zinc-300"
               )}
             >
               <ShoppingCart className="mr-3 w-5 h-5 lg:w-5 lg:h-5" />
@@ -194,9 +209,9 @@ export const PizzaCard = memo(({ pizza, visible, onOrder }: { pizza: Pizza; visi
               <h3 className="text-xl lg:text-2xl font-black text-foreground">نظرات مشتریان</h3>
               <button 
                 onClick={(e) => { e.stopPropagation(); setShowReviews(false); }} 
-                className="w-10 h-10 flex items-center justify-center bg-black/5 rounded-full hover:bg-primary hover:text-white transition-all shadow-sm"
+                className="w-10 h-10 flex items-center justify-center bg-black/5 rounded-full hover:bg-primary hover:text-white transition-all shadow-sm group"
               >
-                ←
+                <span className="group-hover:-translate-x-1 transition-transform">←</span>
               </button>
             </div>
             
