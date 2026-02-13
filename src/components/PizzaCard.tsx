@@ -82,7 +82,7 @@ export const PizzaCard = memo(({ pizza, visible, onOrder }: { pizza: Pizza; visi
       <div 
         ref={cardRef}
         className={cn(
-          "rounded-[3rem] w-full max-w-[90vw] sm:max-w-[420px] lg:max-w-[440px] h-[620px] sm:h-[680px] lg:h-[720px] flex flex-col overflow-hidden relative bg-white/40 backdrop-blur-3xl border border-white/20 shadow-[0_20px_60px_rgba(0,0,0,0.03)] transition-all duration-1000 will-change-transform z-10",
+          "rounded-[3rem] w-full max-w-[90vw] sm:max-w-[420px] lg:max-w-[440px] h-[650px] sm:h-[680px] lg:h-[720px] flex flex-col overflow-hidden relative bg-white/40 backdrop-blur-3xl border border-white/20 shadow-[0_20px_60px_rgba(0,0,0,0.03)] transition-all duration-1000 will-change-transform z-10",
           !visible ? "opacity-0 scale-95" : "opacity-100 scale-100"
         )}
       >
@@ -94,7 +94,7 @@ export const PizzaCard = memo(({ pizza, visible, onOrder }: { pizza: Pizza; visi
         >
           {/* Main Content Side */}
           <div className="w-1/2 h-full flex flex-col p-6 lg:p-8 justify-between">
-            <div className="flex-1 flex flex-col space-y-2 lg:space-y-4 relative z-10 overflow-hidden">
+            <div className="flex-1 flex flex-col space-y-3 lg:space-y-4 relative z-10 overflow-hidden">
               <div className="flex flex-col items-center text-center">
                 <IndustrialLamp isOn={pizza.isAvailable} />
                 
@@ -119,7 +119,7 @@ export const PizzaCard = memo(({ pizza, visible, onOrder }: { pizza: Pizza; visi
                 </p>
               </div>
 
-              <p className="text-xs lg:text-[13px] leading-relaxed text-center px-4 text-zinc-500 font-medium max-w-[95%] mx-auto line-clamp-2 lg:line-clamp-3">
+              <p className="text-xs lg:text-[13px] leading-relaxed text-center px-4 text-zinc-500 font-medium max-w-[95%] mx-auto line-clamp-3">
                 {pizza.description}
               </p>
 
@@ -138,7 +138,7 @@ export const PizzaCard = memo(({ pizza, visible, onOrder }: { pizza: Pizza; visi
                 </button>
               </div>
 
-              <div className="space-y-3 pt-1">
+              <div className="space-y-4 pt-2">
                 <div className="space-y-1.5">
                   <div className="flex justify-between text-[8px] font-black text-zinc-400 uppercase tracking-widest">
                     <span>Intensity</span>
@@ -157,20 +157,22 @@ export const PizzaCard = memo(({ pizza, visible, onOrder }: { pizza: Pizza; visi
               </div>
             </div>
 
-            <Button 
-              onClick={onOrder}
-              disabled={!pizza.isAvailable}
-              className={cn(
-                "w-full h-12 lg:h-14 rounded-[2rem] text-white font-black text-base transition-all mt-4 border-none shadow-lg relative overflow-hidden group/btn",
-                pizza.isAvailable 
-                  ? "bg-zinc-900 hover:bg-primary hover:scale-[1.01] active:scale-95" 
-                  : "bg-zinc-200 text-zinc-400"
-              )}
-            >
-              <div className="absolute inset-0 bg-white/10 translate-y-full group-hover/btn:translate-y-0 transition-transform duration-500" />
-              <ShoppingCart className="mr-2 w-5 h-5 relative z-10" />
-              <span className="relative z-10">{pizza.isAvailable ? "سفارش سریع" : "فعلاً ناموجود"}</span>
-            </Button>
+            <div className="mt-4 pt-4 border-t border-black/5">
+              <Button 
+                onClick={onOrder}
+                disabled={!pizza.isAvailable}
+                className={cn(
+                  "w-full h-12 lg:h-14 rounded-[2rem] text-white font-black text-base transition-all border-none shadow-lg relative overflow-hidden group/btn",
+                  pizza.isAvailable 
+                    ? "bg-zinc-900 hover:bg-primary hover:scale-[1.01] active:scale-95" 
+                    : "bg-zinc-200 text-zinc-400"
+                )}
+              >
+                <div className="absolute inset-0 bg-white/10 translate-y-full group-hover/btn:translate-y-0 transition-transform duration-500" />
+                <ShoppingCart className="mr-2 w-5 h-5 relative z-10" />
+                <span className="relative z-10">{pizza.isAvailable ? "سفارش سریع" : "فعلاً ناموجود"}</span>
+              </Button>
+            </div>
           </div>
 
           {/* Reviews Side */}
