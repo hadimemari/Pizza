@@ -17,25 +17,12 @@ const IndustrialLamp = memo(({ isOn }: { isOn: boolean }) => {
         <div className="w-4 h-2 lg:w-6 h-3 bg-zinc-800 rounded-t-sm border-b border-zinc-700" />
         <div className={cn(
           "w-16 h-8 lg:w-24 lg:h-12 bg-zinc-900 rounded-[100%_100%_15%_15%] relative z-20 border-b-2 border-zinc-800 transition-all duration-700",
-          isOn ? "shadow-[0_5px_30px_rgba(251,191,36,0.3)]" : "opacity-95"
+          isOn ? "shadow-[0_5px_15px_rgba(251,191,36,0.2)]" : "opacity-95"
         )}>
           <div className={cn(
-            "absolute bottom-0 left-1/2 -translate-x-1/2 w-8 h-2 lg:w-12 h-3 rounded-full blur-[6px] transition-all duration-700",
-            isOn ? "bg-amber-100/70 opacity-100" : "bg-zinc-800 opacity-40"
+            "absolute bottom-0 left-1/2 -translate-x-1/2 w-8 h-1 lg:w-12 h-2 rounded-full blur-[4px] transition-all duration-700",
+            isOn ? "bg-amber-100/50 opacity-100" : "bg-zinc-800 opacity-20"
           )} />
-        </div>
-        <div className={cn(
-          "absolute top-6 lg:top-10 left-1/2 -translate-x-1/2 w-[350px] h-[350px] lg:w-[600px] lg:h-[600px] pointer-events-none transition-all duration-1000 ease-in-out z-10 hidden sm:block",
-          isOn ? "opacity-100 scale-100" : "opacity-0 scale-95"
-        )}>
-          <div 
-            className="w-full h-full"
-            style={{
-              background: 'radial-gradient(circle at top, rgba(230, 126, 34, 0.3) 0%, rgba(230, 126, 34, 0.1) 40%, transparent 70%)',
-              clipPath: 'polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)',
-              filter: 'blur(50px)'
-            }}
-          />
         </div>
       </div>
     </div>
@@ -195,7 +182,9 @@ export const PizzaCard = memo(({ pizza, visible, onOrder }: { pizza: Pizza; visi
               disabled={!pizza.isAvailable}
               className={cn(
                 "w-full h-14 lg:h-16 rounded-2xl lg:rounded-[2rem] text-white font-black text-base lg:text-lg transition-all mt-4 shadow-xl shadow-black/5",
-                pizza.isAvailable ? "bg-black hover:bg-primary hover:scale-[1.02] active:scale-95 shadow-primary/10" : "bg-zinc-300"
+                pizza.isAvailable 
+                  ? "bg-black hover:bg-primary hover:scale-[1.02] active:scale-95 hover:shadow-[0_0_30px_rgba(230,126,34,0.6)] shadow-primary/10" 
+                  : "bg-zinc-300"
               )}
             >
               <ShoppingCart className="mr-3 w-5 h-5 lg:w-5 lg:h-5" />
