@@ -30,16 +30,16 @@ const CategorySection = memo(({
   
   return (
     <div 
-      className="relative h-screen w-full flex flex-col lg:flex-row items-center justify-center pt-24 lg:pt-0"
+      className="relative h-screen w-full flex flex-col lg:flex-row items-center justify-center pt-20 lg:pt-12"
       style={{ contentVisibility: 'auto' }}
     >
       {/* Background Decorative Element for Desktop */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none hidden lg:block">
-        <div className="absolute top-[20%] left-[10%] w-[30%] h-[30%] bg-primary/5 rounded-full blur-[120px] animate-float-bg" />
-        <div className="absolute bottom-[20%] right-[10%] w-[30%] h-[30%] bg-accent/5 rounded-full blur-[120px] animate-float-bg" style={{ animationDelay: '-3s' }} />
+        <div className="absolute top-[15%] left-[5%] w-[40%] h-[40%] bg-primary/[0.03] rounded-full blur-[150px] animate-float-bg" />
+        <div className="absolute bottom-[10%] right-[5%] w-[40%] h-[40%] bg-accent/[0.03] rounded-full blur-[150px] animate-float-bg" style={{ animationDelay: '-3s' }} />
       </div>
 
-      <div className="w-full h-[40vh] sm:h-[45vh] lg:w-[60%] lg:h-full flex items-center z-10 overflow-visible relative">
+      <div className="w-full h-[40vh] sm:h-[45vh] lg:w-[55%] lg:h-full flex items-center z-10 overflow-visible relative lg:pl-12">
         <PizzaCarousel 
           pizzas={items} 
           activeIndex={activeIndex} 
@@ -47,7 +47,7 @@ const CategorySection = memo(({
         />
       </div>
 
-      <div className="w-full flex-1 lg:w-[40%] flex justify-center items-center px-4 sm:px-6 lg:pr-24 z-20">
+      <div className="w-full flex-1 lg:w-[45%] flex justify-center items-center px-4 sm:px-6 lg:pr-24 z-20">
         {isActive && (
           <PizzaCard 
             pizza={items[activeIndex] || items[0]} 
@@ -112,14 +112,17 @@ export default function Home() {
       {isLoading && <LoadingScreen />}
 
       <div className={`h-full w-full transition-all duration-[1500ms] cubic-bezier(0.23, 1, 0.32, 1) ${isLoading ? 'opacity-0 scale-105 blur-2xl' : 'opacity-100 scale-100 blur-0'}`}>
-        <header className="fixed top-0 left-0 w-full px-6 md:px-12 py-4 md:py-8 flex items-center justify-between z-50 bg-white/40 backdrop-blur-xl border-b border-black/5">
+        <header className="fixed top-0 left-0 w-full px-6 md:px-12 py-4 md:py-6 flex items-center justify-between z-50 bg-white/40 backdrop-blur-xl border-b border-black/5">
           <div className="flex items-center gap-4">
             <div className="w-10 h-10 md:w-12 md:h-12 bg-primary rounded-[1rem] flex items-center justify-center text-white font-black text-xl md:text-2xl shadow-xl shadow-primary/20">
               پ
             </div>
-            <span className="font-black text-2xl md:text-3xl tracking-tighter uppercase italic text-foreground">
-              پیتزا<span className="text-primary">موشن</span>
-            </span>
+            <div className="flex flex-col -gap-1">
+              <span className="font-black text-2xl md:text-3xl tracking-tighter uppercase italic text-foreground leading-none">
+                پیتزا<span className="text-primary">موشن</span>
+              </span>
+              <span className="text-[8px] md:text-[10px] font-bold text-muted-foreground uppercase tracking-widest hidden md:block">Premium Dining</span>
+            </div>
           </div>
 
           <div className="flex items-center gap-3 md:gap-6">
