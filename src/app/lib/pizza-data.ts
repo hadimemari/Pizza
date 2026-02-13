@@ -21,7 +21,7 @@ export interface Pizza {
 }
 
 export const PIZZAS: Pizza[] = [
-  // پیتزاها (pizzas)
+  // پیتزاها (pizzas) - 4 آیتم
   {
     id: "1",
     name: "مارگاریتا کلاسیک",
@@ -29,7 +29,7 @@ export const PIZZAS: Pizza[] = [
     cheesiness: 85,
     ingredients: ["ریحان تازه", "پنیر موزارلا", "سس گوجه", "روغن زیتون"],
     description: "کلاسیک بی نظیر ایتالیایی با موزارلای تازه و برگ‌های معطر ریحان که روی خمیری ترد و نازک چیده شده است.",
-    image: "/images/pizzas/1.png",
+    image: "/images/pizzas/p1.png",
     category: "pizzas",
     isAvailable: true,
     reviews: [
@@ -44,7 +44,7 @@ export const PIZZAS: Pizza[] = [
     cheesiness: 92,
     ingredients: ["سلامی تند", "پنیر اضافه", "سبزیجات معطر", "آویشن"],
     description: "رویای عاشقان گوشت با پپرونی ترد و پنیر دوبل کشسان که با هر گاز، طعمی تند و به یاد ماندنی را تجربه می‌کنید.",
-    image: "/images/pizzas/2.png",
+    image: "/images/pizzas/p2.png",
     category: "pizzas",
     isAvailable: true,
     reviews: [
@@ -58,12 +58,24 @@ export const PIZZAS: Pizza[] = [
     cheesiness: 75,
     ingredients: ["فلفل دلمه", "قارچ", "ذرت شیرین", "زیتون سیاه"],
     description: "ترکیب رنگارنگ و سالم از سبزیجات تازه فصل که در دمای بالا رست شده‌اند.",
-    image: "/images/pizzas/3.png",
+    image: "/images/pizzas/p3.png",
     category: "pizzas",
     isAvailable: true,
     reviews: []
   },
-  // کالزونه (calzones)
+  {
+    id: "4",
+    name: "مرغ باربیکیو ویژه",
+    price: "۱۷۵,۰۰۰ تومان",
+    cheesiness: 88,
+    ingredients: ["مرغ گریل شده", "سس باربیکیو دودی", "پیاز قرمز", "ذرت"],
+    description: "طعم لذیذ مرغ گریل شده همراه با سس مخصوص باربیکیو که در تنور سنگی برشته شده است.",
+    image: "/images/pizzas/p4.png",
+    category: "pizzas",
+    isAvailable: true,
+    reviews: []
+  },
+  // کالزونه (calzones) - 2 آیتم
   {
     id: "c1",
     name: "کالزونه گوشت و قارچ",
@@ -71,7 +83,7 @@ export const PIZZAS: Pizza[] = [
     cheesiness: 95,
     ingredients: ["گوشت چرخ‌کرده", "قارچ اسلایس", "فلفل دلمه", "پنیر اضافه"],
     description: "یک پیراشکی غول‌آسا پر از مواد گوشتی و پنیر فراوان که در تنور سنگی برشته شده است.",
-    image: "/images/calzones/c1.png",
+    image: "/images/calzones/cal1.png",
     category: "calzones",
     isAvailable: true,
     reviews: []
@@ -83,24 +95,12 @@ export const PIZZAS: Pizza[] = [
     cheesiness: 80,
     ingredients: ["اسفناج تازه", "پنیر فتا", "پیاز کاراملی", "گردو"],
     description: "ترکیب خوشمزه سبزیجات معطر و پنیرهای مدیترانه‌ای در دل یک خمیر ترد و داغ.",
-    image: "/images/calzones/c2.png",
+    image: "/images/calzones/cal2.png",
     category: "calzones",
     isAvailable: true,
     reviews: []
   },
-  {
-    id: "c3",
-    name: "کالزونه مرغ باربیکیو",
-    price: "۱۷۹,۰۰۰ تومان",
-    cheesiness: 90,
-    ingredients: ["مرغ گریل", "سس باربیکیو", "پیاز قرمز", "پنیر گودا"],
-    description: "طعم دودی و لذیذ مرغ همراه با سس مخصوص در پوششی از خمیر طلایی.",
-    image: "/images/calzones/c3.png",
-    category: "calzones",
-    isAvailable: false,
-    reviews: []
-  },
-  // سالادها (sides)
+  // سالادها (sides) - 2 آیتم
   {
     id: "s1",
     name: "سالاد سزار ویژه",
@@ -108,7 +108,7 @@ export const PIZZAS: Pizza[] = [
     cheesiness: 30,
     ingredients: ["کاهو رسمی", "مرغ گریل", "پنیر پارمزان", "سس مخصوص"],
     description: "سالاد سزار کلاسیک با فیله مرغ گریل شده و سس دست‌ساز سرآشپز.",
-    image: "/images/sides/s1.png",
+    image: "/images/sides/sal1.png",
     category: "sides",
     isAvailable: true,
     reviews: []
@@ -120,24 +120,12 @@ export const PIZZAS: Pizza[] = [
     cheesiness: 0,
     ingredients: ["خیار", "گوجه", "نان سوخاری", "سماق"],
     description: "یک سالاد مدیترانه‌ای خنک و ترش که همراه عالی برای پیتزاهای شماست.",
-    image: "/images/sides/s2.png",
+    image: "/images/sides/sal2.png",
     category: "sides",
     isAvailable: true,
     reviews: []
   },
-  {
-    id: "s3",
-    name: "سالاد یونانی",
-    price: "۱۱۰,۰۰۰ تومان",
-    cheesiness: 15,
-    ingredients: ["پنیر فتا", "زیتون کالاماتا", "پونه کوهی", "روغن زیتون"],
-    description: "طعم‌های اصیل یونانی با بهترین روغن زیتون بکر و سبزیجات تازه.",
-    image: "/images/sides/s3.png",
-    category: "sides",
-    isAvailable: true,
-    reviews: []
-  },
-  // نوشیدنی‌ها (beverages)
+  // نوشیدنی‌ها (beverages) - 2 آیتم
   {
     id: "b1",
     name: "موخیتو طبیعی",
@@ -145,7 +133,7 @@ export const PIZZAS: Pizza[] = [
     cheesiness: 0,
     ingredients: ["نعناع تازه", "لیمو", "شکر قهوه‌ای", "سودا"],
     description: "نوشیدنی خنک و دست‌ساز با طعم نعناع و لیموی تازه.",
-    image: "/images/beverages/b1.png",
+    image: "/images/beverages/bev1.png",
     category: "beverages",
     isAvailable: true,
     reviews: []
@@ -157,21 +145,9 @@ export const PIZZAS: Pizza[] = [
     cheesiness: 0,
     ingredients: ["لیمو سنگی", "عسل", "یخ فراوان"],
     description: "ترکیب ترش و شیرین لیموی تازه برای رفع عطش بعد از یک غذای داغ.",
-    image: "/images/beverages/b2.png",
+    image: "/images/beverages/bev2.png",
     category: "beverages",
     isAvailable: true,
-    reviews: []
-  },
-  {
-    id: "b3",
-    name: "آبمیوه فصل",
-    price: "۷۵,۰۰۰ تومان",
-    cheesiness: 0,
-    ingredients: ["میوه تازه"],
-    description: "آبمیوه ۱۰۰٪ طبیعی تهیه شده از میوه‌های تازه فصل.",
-    image: "/images/beverages/b3.png",
-    category: "beverages",
-    isAvailable: false,
     reviews: []
   }
 ];
