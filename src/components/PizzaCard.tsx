@@ -62,32 +62,30 @@ export const PizzaCard = memo(({ pizza, visible, onOrder }: { pizza: Pizza; visi
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
+      {/* INTERACTIVE LIVE HALO - Desktop Only */}
+      <div 
+        className={cn(
+          "absolute inset-0 -z-10 transition-opacity duration-700 pointer-events-none hidden lg:block",
+          isHovered ? "opacity-100" : "opacity-0"
+        )}
+        style={{
+          transform: `translate3d(${mousePos.x - 200}px, ${mousePos.y - 200}px, 0)`,
+          width: '400px',
+          height: '400px',
+          background: 'radial-gradient(circle, rgba(230, 126, 34, 0.15) 0%, transparent 70%)',
+          filter: 'blur(50px)',
+          borderRadius: '50%',
+          willChange: 'transform'
+        }}
+      />
+
       <div 
         ref={cardRef}
         className={cn(
-          "rounded-[3rem] w-full max-w-[90vw] sm:max-w-[420px] lg:max-w-[440px] h-[620px] sm:h-[660px] lg:h-[720px] flex flex-col overflow-hidden relative bg-white/40 backdrop-blur-3xl border border-white/20 shadow-[0_20px_60px_rgba(0,0,0,0.03)] transition-all duration-1000 will-change-transform z-10",
+          "rounded-[3rem] w-full max-w-[90vw] sm:max-w-[420px] lg:max-w-[440px] h-[620px] sm:h-[680px] lg:h-[720px] flex flex-col overflow-hidden relative bg-white/40 backdrop-blur-3xl border border-white/20 shadow-[0_20px_60px_rgba(0,0,0,0.03)] transition-all duration-1000 will-change-transform z-10",
           !visible ? "opacity-0 scale-95" : "opacity-100 scale-100"
         )}
       >
-        {/* INTERACTIVE LIQUID HALO V2 - Desktop Only */}
-        <div 
-          className={cn(
-            "absolute inset-0 -z-10 transition-opacity duration-700 ease-out pointer-events-none overflow-hidden hidden lg:block",
-            isHovered ? "opacity-100" : "opacity-0"
-          )}
-        >
-          <div 
-            className="absolute w-[280px] h-[280px] -translate-x-1/2 -translate-y-1/2 transition-transform duration-200 ease-out rounded-full"
-            style={{
-              left: `${mousePos.x}px`,
-              top: `${mousePos.y}px`,
-              background: 'radial-gradient(circle, rgba(230, 126, 34, 0.12) 0%, rgba(230, 126, 34, 0.04) 45%, transparent 70%)',
-              filter: 'blur(40px)',
-              willChange: 'transform'
-            }}
-          />
-        </div>
-
         <div 
           className={cn(
             "flex w-[200%] h-full transition-transform duration-1000 cubic-bezier(0.16, 1, 0.3, 1) will-change-transform",
@@ -96,7 +94,7 @@ export const PizzaCard = memo(({ pizza, visible, onOrder }: { pizza: Pizza; visi
         >
           {/* Main Content Side */}
           <div className="w-1/2 h-full flex flex-col p-6 lg:p-8 justify-between">
-            <div className="flex-1 flex flex-col space-y-3 lg:space-y-4 relative z-10 overflow-hidden">
+            <div className="flex-1 flex flex-col space-y-2 lg:space-y-4 relative z-10 overflow-hidden">
               <div className="flex flex-col items-center text-center">
                 <IndustrialLamp isOn={pizza.isAvailable} />
                 
@@ -110,7 +108,7 @@ export const PizzaCard = memo(({ pizza, visible, onOrder }: { pizza: Pizza; visi
                 </div>
 
                 <h2 className={cn(
-                  "text-2xl lg:text-[2.2rem] font-black uppercase tracking-tighter transition-all duration-1000 leading-tight px-4 text-zinc-900",
+                  "text-2xl lg:text-[2.2rem] font-black uppercase tracking-tighter transition-all duration-1000 leading-tight px-2 text-zinc-900",
                   !pizza.isAvailable && "opacity-40 grayscale blur-[1px]"
                 )}>
                   {pizza.name}
@@ -121,7 +119,7 @@ export const PizzaCard = memo(({ pizza, visible, onOrder }: { pizza: Pizza; visi
                 </p>
               </div>
 
-              <p className="text-xs lg:text-[13px] leading-relaxed text-center px-4 text-zinc-500 font-medium max-w-[90%] mx-auto line-clamp-2">
+              <p className="text-xs lg:text-[13px] leading-relaxed text-center px-4 text-zinc-500 font-medium max-w-[95%] mx-auto line-clamp-2 lg:line-clamp-3">
                 {pizza.description}
               </p>
 
