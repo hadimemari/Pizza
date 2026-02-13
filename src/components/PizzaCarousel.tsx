@@ -1,7 +1,7 @@
 
 "use client";
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, memo } from 'react';
 import Image from 'next/image';
 import { Pizza } from '@/app/lib/pizza-data';
 import { cn } from '@/lib/utils';
@@ -12,7 +12,7 @@ interface PizzaCarouselProps {
   onPizzaClick: (index: number) => void;
 }
 
-export const PizzaCarousel: React.FC<PizzaCarouselProps> = ({ pizzas, activeIndex, onPizzaClick }) => {
+export const PizzaCarousel = memo(({ pizzas, activeIndex, onPizzaClick }: PizzaCarouselProps) => {
   const [viewport, setViewport] = useState<'mobile' | 'tablet' | 'desktop'>('desktop');
 
   useEffect(() => {
@@ -23,40 +23,34 @@ export const PizzaCarousel: React.FC<PizzaCarouselProps> = ({ pizzas, activeInde
       else setViewport('desktop');
     };
     handleResize();
-    window.addEventListener('resize', handleResize);
+    window.addEventListener('resize', handleResize, { passive: true });
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Optimized radius and centering for each viewport
   const radius = viewport === 'mobile' ? 340 : viewport === 'tablet' ? 550 : 850;
   const pizzaSize = viewport === 'mobile' ? 240 : viewport === 'tablet' ? 350 : 520;
   
   const total = pizzas.length;
   const angleStep = 360 / total;
-  const transitionDuration = "5000ms"; 
+  const transitionDuration = "1000ms"; 
   const easing = "cubic-bezier(0.16, 1, 0.3, 1)";
   
-  // Clockwise for mobile, Anti-clockwise for others
   const parentRotation = viewport === 'mobile' 
     ? activeIndex * angleStep 
     : activeIndex * -angleStep;
 
   const getCenterStyles = () => {
-    // Ensuring the center of the arc is perfectly balanced
-    if (viewport === 'mobile') return { left: '50%', top: '420px', transform: 'translateX(-50%)' };
-    if (viewport === 'tablet') return { left: '50%', top: '-100px', transform: 'translateX(-50%)' };
-    return { left: '-400px', top: '50%', transform: 'translateY(-50%)' };
+    if (viewport === 'mobile') return { left: '50%', top: '420px', transform: 'translateX(-50%) translateZ(0)' };
+    if (viewport === 'tablet') return { left: '50%', top: '-100px', transform: 'translateX(-50%) translateZ(0)' };
+    return { left: '-400px', top: '50%', transform: 'translateY(-50%) translateZ(0)' };
   };
 
-  const centerStyles = getCenterStyles();
-
   return (
-    <div className="relative w-full h-full flex items-center justify-center lg:justify-start overflow-visible select-none">
+    <div className="relative w-full h-full flex items-center justify-center lg:justify-start overflow-visible select-none will-change-transform">
       <div 
         className="absolute w-1 h-1 bg-transparent will-change-transform"
-        style={centerStyles}
+        style={getCenterStyles()}
       >
-        {/* Chalk Line Path Decoration */}
         <svg 
           className="absolute pointer-events-none overflow-visible" 
           width={radius * 2} 
@@ -68,12 +62,14 @@ export const PizzaCarousel: React.FC<PizzaCarouselProps> = ({ pizzas, activeInde
             zIndex: 0
           }}
         >
-          <defs>
-            <filter id="chalk-effect">
-              <feTurbulence type="fractalNoise" baseFrequency="0.5" numOctaves="3" result="noise" />
-              <feDisplacementMap in="SourceGraphic" in2="noise" scale="3" />
-            </filter>
-          </defs>
+          {viewport !== 'mobile' && (
+            <defs>
+              <filter id="chalk-effect">
+                <feTurbulence type="fractalNoise" baseFrequency="0.5" numOctaves="1" result="noise" />
+                <feDisplacementMap in="SourceGraphic" in2="noise" scale="2" />
+              </filter>
+            </defs>
+          )}
           
           <circle 
             cx="0" 
@@ -81,34 +77,16 @@ export const PizzaCarousel: React.FC<PizzaCarouselProps> = ({ pizzas, activeInde
             r={radius} 
             fill="none" 
             stroke="black" 
-            strokeWidth="2" 
-            strokeDasharray="15 25" 
-            filter="url(#chalk-effect)"
-            className="opacity-10"
+            strokeWidth="1.5" 
+            strokeDasharray="10 20" 
+            filter={viewport === 'mobile' ? '' : 'url(#chalk-effect)'}
+            className="opacity-5"
             style={{ transform: `translate(${radius}px, ${radius}px)` }}
           />
-
-          {[0, 90, 180, 270].map((angle) => (
-            <g key={angle} style={{ transform: `translate(${radius}px, ${radius}px) rotate(${angle}deg)` }}>
-              <path
-                d={`M ${radius - 15} -30 L ${radius} -45 L ${radius + 15} -30`}
-                fill="none"
-                stroke="black"
-                strokeWidth="2"
-                strokeLinecap="round"
-                filter="url(#chalk-effect)"
-                className="opacity-10"
-              />
-            </g>
-          ))}
         </svg>
 
         {pizzas.map((pizza, index) => {
-          // Calculation for correct positioning (12 o'clock for mobile)
-          const angle = viewport === 'mobile' 
-            ? index * -angleStep - 90 
-            : index * angleStep;
-
+          const angle = viewport === 'mobile' ? index * -angleStep - 90 : index * angleStep;
           const isActive = index === activeIndex;
           const currentRotation = angle + parentRotation;
 
@@ -123,6 +101,7 @@ export const PizzaCarousel: React.FC<PizzaCarouselProps> = ({ pizzas, activeInde
                   translateX(${radius}px) 
                   rotate(${-currentRotation}deg)
                   translate(-50%, -50%)
+                  translateZ(0)
                 `,
                 transition: `transform ${transitionDuration} ${easing}`,
                 zIndex: isActive ? 40 : 10,
@@ -141,13 +120,13 @@ export const PizzaCarousel: React.FC<PizzaCarouselProps> = ({ pizzas, activeInde
                       "object-contain pizza-glow animate-spin-slow will-change-transform"
                     )}
                     style={{ 
-                      animationDuration: '60s',
+                      animationDuration: '80s',
                       filter: isActive 
-                        ? 'drop-shadow(0 40px 80px rgba(0,0,0,0.15))' 
-                        : 'drop-shadow(0 10px 20px rgba(0,0,0,0.05))'
+                        ? 'drop-shadow(0 20px 40px rgba(0,0,0,0.12))' 
+                        : 'drop-shadow(0 5px 10px rgba(0,0,0,0.03))'
                     }}
                     unoptimized
-                    priority
+                    priority={isActive}
                   />
                 </div>
               </div>
@@ -157,4 +136,6 @@ export const PizzaCarousel: React.FC<PizzaCarouselProps> = ({ pizzas, activeInde
       </div>
     </div>
   );
-};
+});
+
+PizzaCarousel.displayName = 'PizzaCarousel';

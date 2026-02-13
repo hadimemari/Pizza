@@ -1,7 +1,7 @@
 
 "use client";
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, memo } from 'react';
 import { PIZZAS, CATEGORIES } from '@/app/lib/pizza-data';
 import { PizzaCarousel } from '@/components/PizzaCarousel';
 import { PizzaCard } from '@/components/PizzaCard';
@@ -11,6 +11,50 @@ import { AuthDialog } from '@/components/AuthDialog';
 import { LoadingScreen } from '@/components/LoadingScreen';
 import { Button } from '@/components/ui/button';
 import { ShoppingBag, Menu, User } from 'lucide-react';
+
+// Memoized Category Section for Performance
+const CategorySection = memo(({ 
+  cat, 
+  isActive, 
+  activeIndex, 
+  onPizzaClick, 
+  onOrder 
+}: { 
+  cat: any, 
+  isActive: boolean, 
+  activeIndex: number, 
+  onPizzaClick: (i: number) => void,
+  onOrder: () => void
+}) => {
+  const items = useMemo(() => PIZZAS.filter(item => item.category === cat.id), [cat.id]);
+  
+  return (
+    <div 
+      className="relative h-screen w-full flex flex-col lg:flex-row items-center justify-center pt-24 lg:pt-0"
+      style={{ contentVisibility: 'auto' }}
+    >
+      <div className="w-full h-[40vh] sm:h-[45vh] lg:w-[60%] lg:h-full flex items-center z-10 overflow-visible relative">
+        <PizzaCarousel 
+          pizzas={items} 
+          activeIndex={activeIndex} 
+          onPizzaClick={onPizzaClick} 
+        />
+      </div>
+
+      <div className="w-full flex-1 lg:w-[40%] flex justify-center items-center px-4 sm:px-6 lg:pr-16 z-20">
+        {isActive && (
+          <PizzaCard 
+            pizza={items[activeIndex] || items[0]} 
+            visible={true}
+            onOrder={onOrder}
+          />
+        )}
+      </div>
+    </div>
+  );
+});
+
+CategorySection.displayName = 'CategorySection';
 
 export default function Home() {
   const [activeCategoryId, setActiveCategoryId] = useState("pizzas");
@@ -41,10 +85,6 @@ export default function Home() {
     }
   };
 
-  const handleLoginSuccess = (userName: string) => {
-    setUser(userName);
-  };
-
   const currentCategoryItems = useMemo(() => {
     return PIZZAS.filter(item => item.category === activeCategoryId);
   }, [activeCategoryId]);
@@ -62,13 +102,10 @@ export default function Home() {
 
   return (
     <main className="relative h-screen w-full bg-white overflow-hidden font-lalezar text-foreground select-none">
-      {/* Loading Screen Overlay */}
       {isLoading && <LoadingScreen />}
 
-      {/* Main Content with Transition */}
       <div className={`h-full w-full transition-all duration-1000 ease-in-out ${isLoading ? 'opacity-0 scale-95 blur-sm' : 'opacity-100 scale-100 blur-0'}`}>
-        {/* Header */}
-        <header className="fixed top-0 left-0 w-full px-6 md:px-8 py-4 md:py-6 flex items-center justify-between z-50 bg-white/50 backdrop-blur-sm">
+        <header className="fixed top-0 left-0 w-full px-6 md:px-8 py-4 md:py-6 flex items-center justify-between z-50 bg-white/50 backdrop-blur-sm lg:backdrop-blur-md">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 md:w-10 md:h-10 bg-primary rounded-xl flex items-center justify-center text-white font-black text-lg md:text-xl shadow-lg shadow-primary/20">
               پ
@@ -104,47 +141,28 @@ export default function Home() {
                 </div>
               )}
             </div>
-            <Button variant="ghost" size="icon" className="lg:hidden">
-              <Menu className="w-5 h-5" />
-            </Button>
           </div>
         </header>
 
-        {/* Cinematic Vertical World Container */}
         <div 
           className="relative w-full transition-transform duration-1000 cubic-bezier(0.16, 1, 0.3, 1) will-change-transform"
-          style={{ transform: `translateY(-${categoryIndex * 100}vh)` }}
+          style={{ transform: `translate3d(0, -${categoryIndex * 100}vh, 0)` }}
         >
           {CATEGORIES.map((cat) => (
-            <div 
-              key={cat.id} 
-              className="relative h-screen w-full flex flex-col lg:flex-row items-center justify-center pt-24 lg:pt-0"
-            >
-              <div className="w-full h-[40vh] sm:h-[45vh] lg:w-[60%] lg:h-full flex items-center z-10 overflow-visible relative">
-                <PizzaCarousel 
-                  pizzas={PIZZAS.filter(item => item.category === cat.id)} 
-                  activeIndex={activeIndices[cat.id] || 0} 
-                  onPizzaClick={(i) => {
-                    setActiveIndices(prev => ({ ...prev, [cat.id]: i }));
-                  }} 
-                />
-              </div>
-
-              <div className="w-full flex-1 lg:w-[40%] flex justify-center items-center px-4 sm:px-6 lg:pr-16 z-20">
-                {activeCategoryId === cat.id && (
-                  <PizzaCard 
-                    pizza={PIZZAS.filter(item => item.category === cat.id)[activeIndices[cat.id] || 0]} 
-                    visible={true}
-                    onOrder={handleOrder}
-                  />
-                )}
-              </div>
-            </div>
+            <CategorySection 
+              key={cat.id}
+              cat={cat}
+              isActive={activeCategoryId === cat.id}
+              activeIndex={activeIndices[cat.id] || 0}
+              onPizzaClick={(i) => {
+                setActiveIndices(prev => ({ ...prev, [cat.id]: i }));
+              }}
+              onOrder={handleOrder}
+            />
           ))}
         </div>
 
-        {/* Fixed Bottom Controls */}
-        <div className="fixed bottom-0 lg:bottom-10 left-0 lg:left-10 w-full lg:w-auto z-40 flex flex-col items-center lg:items-start gap-3 bg-white/90 lg:bg-transparent backdrop-blur-md lg:backdrop-blur-none p-4 lg:p-0 border-t border-black/5 lg:border-none">
+        <div className="fixed bottom-0 lg:bottom-10 left-0 lg:left-10 w-full lg:w-auto z-40 flex flex-col items-center lg:items-start gap-3 bg-white/95 lg:bg-transparent backdrop-blur-xl lg:backdrop-blur-none p-4 lg:p-0 border-t border-black/5 lg:border-none shadow-2xl lg:shadow-none">
           <div className="w-full lg:w-auto overflow-x-auto no-scrollbar">
             <PizzaThumbnails 
               pizzas={currentCategoryItems} 
@@ -160,7 +178,6 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Vertical Navigation Dot Indicator - Desktop Only */}
         <div className="fixed right-6 top-1/2 -translate-y-1/2 hidden lg:flex flex-col gap-4 z-40">
           {CATEGORIES.map((cat) => (
             <button
@@ -174,11 +191,10 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Auth Dialog */}
       <AuthDialog 
         isOpen={isAuthOpen} 
         onClose={() => setIsAuthOpen(false)} 
-        onLoginSuccess={handleLoginSuccess}
+        onLoginSuccess={(name) => setUser(name)}
       />
     </main>
   );
