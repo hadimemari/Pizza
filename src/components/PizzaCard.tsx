@@ -1,4 +1,3 @@
-
 "use client";
 
 import React, { useEffect, useState, useRef, useMemo, memo } from 'react';
@@ -65,15 +64,14 @@ export const PizzaCard = memo(({ pizza, visible, onOrder }: { pizza: Pizza; visi
       {/* INTERACTIVE LIVE HALO - Desktop Only */}
       <div 
         className={cn(
-          "absolute inset-0 -z-10 transition-opacity duration-700 pointer-events-none hidden lg:block",
-          isHovered ? "opacity-100" : "opacity-0"
+          "absolute inset-0 -z-10 transition-all duration-300 ease-out pointer-events-none hidden lg:block opacity-0 group-hover/card:opacity-100",
         )}
         style={{
-          transform: `translate3d(${mousePos.x - 200}px, ${mousePos.y - 200}px, 0)`,
-          width: '400px',
-          height: '400px',
-          background: 'radial-gradient(circle, rgba(230, 126, 34, 0.15) 0%, transparent 70%)',
-          filter: 'blur(50px)',
+          transform: `translate3d(${mousePos.x - 150}px, ${mousePos.y - 150}px, 0)`,
+          width: '300px',
+          height: '300px',
+          background: 'radial-gradient(circle, rgba(230, 126, 34, 0.2) 0%, transparent 70%)',
+          filter: 'blur(40px)',
           borderRadius: '50%',
           willChange: 'transform'
         }}
@@ -94,8 +92,8 @@ export const PizzaCard = memo(({ pizza, visible, onOrder }: { pizza: Pizza; visi
         >
           {/* Main Content Side */}
           <div className="w-1/2 h-full flex flex-col p-6 lg:p-8 justify-between">
-            <div className="flex-1 flex flex-col space-y-3 lg:space-y-4 relative z-10 overflow-hidden">
-              <div className="flex flex-col items-center text-center">
+            <div className="flex-1 flex flex-col space-y-3 lg:space-y-4 relative z-10 overflow-hidden text-center">
+              <div className="flex flex-col items-center">
                 <IndustrialLamp isOn={pizza.isAvailable} />
                 
                 <div className="flex items-center gap-2 mb-1">
@@ -108,18 +106,18 @@ export const PizzaCard = memo(({ pizza, visible, onOrder }: { pizza: Pizza; visi
                 </div>
 
                 <h2 className={cn(
-                  "text-2xl lg:text-[2.2rem] font-black uppercase tracking-tighter transition-all duration-1000 leading-tight px-2 text-zinc-900",
+                  "text-2xl lg:text-[2.5rem] font-black uppercase tracking-tighter transition-all duration-1000 leading-tight px-2 text-zinc-900",
                   !pizza.isAvailable && "opacity-40 grayscale blur-[1px]"
                 )}>
                   {pizza.name}
                 </h2>
                 
-                <p className={cn("font-black text-xl lg:text-2xl mt-0.5", pizza.isAvailable ? "text-primary drop-shadow-[0_5px_15px_rgba(230,126,34,0.12)]" : "text-zinc-300")}>
+                <p className={cn("font-black text-xl lg:text-2xl mt-1", pizza.isAvailable ? "text-primary" : "text-zinc-300")}>
                   {pizza.price}
                 </p>
               </div>
 
-              <p className="text-xs lg:text-[13px] leading-relaxed text-center px-4 text-zinc-500 font-medium max-w-[95%] mx-auto line-clamp-3">
+              <p className="text-xs lg:text-[13px] leading-relaxed text-zinc-500 font-medium max-w-[90%] mx-auto line-clamp-3">
                 {pizza.description}
               </p>
 
@@ -131,7 +129,7 @@ export const PizzaCard = memo(({ pizza, visible, onOrder }: { pizza: Pizza; visi
                   <MessageSquare className="w-3 h-3" />
                   <span>
                     نظرات
-                    <span className="mr-2 px-2 py-0.5 rounded-full bg-primary text-white text-[8px] group-hover:scale-110 transition-transform inline-block font-black shadow-lg shadow-primary/30">
+                    <span className="mr-2 px-2 py-0.5 rounded-full bg-primary text-white text-[8px] group-hover:scale-110 transition-transform inline-block font-black">
                       {pizza.reviews.length}
                     </span>
                   </span>

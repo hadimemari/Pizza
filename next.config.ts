@@ -1,8 +1,7 @@
-
 import type {NextConfig} from 'next';
 
 const nextConfig: NextConfig = {
-  output: 'export', // مورد نیاز برای GitHub Pages
+  output: 'export',
   typescript: {
     ignoreBuildErrors: true,
   },
@@ -10,7 +9,7 @@ const nextConfig: NextConfig = {
     ignoreDuringBuilds: true,
   },
   images: {
-    unoptimized: true, // مورد نیاز برای خروجی استاتیک در GitHub Pages
+    unoptimized: true,
     remotePatterns: [
       {
         protocol: 'https',
