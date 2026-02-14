@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState, useRef, useMemo, memo } from 'react';
-import { Pizza } from '@/app/lib/pizza-data';
+import { type MappedProduct as Pizza } from '@/lib/data-mapper';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Leaf, ShoppingCart, Star, MessageSquare, ChevronLeft } from 'lucide-react';

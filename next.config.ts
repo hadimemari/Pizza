@@ -1,39 +1,29 @@
 import type {NextConfig} from 'next';
 
-const isProd = process.env.NODE_ENV === 'production';
-
 const nextConfig: NextConfig = {
-  output: 'export',
-  basePath: isProd ? '/Pizza' : '',
-  assetPrefix: isProd ? '/Pizza/' : '',
+  images: {
+    unoptimized: true,
+  },
   typescript: {
     ignoreBuildErrors: true,
   },
   eslint: {
     ignoreDuringBuilds: true,
   },
-  images: {
-    unoptimized: true,
-    remotePatterns: [
+  // Vercel uses serverless functions automatically
+  // Add security headers
+  async headers() {
+    return [
       {
-        protocol: 'https',
-        hostname: 'placehold.co',
-        port: '',
-        pathname: '/**',
+        source: "/(.*)",
+        headers: [
+          { key: "X-Content-Type-Options", value: "nosniff" },
+          { key: "X-Frame-Options", value: "DENY" },
+          { key: "X-XSS-Protection", value: "1; mode=block" },
+          { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+        ],
       },
-      {
-        protocol: 'https',
-        hostname: 'images.unsplash.com',
-        port: '',
-        pathname: '/**',
-      },
-      {
-        protocol: 'https',
-        hostname: 'picsum.photos',
-        port: '',
-        pathname: '/**',
-      },
-    ],
+    ];
   },
 };
 

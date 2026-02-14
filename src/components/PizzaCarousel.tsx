@@ -3,7 +3,7 @@
 
 import React, { useEffect, useState, memo } from 'react';
 import Image from 'next/image';
-import { Pizza } from '@/app/lib/pizza-data';
+import { type MappedProduct as Pizza } from '@/lib/data-mapper';
 import { cn, assetPath } from '@/lib/utils';
 
 interface PizzaCarouselProps {
