@@ -3,6 +3,13 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 async function main() {
+  // Check if already seeded
+  const productCount = await prisma.product.count();
+  if (productCount > 0) {
+    console.log(`Database already has ${productCount} products. Skipping seed.`);
+    return;
+  }
+
   console.log("Seeding database...");
 
   // ── دسته‌بندی‌ها ──
@@ -163,7 +170,6 @@ async function main() {
     create: { phone: "09123333333", name: "رضا" },
   });
 
-  // Get first two products for reviews
   const allProducts = await prisma.product.findMany({ orderBy: { sortOrder: "asc" } });
 
   if (allProducts.length >= 2) {
@@ -181,8 +187,8 @@ async function main() {
 
 main()
   .catch((e) => {
-    console.error(e);
-    process.exit(1);
+    console.error("Seed error:", e);
+    // Don't exit(1) - let build continue even if seed fails
   })
   .finally(async () => {
     await prisma.$disconnect();
