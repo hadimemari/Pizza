@@ -4,7 +4,7 @@
 import React from 'react';
 import Image from 'next/image';
 import { Pizza } from '@/app/lib/pizza-data';
-import { cn } from '@/lib/utils';
+import { cn, assetPath } from '@/lib/utils';
 
 interface PizzaThumbnailsProps {
   pizzas: Pizza[];
@@ -36,7 +36,7 @@ export const PizzaThumbnails: React.FC<PizzaThumbnailsProps> = ({ pizzas, active
             transform: index === activeIndex ? 'rotate(15deg)' : 'rotate(0)',
           }}>
             <Image
-              src={pizza.image}
+              src={assetPath(pizza.image)}
               alt={pizza.name}
               fill
               className="object-contain"

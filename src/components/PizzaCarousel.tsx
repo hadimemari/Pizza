@@ -4,7 +4,7 @@
 import React, { useEffect, useState, memo } from 'react';
 import Image from 'next/image';
 import { Pizza } from '@/app/lib/pizza-data';
-import { cn } from '@/lib/utils';
+import { cn, assetPath } from '@/lib/utils';
 
 interface PizzaCarouselProps {
   pizzas: Pizza[];
@@ -118,7 +118,7 @@ export const PizzaCarousel = memo(({ pizzas, activeIndex, onPizzaClick }: PizzaC
               }}>
                 <div className="relative" style={{ width: pizzaSize, height: pizzaSize }}>
                   <Image
-                    src={pizza.image}
+                    src={assetPath(pizza.image)}
                     alt={pizza.name}
                     fill
                     className={cn(
