@@ -3,7 +3,6 @@
 import React, { useEffect, useState, useRef, useMemo, memo } from 'react';
 import { Pizza } from '@/app/lib/pizza-data';
 import { cn } from '@/lib/utils';
-import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
 import { Leaf, ShoppingCart, Star, MessageSquare, ChevronLeft } from 'lucide-react';
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -137,13 +136,6 @@ export const PizzaCard = memo(({ pizza, visible, onOrder }: { pizza: Pizza; visi
               </div>
 
               <div className="space-y-4 pt-2">
-                <div className="space-y-1.5">
-                  <div className="flex justify-between text-[8px] font-black text-zinc-400 uppercase tracking-widest">
-                    <span>Intensity</span>
-                    <span className="text-zinc-900">{pizza.cheesiness}%</span>
-                  </div>
-                  <Progress value={pizza.cheesiness} className="h-1 bg-black/[0.05]" />
-                </div>
                 <div className="flex flex-wrap justify-center gap-1.5">
                   {pizza.ingredients.slice(0, 4).map((ing) => (
                     <div key={ing} className="flex items-center gap-1 px-2.5 py-1 rounded-full text-[8px] font-bold bg-black/[0.03] text-zinc-600 border border-black/[0.02]">
