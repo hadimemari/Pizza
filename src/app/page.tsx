@@ -1,56 +1,57 @@
 
 "use client";
 
-import React, { useState, useEffect, useMemo, memo } from 'react';
-import { PIZZAS, CATEGORIES } from '@/app/lib/pizza-data';
+import React, { useState, useEffect, useMemo, useCallback, memo } from 'react';
 import { PizzaCarousel } from '@/components/PizzaCarousel';
 import { PizzaCard } from '@/components/PizzaCard';
 import { PizzaThumbnails } from '@/components/PizzaThumbnails';
 import { CategoryNavigator } from '@/components/CategoryNavigator';
 import { AuthDialog } from '@/components/AuthDialog';
+import { CartSheet } from '@/components/CartSheet';
 import { LoadingScreen } from '@/components/LoadingScreen';
 import { Button } from '@/components/ui/button';
-import { ShoppingBag, User } from 'lucide-react';
+import { ShoppingBag, User, LogOut } from 'lucide-react';
+import { api } from '@/lib/api-client';
+import { mapProduct, mapCategory, type MappedProduct, type MappedCategory } from '@/lib/data-mapper';
 
-// Memoized Category Section for Hybrid Performance
-const CategorySection = memo(({ 
-  cat, 
-  isActive, 
-  activeIndex, 
-  onPizzaClick, 
-  onOrder 
-}: { 
-  cat: any, 
-  isActive: boolean, 
-  activeIndex: number, 
-  onPizzaClick: (i: number) => void,
-  onOrder: () => void
+// Memoized Category Section
+const CategorySection = memo(({
+  cat,
+  items,
+  isActive,
+  activeIndex,
+  onPizzaClick,
+  onOrder
+}: {
+  cat: MappedCategory;
+  items: MappedProduct[];
+  isActive: boolean;
+  activeIndex: number;
+  onPizzaClick: (i: number) => void;
+  onOrder: () => void;
 }) => {
-  const items = useMemo(() => PIZZAS.filter(item => item.category === cat.id), [cat.id]);
-  
   return (
-    <div 
+    <div
       className="relative h-screen w-full flex flex-col lg:flex-row items-center justify-center pt-20 lg:pt-12"
       style={{ contentVisibility: 'auto' }}
     >
-      {/* Background Decorative Element for Desktop */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none hidden lg:block">
         <div className="absolute top-[15%] left-[5%] w-[40%] h-[40%] bg-primary/[0.03] rounded-full blur-[150px] animate-float-bg" />
         <div className="absolute bottom-[10%] right-[5%] w-[40%] h-[40%] bg-accent/[0.03] rounded-full blur-[150px] animate-float-bg" style={{ animationDelay: '-3s' }} />
       </div>
 
       <div className="w-full h-[40vh] sm:h-[45vh] lg:w-[55%] lg:h-full flex items-center z-10 overflow-visible relative lg:pl-12">
-        <PizzaCarousel 
-          pizzas={items} 
-          activeIndex={activeIndex} 
-          onPizzaClick={onPizzaClick} 
+        <PizzaCarousel
+          pizzas={items}
+          activeIndex={activeIndex}
+          onPizzaClick={onPizzaClick}
         />
       </div>
 
       <div className="w-full flex-1 lg:w-[45%] flex justify-center items-center px-4 sm:px-6 lg:pr-24 z-20">
-        {isActive && (
-          <PizzaCard 
-            pizza={items[activeIndex] || items[0]} 
+        {isActive && items[activeIndex] && (
+          <PizzaCard
+            pizza={items[activeIndex]}
             visible={true}
             onOrder={onOrder}
           />
@@ -63,38 +64,95 @@ const CategorySection = memo(({
 CategorySection.displayName = 'CategorySection';
 
 export default function Home() {
-  const [activeCategoryId, setActiveCategoryId] = useState("pizzas");
-  const [activeIndices, setActiveIndices] = useState<Record<string, number>>({
-    pizzas: 0,
-    calzones: 0,
-    sides: 0,
-    beverages: 0
-  });
-  const [cartCount, setCartCount] = useState(0);
+  // Data from API
+  const [products, setProducts] = useState<MappedProduct[]>([]);
+  const [categories, setCategories] = useState<MappedCategory[]>([]);
+
+  // UI state
+  const [activeCategoryId, setActiveCategoryId] = useState("");
+  const [activeIndices, setActiveIndices] = useState<Record<string, number>>({});
   const [isAuthOpen, setIsAuthOpen] = useState(false);
-  const [user, setUser] = useState<string | null>(null);
+  const [isCartOpen, setIsCartOpen] = useState(false);
+  const [cartCount, setCartCount] = useState(0);
+  const [userName, setUserName] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
+  // Fetch initial data
   useEffect(() => {
-    // Cinematic delay for splash screen
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 3500);
-    return () => clearTimeout(timer);
+    const loadData = async () => {
+      const [productsRes, categoriesRes, meRes] = await Promise.all([
+        api.products.list(),
+        api.categories.list(),
+        api.auth.me(),
+      ]);
+
+      if (productsRes.data?.products) {
+        setProducts(productsRes.data.products.map(mapProduct));
+      }
+
+      if (categoriesRes.data?.categories) {
+        const mapped = categoriesRes.data.categories.map(mapCategory);
+        setCategories(mapped);
+        if (mapped.length > 0) {
+          setActiveCategoryId(mapped[0].id);
+          const indices: Record<string, number> = {};
+          mapped.forEach((c) => { indices[c.id] = 0; });
+          setActiveIndices(indices);
+        }
+      }
+
+      if (meRes.data?.user) {
+        setUserName(meRes.data.user.name);
+        // Load cart count
+        const cartRes = await api.cart.get();
+        if (cartRes.data?.items) {
+          setCartCount(cartRes.data.items.reduce((s, i) => s + i.quantity, 0));
+        }
+      }
+
+      // Loading screen delay
+      setTimeout(() => setIsLoading(false), 2000);
+    };
+
+    loadData();
   }, []);
 
-  const handleOrder = () => {
-    setCartCount(prev => prev + 1);
-    if (!user) {
-      setTimeout(() => {
-        setIsAuthOpen(true);
-      }, 500);
+  const handleOrder = useCallback(async () => {
+    if (!userName) {
+      setIsAuthOpen(true);
+      return;
     }
-  };
+
+    // Get current active product
+    const currentItems = products.filter(p => p.category === activeCategoryId);
+    const activeIdx = activeIndices[activeCategoryId] || 0;
+    const product = currentItems[activeIdx];
+
+    if (product) {
+      const { error } = await api.cart.add(product.id);
+      if (!error) {
+        setCartCount(prev => prev + 1);
+      }
+    }
+  }, [userName, products, activeCategoryId, activeIndices]);
+
+  const handleLoginSuccess = useCallback(async (name: string) => {
+    setUserName(name);
+    const cartRes = await api.cart.get();
+    if (cartRes.data?.items) {
+      setCartCount(cartRes.data.items.reduce((s, i) => s + i.quantity, 0));
+    }
+  }, []);
+
+  const handleLogout = useCallback(async () => {
+    await api.auth.logout();
+    setUserName(null);
+    setCartCount(0);
+  }, []);
 
   const currentCategoryItems = useMemo(() => {
-    return PIZZAS.filter(item => item.category === activeCategoryId);
-  }, [activeCategoryId]);
+    return products.filter(item => item.category === activeCategoryId);
+  }, [products, activeCategoryId]);
 
   const activeIndex = activeIndices[activeCategoryId] || 0;
 
@@ -105,7 +163,7 @@ export default function Home() {
     }));
   };
 
-  const categoryIndex = CATEGORIES.findIndex(cat => cat.id === activeCategoryId);
+  const categoryIndex = categories.findIndex(cat => cat.id === activeCategoryId);
 
   return (
     <main className="relative h-screen w-full bg-white overflow-hidden font-lalezar text-foreground select-none">
@@ -126,23 +184,33 @@ export default function Home() {
           </div>
 
           <div className="flex items-center gap-3 md:gap-6">
-            {user ? (
-              <div className="flex items-center gap-3 bg-black/5 px-6 py-2.5 rounded-full border border-black/5">
-                <User className="w-5 h-5 text-primary" />
-                <span className="text-sm font-black">{user}</span>
+            {userName ? (
+              <div className="flex items-center gap-2">
+                <div className="flex items-center gap-3 bg-black/5 px-5 py-2 rounded-full border border-black/5">
+                  <User className="w-4 h-4 text-primary" />
+                  <span className="text-sm font-black">{userName}</span>
+                </div>
+                <button onClick={handleLogout} className="p-2 hover:bg-black/5 rounded-full transition-colors" title="خروج">
+                  <LogOut className="w-4 h-4 text-muted-foreground" />
+                </button>
               </div>
             ) : (
-              <Button 
+              <Button
                 onClick={() => setIsAuthOpen(true)}
-                variant="ghost" 
+                variant="ghost"
                 className="rounded-full text-sm font-black hover:bg-black/5 px-6"
               >
                 ورود / ثبت‌نام
               </Button>
             )}
-            
+
             <div className="relative">
-              <Button variant="outline" size="icon" className="rounded-full border-black/5 bg-white shadow-xl w-10 h-10 md:w-12 md:h-12 hover:scale-110 transition-transform">
+              <Button
+                variant="outline"
+                size="icon"
+                className="rounded-full border-black/5 bg-white shadow-xl w-10 h-10 md:w-12 md:h-12 hover:scale-110 transition-transform"
+                onClick={() => userName ? setIsCartOpen(true) : setIsAuthOpen(true)}
+              >
                 <ShoppingBag className="w-5 h-5 md:w-6 md:h-6" />
               </Button>
               {cartCount > 0 && (
@@ -155,14 +223,15 @@ export default function Home() {
         </header>
 
         {/* Cinematic Vertical Scroller */}
-        <div 
+        <div
           className="relative w-full transition-transform duration-[1200ms] cubic-bezier(0.16, 1, 0.3, 1) will-change-transform gpu-accelerated"
           style={{ transform: `translate3d(0, -${categoryIndex * 100}vh, 0)` }}
         >
-          {CATEGORIES.map((cat) => (
-            <CategorySection 
+          {categories.map((cat) => (
+            <CategorySection
               key={cat.id}
               cat={cat}
+              items={products.filter(p => p.category === cat.id)}
               isActive={activeCategoryId === cat.id}
               activeIndex={activeIndices[cat.id] || 0}
               onPizzaClick={(i) => {
@@ -176,15 +245,16 @@ export default function Home() {
         {/* Global Nav Elements */}
         <div className="fixed bottom-0 lg:bottom-12 left-0 lg:left-12 w-full lg:w-auto z-40 flex flex-col items-center lg:items-start gap-5 bg-white/95 lg:bg-transparent backdrop-blur-2xl lg:backdrop-blur-none p-5 lg:p-0 border-t border-black/5 lg:border-none shadow-2xl lg:shadow-none">
           <div className="w-full lg:w-auto overflow-x-auto no-scrollbar">
-            <PizzaThumbnails 
-              pizzas={currentCategoryItems} 
-              activeIndex={activeIndex} 
-              onSelect={handleIndexChange} 
+            <PizzaThumbnails
+              pizzas={currentCategoryItems}
+              activeIndex={activeIndex}
+              onSelect={handleIndexChange}
             />
           </div>
           <div className="lg:ml-3">
-            <CategoryNavigator 
-              activeId={activeCategoryId} 
+            <CategoryNavigator
+              categories={categories}
+              activeId={activeCategoryId}
               onCategoryChange={(id) => setActiveCategoryId(id)}
             />
           </div>
@@ -192,7 +262,7 @@ export default function Home() {
 
         {/* Vertical Pagination Indicator (Desktop Only) */}
         <div className="fixed right-10 top-1/2 -translate-y-1/2 hidden lg:flex flex-col gap-6 z-40">
-          {CATEGORIES.map((cat) => (
+          {categories.map((cat) => (
             <button
               key={cat.id}
               onClick={() => setActiveCategoryId(cat.id)}
@@ -204,10 +274,16 @@ export default function Home() {
         </div>
       </div>
 
-      <AuthDialog 
-        isOpen={isAuthOpen} 
-        onClose={() => setIsAuthOpen(false)} 
-        onLoginSuccess={(name) => setUser(name)}
+      <AuthDialog
+        isOpen={isAuthOpen}
+        onClose={() => setIsAuthOpen(false)}
+        onLoginSuccess={handleLoginSuccess}
+      />
+
+      <CartSheet
+        isOpen={isCartOpen}
+        onClose={() => setIsCartOpen(false)}
+        onCartUpdate={setCartCount}
       />
     </main>
   );
