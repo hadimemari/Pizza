@@ -9,7 +9,6 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   title: 'پیتزا موشن | تجربه پیتزای ممتاز',
   description: 'منوی پیتزاهای لذیذ با انیمیشن‌های روان و مواد اولیه با کیفیت.',
-  manifest: '/manifest.json',
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
