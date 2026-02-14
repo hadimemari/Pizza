@@ -1,7 +1,181 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/server/db";
 
+const CREATE_TABLES_SQL = `
+-- Users
+CREATE TABLE IF NOT EXISTS "User" (
+  "id" TEXT NOT NULL,
+  "phone" TEXT NOT NULL,
+  "name" TEXT,
+  "role" TEXT NOT NULL DEFAULT 'CUSTOMER',
+  "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT "User_pkey" PRIMARY KEY ("id")
+);
+CREATE UNIQUE INDEX IF NOT EXISTS "User_phone_key" ON "User"("phone");
+
+-- OTP
+CREATE TABLE IF NOT EXISTS "OtpCode" (
+  "id" TEXT NOT NULL,
+  "phone" TEXT NOT NULL,
+  "code" TEXT NOT NULL,
+  "expiresAt" TIMESTAMP(3) NOT NULL,
+  "used" BOOLEAN NOT NULL DEFAULT false,
+  "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "userId" TEXT,
+  CONSTRAINT "OtpCode_pkey" PRIMARY KEY ("id")
+);
+CREATE INDEX IF NOT EXISTS "OtpCode_phone_code_idx" ON "OtpCode"("phone", "code");
+
+-- Category
+CREATE TABLE IF NOT EXISTS "Category" (
+  "id" TEXT NOT NULL,
+  "name" TEXT NOT NULL,
+  "slug" TEXT NOT NULL,
+  "icon" TEXT NOT NULL,
+  "sortOrder" INTEGER NOT NULL DEFAULT 0,
+  CONSTRAINT "Category_pkey" PRIMARY KEY ("id")
+);
+CREATE UNIQUE INDEX IF NOT EXISTS "Category_slug_key" ON "Category"("slug");
+
+-- Product
+CREATE TABLE IF NOT EXISTS "Product" (
+  "id" TEXT NOT NULL,
+  "name" TEXT NOT NULL,
+  "price" INTEGER NOT NULL,
+  "description" TEXT NOT NULL,
+  "image" TEXT NOT NULL,
+  "ingredients" TEXT NOT NULL,
+  "isAvailable" BOOLEAN NOT NULL DEFAULT true,
+  "sortOrder" INTEGER NOT NULL DEFAULT 0,
+  "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "categoryId" TEXT NOT NULL,
+  CONSTRAINT "Product_pkey" PRIMARY KEY ("id")
+);
+CREATE INDEX IF NOT EXISTS "Product_categoryId_idx" ON "Product"("categoryId");
+
+-- Review
+CREATE TABLE IF NOT EXISTS "Review" (
+  "id" TEXT NOT NULL,
+  "rating" INTEGER NOT NULL,
+  "comment" TEXT NOT NULL,
+  "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "userId" TEXT NOT NULL,
+  "productId" TEXT NOT NULL,
+  CONSTRAINT "Review_pkey" PRIMARY KEY ("id")
+);
+CREATE INDEX IF NOT EXISTS "Review_productId_idx" ON "Review"("productId");
+
+-- Cart
+CREATE TABLE IF NOT EXISTS "Cart" (
+  "id" TEXT NOT NULL,
+  "userId" TEXT NOT NULL,
+  "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT "Cart_pkey" PRIMARY KEY ("id")
+);
+CREATE UNIQUE INDEX IF NOT EXISTS "Cart_userId_key" ON "Cart"("userId");
+
+-- CartItem
+CREATE TABLE IF NOT EXISTS "CartItem" (
+  "id" TEXT NOT NULL,
+  "quantity" INTEGER NOT NULL DEFAULT 1,
+  "cartId" TEXT NOT NULL,
+  "productId" TEXT NOT NULL,
+  CONSTRAINT "CartItem_pkey" PRIMARY KEY ("id")
+);
+CREATE UNIQUE INDEX IF NOT EXISTS "CartItem_cartId_productId_key" ON "CartItem"("cartId", "productId");
+
+-- Order
+CREATE TABLE IF NOT EXISTS "Order" (
+  "id" TEXT NOT NULL,
+  "orderNumber" INTEGER NOT NULL,
+  "status" TEXT NOT NULL DEFAULT 'PENDING',
+  "totalAmount" INTEGER NOT NULL,
+  "note" TEXT,
+  "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "userId" TEXT NOT NULL,
+  CONSTRAINT "Order_pkey" PRIMARY KEY ("id")
+);
+CREATE UNIQUE INDEX IF NOT EXISTS "Order_orderNumber_key" ON "Order"("orderNumber");
+CREATE INDEX IF NOT EXISTS "Order_userId_idx" ON "Order"("userId");
+CREATE INDEX IF NOT EXISTS "Order_status_idx" ON "Order"("status");
+
+-- OrderItem
+CREATE TABLE IF NOT EXISTS "OrderItem" (
+  "id" TEXT NOT NULL,
+  "quantity" INTEGER NOT NULL,
+  "unitPrice" INTEGER NOT NULL,
+  "orderId" TEXT NOT NULL,
+  "productId" TEXT NOT NULL,
+  CONSTRAINT "OrderItem_pkey" PRIMARY KEY ("id")
+);
+
+-- Payment
+CREATE TABLE IF NOT EXISTS "Payment" (
+  "id" TEXT NOT NULL,
+  "amount" INTEGER NOT NULL,
+  "status" TEXT NOT NULL DEFAULT 'PENDING',
+  "gateway" TEXT,
+  "transactionId" TEXT,
+  "refId" TEXT,
+  "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "orderId" TEXT NOT NULL,
+  CONSTRAINT "Payment_pkey" PRIMARY KEY ("id")
+);
+CREATE UNIQUE INDEX IF NOT EXISTS "Payment_orderId_key" ON "Payment"("orderId");
+`;
+
+const ADD_FOREIGN_KEYS_SQL = `
+DO $$ BEGIN
+  ALTER TABLE "OtpCode" ADD CONSTRAINT "OtpCode_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+DO $$ BEGIN
+  ALTER TABLE "Product" ADD CONSTRAINT "Product_categoryId_fkey" FOREIGN KEY ("categoryId") REFERENCES "Category"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+DO $$ BEGIN
+  ALTER TABLE "Review" ADD CONSTRAINT "Review_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+DO $$ BEGIN
+  ALTER TABLE "Review" ADD CONSTRAINT "Review_productId_fkey" FOREIGN KEY ("productId") REFERENCES "Product"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+DO $$ BEGIN
+  ALTER TABLE "Cart" ADD CONSTRAINT "Cart_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+DO $$ BEGIN
+  ALTER TABLE "CartItem" ADD CONSTRAINT "CartItem_cartId_fkey" FOREIGN KEY ("cartId") REFERENCES "Cart"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+DO $$ BEGIN
+  ALTER TABLE "CartItem" ADD CONSTRAINT "CartItem_productId_fkey" FOREIGN KEY ("productId") REFERENCES "Product"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+DO $$ BEGIN
+  ALTER TABLE "Order" ADD CONSTRAINT "Order_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+DO $$ BEGIN
+  ALTER TABLE "OrderItem" ADD CONSTRAINT "OrderItem_orderId_fkey" FOREIGN KEY ("orderId") REFERENCES "Order"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+DO $$ BEGIN
+  ALTER TABLE "OrderItem" ADD CONSTRAINT "OrderItem_productId_fkey" FOREIGN KEY ("productId") REFERENCES "Product"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+DO $$ BEGIN
+  ALTER TABLE "Payment" ADD CONSTRAINT "Payment_orderId_fkey" FOREIGN KEY ("orderId") REFERENCES "Order"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+`;
+
 // One-time database setup endpoint
+// Creates tables + seeds data
 // Protected by NEXTAUTH_SECRET as setup key
 export async function POST(req: NextRequest) {
   const body = await req.json();
@@ -12,16 +186,20 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    // Check if already seeded
+    // Step 1: Create tables
+    await db.$executeRawUnsafe(CREATE_TABLES_SQL);
+    await db.$executeRawUnsafe(ADD_FOREIGN_KEYS_SQL);
+
+    // Step 2: Check if already seeded
     const existingProducts = await db.product.count();
     if (existingProducts > 0) {
       return NextResponse.json({
-        message: "Database already seeded",
+        message: "Tables created, database already seeded",
         products: existingProducts,
       });
     }
 
-    // Create categories
+    // Step 3: Seed categories
     const pizzas = await db.category.upsert({
       where: { slug: "pizzas" },
       update: {},
@@ -46,7 +224,7 @@ export async function POST(req: NextRequest) {
       create: { name: "نوشیدنی", slug: "beverages", icon: "CupSoda", sortOrder: 3 },
     });
 
-    // Create products
+    // Step 4: Seed products
     const productsData = [
       {
         name: "مارگاریتا کلاسیک",
@@ -149,7 +327,7 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    // Create admin user
+    // Step 5: Seed users
     await db.user.upsert({
       where: { phone: "09120000000" },
       update: {},
@@ -160,7 +338,6 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    // Create sample users with reviews
     const user1 = await db.user.upsert({
       where: { phone: "09121111111" },
       update: {},
@@ -179,6 +356,7 @@ export async function POST(req: NextRequest) {
       create: { phone: "09123333333", name: "رضا" },
     });
 
+    // Step 6: Seed reviews
     const allProducts = await db.product.findMany({ orderBy: { sortOrder: "asc" } });
 
     if (allProducts.length >= 2) {
@@ -192,7 +370,7 @@ export async function POST(req: NextRequest) {
     }
 
     return NextResponse.json({
-      message: "Database seeded successfully!",
+      message: "Database setup complete! Tables created and data seeded.",
       categories: 4,
       products: productsData.length,
       users: 4,
