@@ -27,41 +27,72 @@ export const PizzaCarousel = memo(({ pizzas, activeIndex, onPizzaClick }: PizzaC
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Adaptive values based on viewport for maximum performance/quality balance
-  const radius = viewport === 'mobile' ? 190 : viewport === 'tablet' ? 550 : 850;
-  const pizzaSize = viewport === 'mobile' ? 140 : viewport === 'tablet' ? 350 : 520;
-  
+  // ─── Mobile: Clean single-item display (no circular carousel) ───
+  if (viewport === 'mobile') {
+    return (
+      <div className="relative w-full h-full flex items-center justify-center select-none">
+        {pizzas.map((pizza, index) => {
+          const isActive = index === activeIndex;
+          return (
+            <div
+              key={pizza.id}
+              className="absolute inset-0 flex items-center justify-center"
+              style={{
+                opacity: isActive ? 1 : 0,
+                transform: `scale(${isActive ? 1 : 0.85})`,
+                transition: 'opacity 400ms ease-out, transform 400ms ease-out',
+                pointerEvents: isActive ? 'auto' : 'none',
+              }}
+            >
+              <div className="relative" style={{ width: 195, height: 195 }}>
+                <Image
+                  src={assetPath(pizza.image)}
+                  alt={pizza.name}
+                  fill
+                  className="object-contain"
+                  style={{
+                    filter: 'drop-shadow(0 10px 25px rgba(0,0,0,0.1))',
+                  }}
+                  unoptimized
+                  priority={isActive}
+                />
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    );
+  }
+
+  // ─── Desktop & Tablet: Circular carousel ───
+  const radius = viewport === 'tablet' ? 550 : 850;
+  const pizzaSize = viewport === 'tablet' ? 350 : 520;
+
   const total = pizzas.length;
   const angleStep = total > 0 ? 360 / total : 0;
-  const transitionDuration = viewport === 'mobile' ? "600ms" : "1000ms";
+  const transitionDuration = "1000ms";
   const easing = "cubic-bezier(0.16, 1, 0.3, 1)";
-  
-  // High-performance rotation logic
-  // For mobile, we flip the direction to feel more natural with touch, for desktop we keep the cinematic rail rotation
-  const parentRotation = viewport === 'mobile' 
-    ? activeIndex * angleStep 
-    : activeIndex * -angleStep;
+
+  const parentRotation = activeIndex * -angleStep;
 
   const getCenterStyles = () => {
-    if (viewport === 'mobile') return { left: '50%', top: '55%', transform: 'translateX(-50%) translate3d(0,0,0)' };
     if (viewport === 'tablet') return { left: '50%', top: '-100px', transform: 'translateX(-50%) translate3d(0,0,0)' };
     return { left: '-400px', top: '50%', transform: 'translateY(-50%) translate3d(0,0,0)' };
   };
 
   return (
     <div className="relative w-full h-full flex items-center justify-center lg:justify-start overflow-visible select-none gpu-accelerated">
-      <div 
+      <div
         className="absolute w-1 h-1 bg-transparent will-change-transform"
         style={getCenterStyles()}
       >
-        {/* SVG Rail - High Quality on Desktop only to save mobile battery/performance */}
-        <svg 
-          className="absolute pointer-events-none overflow-visible" 
-          width={radius * 2} 
-          height={radius * 2} 
-          style={{ 
-            left: 0, 
-            top: 0, 
+        <svg
+          className="absolute pointer-events-none overflow-visible"
+          width={radius * 2}
+          height={radius * 2}
+          style={{
+            left: 0,
+            top: 0,
             transform: 'translate(-50%, -50%)',
             zIndex: 0
           }}
@@ -91,8 +122,7 @@ export const PizzaCarousel = memo(({ pizzas, activeIndex, onPizzaClick }: PizzaC
         </svg>
 
         {pizzas.map((pizza, index) => {
-          // Fixed angle logic for small collections (like Salads)
-          const angle = viewport === 'mobile' ? index * -angleStep - 90 : index * angleStep;
+          const angle = index * angleStep;
           const isActive = index === activeIndex;
           const currentRotation = angle + parentRotation;
 
@@ -103,8 +133,8 @@ export const PizzaCarousel = memo(({ pizzas, activeIndex, onPizzaClick }: PizzaC
               className="absolute top-0 left-0 cursor-pointer will-change-transform"
               style={{
                 transform: `
-                  rotate(${currentRotation}deg) 
-                  translateX(${radius}px) 
+                  rotate(${currentRotation}deg)
+                  translateX(${radius}px)
                   rotate(${-currentRotation}deg)
                   translate(-50%, -50%)
                   translate3d(0, 0, 0)
@@ -123,13 +153,12 @@ export const PizzaCarousel = memo(({ pizzas, activeIndex, onPizzaClick }: PizzaC
                     alt={pizza.name}
                     fill
                     className={cn(
-                      "object-contain pizza-glow will-change-transform",
-                      viewport !== 'mobile' && "animate-spin-slow"
+                      "object-contain pizza-glow animate-spin-slow will-change-transform"
                     )}
-                    style={{ 
+                    style={{
                       animationDuration: '80s',
-                      filter: isActive 
-                        ? 'drop-shadow(0 20px 40px rgba(0,0,0,0.12))' 
+                      filter: isActive
+                        ? 'drop-shadow(0 20px 40px rgba(0,0,0,0.12))'
                         : 'drop-shadow(0 5px 10px rgba(0,0,0,0.03))'
                     }}
                     unoptimized

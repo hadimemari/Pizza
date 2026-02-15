@@ -32,7 +32,7 @@ const CategorySection = memo(({
 }) => {
   return (
     <div
-      className="relative h-screen w-full flex flex-col lg:flex-row items-center justify-center pt-16 sm:pt-20 lg:pt-12 pb-20 sm:pb-24 lg:pb-0"
+      className="relative h-screen w-full flex flex-col lg:flex-row items-center lg:justify-center pt-14 sm:pt-20 lg:pt-12 pb-16 sm:pb-24 lg:pb-0"
       style={{ contentVisibility: 'auto' }}
     >
       <div className="absolute inset-0 overflow-hidden pointer-events-none hidden lg:block">
@@ -40,7 +40,7 @@ const CategorySection = memo(({
         <div className="absolute bottom-[10%] right-[5%] w-[40%] h-[40%] bg-accent/[0.03] rounded-full blur-[150px] animate-float-bg" style={{ animationDelay: '-3s' }} />
       </div>
 
-      <div className="w-full h-[30vh] sm:h-[45vh] lg:w-[55%] lg:h-full flex items-center z-10 overflow-visible relative lg:pl-12">
+      <div className="w-full h-[28vh] sm:h-[45vh] lg:w-[55%] lg:h-full flex items-center z-10 overflow-hidden sm:overflow-visible relative lg:pl-12">
         <PizzaCarousel
           pizzas={items}
           activeIndex={activeIndex}
@@ -48,7 +48,7 @@ const CategorySection = memo(({
         />
       </div>
 
-      <div className="w-full flex-1 lg:w-[45%] flex justify-center items-start sm:items-center px-4 pr-16 sm:pr-6 sm:px-6 lg:pr-24 z-20">
+      <div className="w-full flex-1 lg:w-[45%] flex justify-center items-start sm:items-center px-4 sm:px-6 lg:pr-24 z-20 overflow-y-auto sm:overflow-visible">
         {isActive && items[activeIndex] && (
           <PizzaCard
             pizza={items[activeIndex]}

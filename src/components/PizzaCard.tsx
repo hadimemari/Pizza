@@ -54,14 +54,15 @@ export const PizzaCard = memo(({ pizza, visible, onOrder }: { pizza: Pizza; visi
   }, [pizza.reviews]);
 
   return (
-    <div 
+    <div
       className="relative group/card"
+      dir="rtl"
       onMouseMove={handleMouseMove}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
       {/* INTERACTIVE LIVE HALO - Desktop Only */}
-      <div 
+      <div
         className={cn(
           "absolute inset-0 -z-10 transition-all duration-300 ease-out pointer-events-none hidden lg:block opacity-0 group-hover/card:opacity-100",
         )}
@@ -76,17 +77,20 @@ export const PizzaCard = memo(({ pizza, visible, onOrder }: { pizza: Pizza; visi
         }}
       />
 
-      <div 
+      <div
         ref={cardRef}
         className={cn(
-          "rounded-[2rem] sm:rounded-[3rem] w-full max-w-[85vw] sm:max-w-[420px] lg:max-w-[440px] h-auto max-h-[52vh] sm:h-[680px] sm:max-h-none lg:h-[720px] flex flex-col overflow-hidden relative bg-white/80 sm:bg-white/40 backdrop-blur-xl sm:backdrop-blur-3xl border border-white/20 shadow-[0_20px_60px_rgba(0,0,0,0.03)] transition-all duration-1000 will-change-transform z-10",
+          "rounded-[2rem] sm:rounded-[3rem] w-full max-w-[78vw] sm:max-w-[420px] lg:max-w-[440px] flex flex-col overflow-hidden relative border border-white/20 transition-all duration-1000 z-10",
+          "h-auto sm:h-[680px] lg:h-[720px]",
+          "bg-white/90 sm:bg-white/40 sm:backdrop-blur-3xl",
+          "shadow-[0_8px_30px_rgba(0,0,0,0.06)] sm:shadow-[0_20px_60px_rgba(0,0,0,0.03)]",
           !visible ? "opacity-0 scale-95" : "opacity-100 scale-100"
         )}
       >
-        <div 
+        <div
           className={cn(
-            "flex w-[200%] h-full transition-transform duration-1000 cubic-bezier(0.16, 1, 0.3, 1) will-change-transform",
-            showReviews ? "-translate-x-1/2" : "translate-x-0"
+            "flex w-[200%] h-full transition-transform duration-1000 cubic-bezier(0.16, 1, 0.3, 1)",
+            showReviews ? "translate-x-1/2" : "translate-x-0"
           )}
         >
           {/* Main Content Side */}
@@ -97,7 +101,7 @@ export const PizzaCard = memo(({ pizza, visible, onOrder }: { pizza: Pizza; visi
                   <IndustrialLamp isOn={pizza.isAvailable} />
                 </div>
 
-                <div className="flex items-center gap-2 mb-0.5 sm:mb-1">
+                <div className="flex items-center gap-2 mb-0.5 sm:mb-1" dir="ltr">
                   <div className="flex text-primary">
                     {[...Array(5)].map((_, i) => (
                       <Star key={i} className={`w-2.5 h-2.5 sm:w-3 sm:h-3 ${i < averageRating ? 'fill-current' : 'text-zinc-200'}`} />
@@ -107,18 +111,21 @@ export const PizzaCard = memo(({ pizza, visible, onOrder }: { pizza: Pizza; visi
                 </div>
 
                 <h2 className={cn(
-                  "text-lg sm:text-2xl lg:text-[2.5rem] font-black uppercase tracking-tighter transition-all duration-1000 leading-tight px-2 text-zinc-900",
+                  "text-xl sm:text-2xl lg:text-[2.5rem] font-black tracking-tight transition-all duration-1000 leading-tight px-2 text-zinc-900",
                   !pizza.isAvailable && "opacity-40 grayscale blur-[1px]"
                 )}>
                   {pizza.name}
                 </h2>
 
-                <p className={cn("font-black text-base sm:text-xl lg:text-2xl mt-0.5 sm:mt-1", pizza.isAvailable ? "text-primary" : "text-zinc-300")}>
+                <p className={cn(
+                  "font-black text-lg sm:text-xl lg:text-2xl mt-0.5 sm:mt-1",
+                  pizza.isAvailable ? "text-primary" : "text-zinc-300"
+                )} dir="rtl">
                   {pizza.price}
                 </p>
               </div>
 
-              <p className="text-[10px] sm:text-xs lg:text-[13px] leading-relaxed text-zinc-500 font-medium max-w-[90%] mx-auto line-clamp-2 sm:line-clamp-3">
+              <p className="text-[11px] sm:text-xs lg:text-[13px] leading-relaxed text-zinc-500 font-medium max-w-[90%] mx-auto line-clamp-2 sm:line-clamp-3 text-center" dir="rtl">
                 {pizza.description}
               </p>
 
@@ -128,9 +135,9 @@ export const PizzaCard = memo(({ pizza, visible, onOrder }: { pizza: Pizza; visi
                   className="flex items-center gap-1.5 sm:gap-2 bg-black/[0.03] px-3 sm:px-5 py-1 sm:py-1.5 rounded-full text-[9px] sm:text-[10px] font-bold text-zinc-900 hover:bg-primary/10 hover:text-primary transition-all group w-fit border border-black/[0.03]"
                 >
                   <MessageSquare className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
-                  <span>
+                  <span className="flex items-center gap-1">
                     نظرات
-                    <span className="mr-1.5 sm:mr-2 px-1.5 sm:px-2 py-0.5 rounded-full bg-primary text-white text-[7px] sm:text-[8px] group-hover:scale-110 transition-transform inline-block font-black">
+                    <span className="px-1.5 sm:px-2 py-0.5 rounded-full bg-primary text-white text-[7px] sm:text-[8px] group-hover:scale-110 transition-transform inline-block font-black">
                       {pizza.reviews.length}
                     </span>
                   </span>
@@ -154,46 +161,46 @@ export const PizzaCard = memo(({ pizza, visible, onOrder }: { pizza: Pizza; visi
                 onClick={onOrder}
                 disabled={!pizza.isAvailable}
                 className={cn(
-                  "w-full h-10 sm:h-12 lg:h-14 rounded-[1.5rem] sm:rounded-[2rem] text-white font-black text-sm sm:text-base transition-all border-none shadow-lg relative overflow-hidden group/btn",
+                  "w-full h-11 sm:h-12 lg:h-14 rounded-[1.5rem] sm:rounded-[2rem] text-white font-black text-sm sm:text-base transition-all border-none shadow-lg relative overflow-hidden group/btn",
                   pizza.isAvailable
                     ? "bg-zinc-900 hover:bg-primary hover:scale-[1.01] active:scale-95"
                     : "bg-zinc-200 text-zinc-400"
                 )}
               >
                 <div className="absolute inset-0 bg-white/10 translate-y-full group-hover/btn:translate-y-0 transition-transform duration-500" />
-                <ShoppingCart className="mr-2 w-4 h-4 sm:w-5 sm:h-5 relative z-10" />
+                <ShoppingCart className="ml-2 w-4 h-4 sm:w-5 sm:h-5 relative z-10" />
                 <span className="relative z-10">{pizza.isAvailable ? "سفارش سریع" : "فعلاً ناموجود"}</span>
               </Button>
             </div>
           </div>
 
           {/* Reviews Side */}
-          <div className="w-1/2 h-full flex flex-col p-8 bg-white/70 backdrop-blur-3xl">
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="text-xl font-black text-zinc-900">نظرات مشتریان</h3>
-              <button 
-                onClick={(e) => { e.stopPropagation(); setShowReviews(false); }} 
+          <div className="w-1/2 h-full flex flex-col p-5 sm:p-8 bg-white/70 sm:backdrop-blur-3xl">
+            <div className="flex items-center justify-between mb-4 sm:mb-6">
+              <h3 className="text-lg sm:text-xl font-black text-zinc-900">نظرات مشتریان</h3>
+              <button
+                onClick={(e) => { e.stopPropagation(); setShowReviews(false); }}
                 className="w-8 h-8 flex items-center justify-center bg-black/[0.03] text-zinc-900 rounded-full hover:bg-primary hover:text-white transition-all border border-black/[0.03] group"
               >
-                <ChevronLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
+                <ChevronLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform rotate-180" />
               </button>
             </div>
-            
-            <ScrollArea className="flex-1 pr-2">
+
+            <ScrollArea className="flex-1 pl-2">
               <div className="space-y-3">
                 {pizza.reviews.length > 0 ? (
                   pizza.reviews.map((r) => (
-                    <div key={r.id} className="p-4 bg-white/50 rounded-[1.5rem] border border-black/[0.03] shadow-sm transition-all hover:bg-white">
+                    <div key={r.id} className="p-3 sm:p-4 bg-white/50 rounded-[1.5rem] border border-black/[0.03] shadow-sm transition-all hover:bg-white">
                       <div className="flex justify-between items-center mb-1.5">
                         <span className="font-black text-xs text-zinc-900">{r.userName}</span>
-                        <div className="flex text-primary">
+                        <div className="flex text-primary" dir="ltr">
                           {[...Array(r.rating)].map((_, i) => (
                             <Star key={i} className="w-2.5 h-2.5 fill-current" />
                           ))}
                         </div>
                       </div>
                       <p className="text-[11px] text-zinc-500 leading-relaxed font-medium">{r.comment}</p>
-                      <span className="text-[8px] text-zinc-400 mt-2 block font-bold">{r.date}</span>
+                      <span className="text-[8px] text-zinc-400 mt-2 block font-bold" dir="ltr">{r.date}</span>
                     </div>
                   ))
                 ) : (

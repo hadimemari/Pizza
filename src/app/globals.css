@@ -38,6 +38,7 @@
     font-family: 'Vazirmatn', sans-serif;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 }
 
@@ -98,15 +99,17 @@
 /* Optimization Classes for Hybrid Rendering */
 .gpu-accelerated {
   transform: translate3d(0, 0, 0);
+  -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
   perspective: 1000px;
   will-change: transform;
 }
 
-/* Mobile Performance Optimizations */
+/* ─── Mobile Performance & Cross-Browser ─── */
 @media (max-width: 767px) {
+  /* Kill heavy desktop-only effects */
   .pizza-glow {
-    filter: drop-shadow(0 0 15px rgba(230, 126, 34, 0.06));
+    filter: none;
     will-change: auto;
   }
 
@@ -116,5 +119,35 @@
 
   .gpu-accelerated {
     perspective: none;
+    will-change: auto;
+  }
+
+  /* Fast taps on all interactive elements */
+  button, a, [role="button"] {
+    touch-action: manipulation;
+    -webkit-touch-callout: none;
+  }
+
+  /* Contain layout thrashing */
+  .group\/card {
+    contain: layout style;
+  }
+
+  /* Reduce backdrop-blur for Safari/WebKit performance */
+  .backdrop-blur-xl {
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+  }
+
+  .backdrop-blur-3xl {
+    -webkit-backdrop-filter: blur(16px);
+    backdrop-filter: blur(16px);
+  }
+}
+
+/* Safari-specific fixes */
+@supports (-webkit-touch-callout: none) {
+  .overflow-y-auto {
+    -webkit-overflow-scrolling: touch;
   }
 }
