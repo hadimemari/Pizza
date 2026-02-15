@@ -102,3 +102,19 @@
   perspective: 1000px;
   will-change: transform;
 }
+
+/* Mobile Performance Optimizations */
+@media (max-width: 767px) {
+  .pizza-glow {
+    filter: drop-shadow(0 0 15px rgba(230, 126, 34, 0.06));
+    will-change: auto;
+  }
+
+  .animate-float-bg {
+    animation: none !important;
+  }
+
+  .gpu-accelerated {
+    perspective: none;
+  }
+}

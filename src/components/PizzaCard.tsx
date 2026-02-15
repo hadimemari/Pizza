@@ -79,7 +79,7 @@ export const PizzaCard = memo(({ pizza, visible, onOrder }: { pizza: Pizza; visi
       <div 
         ref={cardRef}
         className={cn(
-          "rounded-[3rem] w-full max-w-[90vw] sm:max-w-[420px] lg:max-w-[440px] h-[650px] sm:h-[680px] lg:h-[720px] flex flex-col overflow-hidden relative bg-white/40 backdrop-blur-3xl border border-white/20 shadow-[0_20px_60px_rgba(0,0,0,0.03)] transition-all duration-1000 will-change-transform z-10",
+          "rounded-[2rem] sm:rounded-[3rem] w-full max-w-[85vw] sm:max-w-[420px] lg:max-w-[440px] h-auto max-h-[52vh] sm:h-[680px] sm:max-h-none lg:h-[720px] flex flex-col overflow-hidden relative bg-white/80 sm:bg-white/40 backdrop-blur-xl sm:backdrop-blur-3xl border border-white/20 shadow-[0_20px_60px_rgba(0,0,0,0.03)] transition-all duration-1000 will-change-transform z-10",
           !visible ? "opacity-0 scale-95" : "opacity-100 scale-100"
         )}
       >
@@ -90,52 +90,54 @@ export const PizzaCard = memo(({ pizza, visible, onOrder }: { pizza: Pizza; visi
           )}
         >
           {/* Main Content Side */}
-          <div className="w-1/2 h-full flex flex-col p-6 lg:p-8 justify-between">
-            <div className="flex-1 flex flex-col space-y-3 lg:space-y-4 relative z-10 overflow-hidden text-center">
+          <div className="w-1/2 h-full flex flex-col p-4 sm:p-6 lg:p-8 justify-between">
+            <div className="flex-1 flex flex-col space-y-1.5 sm:space-y-3 lg:space-y-4 relative z-10 overflow-hidden text-center">
               <div className="flex flex-col items-center">
-                <IndustrialLamp isOn={pizza.isAvailable} />
-                
-                <div className="flex items-center gap-2 mb-1">
+                <div className="hidden sm:block">
+                  <IndustrialLamp isOn={pizza.isAvailable} />
+                </div>
+
+                <div className="flex items-center gap-2 mb-0.5 sm:mb-1">
                   <div className="flex text-primary">
                     {[...Array(5)].map((_, i) => (
-                      <Star key={i} className={`w-3 h-3 ${i < averageRating ? 'fill-current' : 'text-zinc-200'}`} />
+                      <Star key={i} className={`w-2.5 h-2.5 sm:w-3 sm:h-3 ${i < averageRating ? 'fill-current' : 'text-zinc-200'}`} />
                     ))}
                   </div>
-                  <span className="text-[9px] font-black text-zinc-400 uppercase tracking-[0.2em]">Premium</span>
+                  <span className="text-[8px] sm:text-[9px] font-black text-zinc-400 uppercase tracking-[0.2em] hidden sm:inline">Premium</span>
                 </div>
 
                 <h2 className={cn(
-                  "text-2xl lg:text-[2.5rem] font-black uppercase tracking-tighter transition-all duration-1000 leading-tight px-2 text-zinc-900",
+                  "text-lg sm:text-2xl lg:text-[2.5rem] font-black uppercase tracking-tighter transition-all duration-1000 leading-tight px-2 text-zinc-900",
                   !pizza.isAvailable && "opacity-40 grayscale blur-[1px]"
                 )}>
                   {pizza.name}
                 </h2>
-                
-                <p className={cn("font-black text-xl lg:text-2xl mt-1", pizza.isAvailable ? "text-primary" : "text-zinc-300")}>
+
+                <p className={cn("font-black text-base sm:text-xl lg:text-2xl mt-0.5 sm:mt-1", pizza.isAvailable ? "text-primary" : "text-zinc-300")}>
                   {pizza.price}
                 </p>
               </div>
 
-              <p className="text-xs lg:text-[13px] leading-relaxed text-zinc-500 font-medium max-w-[90%] mx-auto line-clamp-3">
+              <p className="text-[10px] sm:text-xs lg:text-[13px] leading-relaxed text-zinc-500 font-medium max-w-[90%] mx-auto line-clamp-2 sm:line-clamp-3">
                 {pizza.description}
               </p>
 
               <div className="flex justify-center">
-                <button 
+                <button
                   onClick={() => setShowReviews(true)}
-                  className="flex items-center gap-2 bg-black/[0.03] px-5 py-1.5 rounded-full text-[10px] font-bold text-zinc-900 hover:bg-primary/10 hover:text-primary transition-all group w-fit border border-black/[0.03]"
+                  className="flex items-center gap-1.5 sm:gap-2 bg-black/[0.03] px-3 sm:px-5 py-1 sm:py-1.5 rounded-full text-[9px] sm:text-[10px] font-bold text-zinc-900 hover:bg-primary/10 hover:text-primary transition-all group w-fit border border-black/[0.03]"
                 >
-                  <MessageSquare className="w-3 h-3" />
+                  <MessageSquare className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
                   <span>
                     نظرات
-                    <span className="mr-2 px-2 py-0.5 rounded-full bg-primary text-white text-[8px] group-hover:scale-110 transition-transform inline-block font-black">
+                    <span className="mr-1.5 sm:mr-2 px-1.5 sm:px-2 py-0.5 rounded-full bg-primary text-white text-[7px] sm:text-[8px] group-hover:scale-110 transition-transform inline-block font-black">
                       {pizza.reviews.length}
                     </span>
                   </span>
                 </button>
               </div>
 
-              <div className="space-y-4 pt-2">
+              <div className="hidden sm:block space-y-4 pt-2">
                 <div className="flex flex-wrap justify-center gap-1.5">
                   {pizza.ingredients.slice(0, 4).map((ing) => (
                     <div key={ing} className="flex items-center gap-1 px-2.5 py-1 rounded-full text-[8px] font-bold bg-black/[0.03] text-zinc-600 border border-black/[0.02]">
@@ -147,19 +149,19 @@ export const PizzaCard = memo(({ pizza, visible, onOrder }: { pizza: Pizza; visi
               </div>
             </div>
 
-            <div className="mt-4 pt-4 border-t border-black/5">
-              <Button 
+            <div className="mt-2 sm:mt-4 pt-2 sm:pt-4 border-t border-black/5">
+              <Button
                 onClick={onOrder}
                 disabled={!pizza.isAvailable}
                 className={cn(
-                  "w-full h-12 lg:h-14 rounded-[2rem] text-white font-black text-base transition-all border-none shadow-lg relative overflow-hidden group/btn",
-                  pizza.isAvailable 
-                    ? "bg-zinc-900 hover:bg-primary hover:scale-[1.01] active:scale-95" 
+                  "w-full h-10 sm:h-12 lg:h-14 rounded-[1.5rem] sm:rounded-[2rem] text-white font-black text-sm sm:text-base transition-all border-none shadow-lg relative overflow-hidden group/btn",
+                  pizza.isAvailable
+                    ? "bg-zinc-900 hover:bg-primary hover:scale-[1.01] active:scale-95"
                     : "bg-zinc-200 text-zinc-400"
                 )}
               >
                 <div className="absolute inset-0 bg-white/10 translate-y-full group-hover/btn:translate-y-0 transition-transform duration-500" />
-                <ShoppingCart className="mr-2 w-5 h-5 relative z-10" />
+                <ShoppingCart className="mr-2 w-4 h-4 sm:w-5 sm:h-5 relative z-10" />
                 <span className="relative z-10">{pizza.isAvailable ? "سفارش سریع" : "فعلاً ناموجود"}</span>
               </Button>
             </div>

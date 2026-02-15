@@ -32,7 +32,7 @@ const CategorySection = memo(({
 }) => {
   return (
     <div
-      className="relative h-screen w-full flex flex-col lg:flex-row items-center justify-center pt-20 lg:pt-12"
+      className="relative h-screen w-full flex flex-col lg:flex-row items-center justify-center pt-16 sm:pt-20 lg:pt-12 pb-20 sm:pb-24 lg:pb-0"
       style={{ contentVisibility: 'auto' }}
     >
       <div className="absolute inset-0 overflow-hidden pointer-events-none hidden lg:block">
@@ -40,7 +40,7 @@ const CategorySection = memo(({
         <div className="absolute bottom-[10%] right-[5%] w-[40%] h-[40%] bg-accent/[0.03] rounded-full blur-[150px] animate-float-bg" style={{ animationDelay: '-3s' }} />
       </div>
 
-      <div className="w-full h-[40vh] sm:h-[45vh] lg:w-[55%] lg:h-full flex items-center z-10 overflow-visible relative lg:pl-12">
+      <div className="w-full h-[30vh] sm:h-[45vh] lg:w-[55%] lg:h-full flex items-center z-10 overflow-visible relative lg:pl-12">
         <PizzaCarousel
           pizzas={items}
           activeIndex={activeIndex}
@@ -48,7 +48,7 @@ const CategorySection = memo(({
         />
       </div>
 
-      <div className="w-full flex-1 lg:w-[45%] flex justify-center items-center px-4 sm:px-6 lg:pr-24 z-20">
+      <div className="w-full flex-1 lg:w-[45%] flex justify-center items-start sm:items-center px-4 pr-16 sm:pr-6 sm:px-6 lg:pr-24 z-20">
         {isActive && items[activeIndex] && (
           <PizzaCard
             pizza={items[activeIndex]}
@@ -242,16 +242,37 @@ export default function Home() {
           ))}
         </div>
 
-        {/* Global Nav Elements */}
-        <div className="fixed bottom-0 lg:bottom-12 left-0 lg:left-12 w-full lg:w-auto z-40 flex flex-col items-center lg:items-start gap-5 bg-white/95 lg:bg-transparent backdrop-blur-2xl lg:backdrop-blur-none p-5 lg:p-0 border-t border-black/5 lg:border-none shadow-2xl lg:shadow-none">
-          <div className="w-full lg:w-auto overflow-x-auto no-scrollbar">
+        {/* Mobile: Vertical Category Nav - Right Side */}
+        <div className="fixed right-2.5 top-1/2 -translate-y-1/2 z-50 lg:hidden">
+          <CategoryNavigator
+            categories={categories}
+            activeId={activeCategoryId}
+            onCategoryChange={(id) => setActiveCategoryId(id)}
+            vertical={true}
+          />
+        </div>
+
+        {/* Mobile: Slim Bottom Thumbnails */}
+        <div className="fixed bottom-0 left-0 w-full z-40 lg:hidden">
+          <div className="bg-white/90 backdrop-blur-xl border-t border-black/[0.04] px-3 py-2.5 overflow-x-auto no-scrollbar">
             <PizzaThumbnails
               pizzas={currentCategoryItems}
               activeIndex={activeIndex}
               onSelect={handleIndexChange}
             />
           </div>
-          <div className="lg:ml-3">
+        </div>
+
+        {/* Desktop: Bottom-left Nav (Thumbnails + Categories) */}
+        <div className="fixed bottom-12 left-12 z-40 hidden lg:flex flex-col items-start gap-5">
+          <div className="overflow-x-auto no-scrollbar">
+            <PizzaThumbnails
+              pizzas={currentCategoryItems}
+              activeIndex={activeIndex}
+              onSelect={handleIndexChange}
+            />
+          </div>
+          <div className="ml-3">
             <CategoryNavigator
               categories={categories}
               activeId={activeCategoryId}
@@ -260,7 +281,7 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Vertical Pagination Indicator (Desktop Only) */}
+        {/* Desktop: Vertical Pagination Indicator */}
         <div className="fixed right-10 top-1/2 -translate-y-1/2 hidden lg:flex flex-col gap-6 z-40">
           {categories.map((cat) => (
             <button

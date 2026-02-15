@@ -28,12 +28,12 @@ export const PizzaCarousel = memo(({ pizzas, activeIndex, onPizzaClick }: PizzaC
   }, []);
 
   // Adaptive values based on viewport for maximum performance/quality balance
-  const radius = viewport === 'mobile' ? 340 : viewport === 'tablet' ? 550 : 850;
-  const pizzaSize = viewport === 'mobile' ? 240 : viewport === 'tablet' ? 350 : 520;
+  const radius = viewport === 'mobile' ? 190 : viewport === 'tablet' ? 550 : 850;
+  const pizzaSize = viewport === 'mobile' ? 140 : viewport === 'tablet' ? 350 : 520;
   
   const total = pizzas.length;
   const angleStep = total > 0 ? 360 / total : 0;
-  const transitionDuration = "1000ms"; 
+  const transitionDuration = viewport === 'mobile' ? "600ms" : "1000ms";
   const easing = "cubic-bezier(0.16, 1, 0.3, 1)";
   
   // High-performance rotation logic
@@ -43,7 +43,7 @@ export const PizzaCarousel = memo(({ pizzas, activeIndex, onPizzaClick }: PizzaC
     : activeIndex * -angleStep;
 
   const getCenterStyles = () => {
-    if (viewport === 'mobile') return { left: '50%', top: '420px', transform: 'translateX(-50%) translate3d(0,0,0)' };
+    if (viewport === 'mobile') return { left: '50%', top: '55%', transform: 'translateX(-50%) translate3d(0,0,0)' };
     if (viewport === 'tablet') return { left: '50%', top: '-100px', transform: 'translateX(-50%) translate3d(0,0,0)' };
     return { left: '-400px', top: '50%', transform: 'translateY(-50%) translate3d(0,0,0)' };
   };
@@ -67,26 +67,27 @@ export const PizzaCarousel = memo(({ pizzas, activeIndex, onPizzaClick }: PizzaC
           }}
         >
           {viewport === 'desktop' && (
-            <defs>
-              <filter id="chalk-effect">
-                <feTurbulence type="fractalNoise" baseFrequency="0.5" numOctaves="1" result="noise" />
-                <feDisplacementMap in="SourceGraphic" in2="noise" scale="2" />
-              </filter>
-            </defs>
+            <>
+              <defs>
+                <filter id="chalk-effect">
+                  <feTurbulence type="fractalNoise" baseFrequency="0.5" numOctaves="1" result="noise" />
+                  <feDisplacementMap in="SourceGraphic" in2="noise" scale="2" />
+                </filter>
+              </defs>
+              <circle
+                cx="0"
+                cy="0"
+                r={radius}
+                fill="none"
+                stroke="black"
+                strokeWidth="1.5"
+                strokeDasharray="10 20"
+                filter="url(#chalk-effect)"
+                className="opacity-5"
+                style={{ transform: `translate(${radius}px, ${radius}px)` }}
+              />
+            </>
           )}
-          
-          <circle 
-            cx="0" 
-            cy="0" 
-            r={radius} 
-            fill="none" 
-            stroke="black" 
-            strokeWidth="1.5" 
-            strokeDasharray="10 20" 
-            filter={viewport === 'desktop' ? 'url(#chalk-effect)' : ''}
-            className="opacity-5"
-            style={{ transform: `translate(${radius}px, ${radius}px)` }}
-          />
         </svg>
 
         {pizzas.map((pizza, index) => {
@@ -122,7 +123,8 @@ export const PizzaCarousel = memo(({ pizzas, activeIndex, onPizzaClick }: PizzaC
                     alt={pizza.name}
                     fill
                     className={cn(
-                      "object-contain pizza-glow animate-spin-slow will-change-transform"
+                      "object-contain pizza-glow will-change-transform",
+                      viewport !== 'mobile' && "animate-spin-slow"
                     )}
                     style={{ 
                       animationDuration: '80s',
