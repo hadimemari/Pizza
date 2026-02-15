@@ -56,10 +56,17 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    return NextResponse.json({
+    const response: Record<string, unknown> = {
       message: "کد تایید ارسال شد",
       isNewUser: !user,
-    });
+    };
+
+    // In development, return OTP code in response for testing
+    if (process.env.NODE_ENV === "development") {
+      response.debug_code = code;
+    }
+
+    return NextResponse.json(response);
   } catch {
     return NextResponse.json(
       { error: "خطای سرور" },

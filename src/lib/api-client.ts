@@ -30,7 +30,7 @@ async function request<T>(
 export const api = {
   auth: {
     sendOtp: (phone: string) =>
-      request<{ message: string; isNewUser: boolean }>("/api/auth/otp/send", {
+      request<{ message: string; isNewUser: boolean; debug_code?: string }>("/api/auth/otp/send", {
         method: "POST",
         body: JSON.stringify({ phone }),
       }),
