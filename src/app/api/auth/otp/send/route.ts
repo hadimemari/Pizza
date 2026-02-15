@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/server/db";
-import { sendOtp, generateOtpCode } from "@/lib/server/sms";
+import { sendOtp, generateOtpCode, isDemoMode, isSandboxMode } from "@/lib/server/sms";
 import { otpSendSchema } from "@/lib/server/validations";
 
 export async function POST(req: NextRequest) {
@@ -61,8 +61,8 @@ export async function POST(req: NextRequest) {
       isNewUser: !user,
     };
 
-    // In development, return OTP code in response for testing
-    if (process.env.NODE_ENV === "development") {
+    // Return OTP code in response when using sandbox or demo mode (no real SMS sent)
+    if (isDemoMode() || isSandboxMode()) {
       response.debug_code = code;
     }
 

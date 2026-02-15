@@ -31,6 +31,10 @@ export function isDemoMode(): boolean {
   return !getApiKey() || !getTemplateId();
 }
 
+export function isSandboxMode(): boolean {
+  return process.env.SMSIR_SANDBOX === "true";
+}
+
 export async function sendOtp(phone: string, code: string): Promise<boolean> {
   const apiKey = getApiKey();
   const templateId = getTemplateId();
