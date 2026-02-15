@@ -15,15 +15,109 @@ datasource db {
 model User {
   id        String   @id @default(cuid())
   phone     String   @unique
-  name      String?
+  name      String?  // display name (computed: firstName + lastName)
+  firstName String?
+  lastName  String?
   role      String   @default("CUSTOMER") // CUSTOMER | ADMIN
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  cart      Cart?
-  orders    Order[]
-  reviews   Review[]
-  otpCodes  OtpCode[]
+  // ── اطلاعات تکمیلی ──
+  email            String?
+  birthDate        String?  // computed: "YYYY/MM/DD"
+  birthYear        Int?
+  birthMonth       Int?
+  birthDay         Int?
+  avatarUrl        String?
+
+  // ── یادداشت پیش‌فرض ──
+  defaultOrderNote String?
+
+  // ── وفاداری ──
+  loyaltyPoints  Int      @default(0)
+  loyaltyTier    String   @default("BRONZE") // BRONZE | SILVER | GOLD | DIAMOND
+  totalOrders    Int      @default(0)
+  totalSpent     Int      @default(0)
+  referralCode   String?  @unique
+  referredById   String?
+  lastOrderAt    DateTime?
+
+  // ── تنظیمات ──
+  smsOptIn         Boolean @default(true)
+  preferredPayment String? // ONLINE | CASH | CARD_ON_DELIVERY
+
+  // ── مدیریتی ──
+  status    String  @default("ACTIVE") // ACTIVE | SUSPENDED | BANNED
+  adminNote String?
+
+  // ── session ──
+  lastActiveAt DateTime?
+  sessionExpiresAt DateTime?
+
+  // ── روابط ──
+  cart       Cart?
+  orders     Order[]
+  reviews    Review[]
+  otpCodes   OtpCode[]
+  addresses  Address[]
+  favorites  FavoriteOrder[]
+  // referredBy tracked via referredById (self-relation deferred)
+}
+
+// ──────────────────────────────────────────
+// آدرس‌های تحویل
+// ──────────────────────────────────────────
+
+model Address {
+  id            String   @id @default(cuid())
+  title         String   // "خانه"، "محل کار"
+  province      String   @default("تهران")
+  city          String   @default("تهران")
+  neighborhood  String   // محله
+  street        String   // نشانی کامل
+  postalCode    String?  // کد پستی ۱۰ رقمی
+  latitude      Float?
+  longitude     Float?
+  receiverName  String?
+  receiverPhone String?
+  isDefault     Boolean  @default(false)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+
+  @@index([userId])
+}
+
+// ──────────────────────────────────────────
+// سفارش همیشگی (مورد علاقه)
+// ──────────────────────────────────────────
+
+model FavoriteOrder {
+  id        String   @id @default(cuid())
+  title     String   // "پیتزا جمعه‌ها"، "ناهار اداره"
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+
+  items FavoriteOrderItem[]
+
+  @@index([userId])
+}
+
+model FavoriteOrderItem {
+  id       String @id @default(cuid())
+  quantity Int    @default(1)
+
+  favoriteOrder   FavoriteOrder @relation(fields: [favoriteOrderId], references: [id], onDelete: Cascade)
+  favoriteOrderId String
+  product         Product       @relation(fields: [productId], references: [id])
+  productId       String
+
+  @@unique([favoriteOrderId, productId])
 }
 
 // ──────────────────────────────────────────
@@ -72,9 +166,10 @@ model Product {
   category   Category @relation(fields: [categoryId], references: [id])
   categoryId String
 
-  reviews    Review[]
-  cartItems  CartItem[]
-  orderItems OrderItem[]
+  reviews            Review[]
+  cartItems          CartItem[]
+  orderItems         OrderItem[]
+  favoriteOrderItems FavoriteOrderItem[]
 
   @@index([categoryId])
 }
@@ -129,8 +224,12 @@ model Order {
   id          String   @id @default(cuid())
   orderNumber Int      @unique
   status      String   @default("PENDING") // PENDING | CONFIRMED | PREPARING | DELIVERED | CANCELLED
-  totalAmount Int      // مبلغ کل به تومان
+  totalAmount Int      // مبلغ کل به تومان (شامل مالیات و ارسال)
+  subtotal    Int      @default(0) // جمع غذاها
+  deliveryFee Int      @default(0) // هزینه ارسال
+  tax         Int      @default(0) // مالیات ارزش افزوده
   note        String?  // یادداشت مشتری
+  addressId   String?  // آدرس تحویل
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 

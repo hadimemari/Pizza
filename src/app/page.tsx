@@ -8,11 +8,14 @@ import { PizzaThumbnails } from '@/components/PizzaThumbnails';
 import { CategoryNavigator } from '@/components/CategoryNavigator';
 import { AuthDialog } from '@/components/AuthDialog';
 import { CartSheet } from '@/components/CartSheet';
+import { ProfileDialog } from '@/components/ProfileDialog';
+import { FavoritesPopup } from '@/components/FavoritesPopup';
 import { LoadingScreen } from '@/components/LoadingScreen';
 import { Button } from '@/components/ui/button';
 import { ShoppingBag, User, LogOut } from 'lucide-react';
 import { api } from '@/lib/api-client';
 import { mapProduct, mapCategory, type MappedProduct, type MappedCategory } from '@/lib/data-mapper';
+import { useSessionMonitor } from '@/lib/useSessionMonitor';
 
 // Memoized Category Section
 const CategorySection = memo(({
@@ -21,7 +24,9 @@ const CategorySection = memo(({
   isActive,
   activeIndex,
   onPizzaClick,
-  onOrder
+  onOrder,
+  favoriteIds,
+  onToggleFavorite,
 }: {
   cat: MappedCategory;
   items: MappedProduct[];
@@ -29,18 +34,19 @@ const CategorySection = memo(({
   activeIndex: number;
   onPizzaClick: (i: number) => void;
   onOrder: () => void;
+  favoriteIds: Set<string>;
+  onToggleFavorite: (productId: string) => void;
 }) => {
   return (
     <div
-      className="relative h-screen w-full flex flex-col lg:flex-row items-center justify-center pt-16 sm:pt-20 lg:pt-12 pb-20 sm:pb-24 lg:pb-0"
-      style={{ contentVisibility: 'auto' }}
+      className="relative h-screen w-full flex flex-col lg:flex-row items-center lg:justify-center pt-14 sm:pt-20 lg:pt-12 pb-16 sm:pb-24 lg:pb-0"
     >
       <div className="absolute inset-0 overflow-hidden pointer-events-none hidden lg:block">
         <div className="absolute top-[15%] left-[5%] w-[40%] h-[40%] bg-primary/[0.03] rounded-full blur-[150px] animate-float-bg" />
         <div className="absolute bottom-[10%] right-[5%] w-[40%] h-[40%] bg-accent/[0.03] rounded-full blur-[150px] animate-float-bg" style={{ animationDelay: '-3s' }} />
       </div>
 
-      <div className="w-full h-[30vh] sm:h-[45vh] lg:w-[55%] lg:h-full flex items-center z-10 overflow-visible relative lg:pl-12">
+      <div className="w-full h-[38vh] sm:h-[45vh] lg:w-[55%] lg:h-full flex items-center z-10 overflow-hidden sm:overflow-visible relative lg:pl-12">
         <PizzaCarousel
           pizzas={items}
           activeIndex={activeIndex}
@@ -48,12 +54,14 @@ const CategorySection = memo(({
         />
       </div>
 
-      <div className="w-full flex-1 lg:w-[45%] flex justify-center items-start sm:items-center px-4 pr-16 sm:pr-6 sm:px-6 lg:pr-24 z-20">
+      <div className="w-full flex-1 lg:w-[45%] flex justify-center items-stretch sm:items-center px-4 sm:px-6 lg:pr-24 z-20 overflow-hidden sm:overflow-visible pt-1 sm:pt-0">
         {isActive && items[activeIndex] && (
           <PizzaCard
             pizza={items[activeIndex]}
             visible={true}
             onOrder={onOrder}
+            isFavorite={favoriteIds.has(items[activeIndex].id)}
+            onToggleFavorite={() => onToggleFavorite(items[activeIndex].id)}
           />
         )}
       </div>
@@ -72,10 +80,13 @@ export default function Home() {
   const [activeCategoryId, setActiveCategoryId] = useState("");
   const [activeIndices, setActiveIndices] = useState<Record<string, number>>({});
   const [isAuthOpen, setIsAuthOpen] = useState(false);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [cartCount, setCartCount] = useState(0);
   const [userName, setUserName] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [favoriteProductIds, setFavoriteProductIds] = useState<Set<string>>(new Set());
+  const [showFavoritesPopup, setShowFavoritesPopup] = useState(false);
 
   // Fetch initial data
   useEffect(() => {
@@ -103,10 +114,23 @@ export default function Home() {
 
       if (meRes.data?.user) {
         setUserName(meRes.data.user.name);
-        // Load cart count
-        const cartRes = await api.cart.get();
+        // Load cart count + favorites
+        const [cartRes, favRes] = await Promise.all([
+          api.cart.get(),
+          api.favorites.list(),
+        ]);
         if (cartRes.data?.items) {
           setCartCount(cartRes.data.items.reduce((s, i) => s + i.quantity, 0));
+        }
+        if (favRes.data?.favorites) {
+          const ids = new Set<string>();
+          favRes.data.favorites.forEach((f) => {
+            f.items.forEach((item) => ids.add(item.product.id));
+          });
+          setFavoriteProductIds(ids);
+          if (ids.size > 0) {
+            setTimeout(() => setShowFavoritesPopup(true), 2500);
+          }
         }
       }
 
@@ -138,17 +162,58 @@ export default function Home() {
 
   const handleLoginSuccess = useCallback(async (name: string) => {
     setUserName(name);
-    const cartRes = await api.cart.get();
+    const [cartRes, favRes] = await Promise.all([
+      api.cart.get(),
+      api.favorites.list(),
+    ]);
     if (cartRes.data?.items) {
       setCartCount(cartRes.data.items.reduce((s, i) => s + i.quantity, 0));
     }
+    if (favRes.data?.favorites) {
+      const ids = new Set<string>();
+      favRes.data.favorites.forEach((f) => {
+        f.items.forEach((item) => ids.add(item.product.id));
+      });
+      setFavoriteProductIds(ids);
+      if (ids.size > 0) {
+        setTimeout(() => setShowFavoritesPopup(true), 500);
+      }
+    }
   }, []);
+
+  const handleToggleFavorite = useCallback(async (productId: string) => {
+    if (!userName) {
+      setIsAuthOpen(true);
+      return;
+    }
+    // Optimistic update
+    setFavoriteProductIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(productId)) next.delete(productId);
+      else next.add(productId);
+      return next;
+    });
+    const { error } = await api.favorites.toggle(productId);
+    if (error) {
+      // Revert on error
+      setFavoriteProductIds((prev) => {
+        const next = new Set(prev);
+        if (next.has(productId)) next.delete(productId);
+        else next.add(productId);
+        return next;
+      });
+    }
+  }, [userName]);
 
   const handleLogout = useCallback(async () => {
     await api.auth.logout();
     setUserName(null);
     setCartCount(0);
+    setFavoriteProductIds(new Set());
   }, []);
+
+  // Session inactivity monitor (30 min idle → auto-logout)
+  useSessionMonitor(!!userName, handleLogout);
 
   const currentCategoryItems = useMemo(() => {
     return products.filter(item => item.category === activeCategoryId);
@@ -170,35 +235,38 @@ export default function Home() {
       {isLoading && <LoadingScreen />}
 
       <div className={`h-full w-full transition-all duration-[1500ms] cubic-bezier(0.23, 1, 0.32, 1) ${isLoading ? 'opacity-0 scale-105 blur-2xl' : 'opacity-100 scale-100 blur-0'}`}>
-        <header className="fixed top-0 left-0 w-full px-6 md:px-12 py-4 md:py-6 flex items-center justify-between z-50 bg-white/40 backdrop-blur-xl border-b border-black/5">
-          <div className="flex items-center gap-4">
-            <div className="w-10 h-10 md:w-12 md:h-12 bg-primary rounded-[1rem] flex items-center justify-center text-white font-black text-xl md:text-2xl shadow-xl shadow-primary/20">
+        <header className="fixed top-0 left-0 w-full px-4 sm:px-6 md:px-12 py-3 sm:py-4 md:py-6 flex items-center justify-between z-50 bg-white/60 sm:bg-white/40 backdrop-blur-xl border-b border-black/5" dir="rtl">
+          <div className="flex items-center gap-3 sm:gap-4">
+            <div className="w-9 h-9 sm:w-10 sm:h-10 md:w-12 md:h-12 bg-primary rounded-[0.8rem] sm:rounded-[1rem] flex items-center justify-center text-white font-black text-lg sm:text-xl md:text-2xl shadow-xl shadow-primary/20">
               پ
             </div>
-            <div className="flex flex-col -gap-1">
-              <span className="font-black text-2xl md:text-3xl tracking-tighter uppercase italic text-foreground leading-none">
+            <div className="flex flex-col">
+              <span className="font-black text-xl sm:text-2xl md:text-3xl tracking-tighter uppercase italic text-foreground leading-none">
                 پیتزا<span className="text-primary">موشن</span>
               </span>
-              <span className="text-[8px] md:text-[10px] font-bold text-muted-foreground uppercase tracking-widest hidden md:block">Premium Dining</span>
+              <span className="text-[7px] sm:text-[8px] md:text-[10px] font-bold text-muted-foreground uppercase tracking-widest hidden sm:block">Premium Dining</span>
             </div>
           </div>
 
-          <div className="flex items-center gap-3 md:gap-6">
+          <div className="flex items-center gap-2 sm:gap-3 md:gap-6">
             {userName ? (
-              <div className="flex items-center gap-2">
-                <div className="flex items-center gap-3 bg-black/5 px-5 py-2 rounded-full border border-black/5">
-                  <User className="w-4 h-4 text-primary" />
-                  <span className="text-sm font-black">{userName}</span>
+              <div className="flex items-center gap-1.5 sm:gap-2">
+                <div
+                  onClick={() => setIsProfileOpen(true)}
+                  className="flex items-center gap-2 sm:gap-3 bg-black/5 px-3 sm:px-5 py-1.5 sm:py-2 rounded-full border border-black/5 cursor-pointer hover:bg-primary/10 hover:border-primary/20 hover:shadow-lg hover:shadow-primary/10 hover:scale-105 active:scale-95 transition-all duration-300"
+                >
+                  <User className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-primary transition-transform duration-300 group-hover:rotate-12" />
+                  <span className="text-xs sm:text-sm font-black">{userName}</span>
                 </div>
-                <button onClick={handleLogout} className="p-2 hover:bg-black/5 rounded-full transition-colors" title="خروج">
-                  <LogOut className="w-4 h-4 text-muted-foreground" />
+                <button onClick={handleLogout} className="group p-2 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full hover:bg-red-50 hover:shadow-md hover:shadow-red-200/50 hover:scale-110 active:scale-90 transition-all duration-300" title="خروج">
+                  <LogOut className="w-4 h-4 text-muted-foreground group-hover:text-red-500 group-hover:rotate-[-12deg] transition-all duration-300" />
                 </button>
               </div>
             ) : (
               <Button
                 onClick={() => setIsAuthOpen(true)}
                 variant="ghost"
-                className="rounded-full text-sm font-black hover:bg-black/5 px-6"
+                className="rounded-full text-xs sm:text-sm font-black hover:bg-black/5 px-4 sm:px-6 min-h-[44px]"
               >
                 ورود / ثبت‌نام
               </Button>
@@ -208,13 +276,13 @@ export default function Home() {
               <Button
                 variant="outline"
                 size="icon"
-                className="rounded-full border-black/5 bg-white shadow-xl w-10 h-10 md:w-12 md:h-12 hover:scale-110 transition-transform"
+                className="rounded-full border-black/5 bg-white shadow-xl w-10 h-10 md:w-12 md:h-12 hover:scale-110 transition-transform min-w-[44px] min-h-[44px]"
                 onClick={() => userName ? setIsCartOpen(true) : setIsAuthOpen(true)}
               >
                 <ShoppingBag className="w-5 h-5 md:w-6 md:h-6" />
               </Button>
               {cartCount > 0 && (
-                <div className="absolute -top-1 -right-1 w-5 h-5 md:w-6 md:h-6 bg-accent text-white rounded-full flex items-center justify-center text-[10px] md:text-xs font-black animate-in zoom-in duration-300 shadow-lg shadow-accent/30">
+                <div className="absolute -top-1 -left-1 sm:-right-1 w-5 h-5 md:w-6 md:h-6 bg-accent text-white rounded-full flex items-center justify-center text-[10px] md:text-xs font-black animate-in zoom-in duration-300 shadow-lg shadow-accent/30">
                   {cartCount}
                 </div>
               )}
@@ -224,8 +292,11 @@ export default function Home() {
 
         {/* Cinematic Vertical Scroller */}
         <div
-          className="relative w-full transition-transform duration-[1200ms] cubic-bezier(0.16, 1, 0.3, 1) will-change-transform gpu-accelerated"
-          style={{ transform: `translate3d(0, -${categoryIndex * 100}vh, 0)` }}
+          className="relative w-full transition-transform duration-[1200ms] will-change-transform gpu-accelerated"
+          style={{
+            transform: `translate3d(0, -${categoryIndex * 100}vh, 0)`,
+            transitionTimingFunction: 'cubic-bezier(0.16, 1, 0.3, 1)'
+          }}
         >
           {categories.map((cat) => (
             <CategorySection
@@ -238,6 +309,8 @@ export default function Home() {
                 setActiveIndices(prev => ({ ...prev, [cat.id]: i }));
               }}
               onOrder={handleOrder}
+              favoriteIds={favoriteProductIds}
+              onToggleFavorite={handleToggleFavorite}
             />
           ))}
         </div>
@@ -254,7 +327,7 @@ export default function Home() {
 
         {/* Mobile: Slim Bottom Thumbnails */}
         <div className="fixed bottom-0 left-0 w-full z-40 lg:hidden">
-          <div className="bg-white/90 backdrop-blur-xl border-t border-black/[0.04] px-3 py-2.5 overflow-x-auto no-scrollbar">
+          <div className="bg-white border-t border-black/[0.06] px-3 py-2.5 overflow-x-auto no-scrollbar shadow-[0_-4px_20px_rgba(0,0,0,0.04)]">
             <PizzaThumbnails
               pizzas={currentCategoryItems}
               activeIndex={activeIndex}
@@ -301,10 +374,27 @@ export default function Home() {
         onLoginSuccess={handleLoginSuccess}
       />
 
+      <ProfileDialog
+        isOpen={isProfileOpen}
+        onClose={() => setIsProfileOpen(false)}
+        onNameUpdate={(name) => setUserName(name)}
+      />
+
       <CartSheet
         isOpen={isCartOpen}
         onClose={() => setIsCartOpen(false)}
         onCartUpdate={setCartCount}
+      />
+
+      <FavoritesPopup
+        isOpen={showFavoritesPopup}
+        onClose={() => setShowFavoritesPopup(false)}
+        onOrderAdded={async () => {
+          const { data } = await api.cart.get();
+          if (data?.items) {
+            setCartCount(data.items.reduce((s, i) => s + i.quantity, 0));
+          }
+        }}
       />
     </main>
   );

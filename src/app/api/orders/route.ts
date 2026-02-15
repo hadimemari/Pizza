@@ -70,23 +70,28 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const totalAmount = cart.items.reduce(
+  const subtotal = cart.items.reduce(
     (sum, item) => sum + item.product.price * item.quantity,
     0
   );
+  const tax = Math.round(subtotal * 0.09);
+  const deliveryFee = 25000;
+  const totalAmount = subtotal + tax + deliveryFee;
 
-  // Generate order number
   const lastOrder = await db.order.findFirst({ orderBy: { orderNumber: "desc" } });
   const orderNumber = (lastOrder?.orderNumber || 1000) + 1;
 
-  // Create order in transaction
   const order = await db.$transaction(async (tx) => {
     const newOrder = await tx.order.create({
       data: {
         orderNumber,
         userId: user.id,
+        subtotal,
+        tax,
+        deliveryFee,
         totalAmount,
         note: parsed.data.note,
+        addressId: parsed.data.addressId,
         items: {
           create: cart.items.map((item) => ({
             productId: item.productId,
@@ -97,10 +102,7 @@ export async function POST(req: NextRequest) {
       },
       include: { items: true },
     });
-
-    // Clear cart
     await tx.cartItem.deleteMany({ where: { cartId: cart.id } });
-
     return newOrder;
   });
 
@@ -110,6 +112,9 @@ export async function POST(req: NextRequest) {
       order: {
         id: order.id,
         orderNumber: order.orderNumber,
+        subtotal: order.subtotal,
+        tax: order.tax,
+        deliveryFee: order.deliveryFee,
         totalAmount: order.totalAmount,
         status: order.status,
       },

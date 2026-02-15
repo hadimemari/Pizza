@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/server/db";
-import { sendOtp, generateOtpCode } from "@/lib/server/sms";
+import { sendOtp, generateOtpCode, isDemoMode, isSandboxMode } from "@/lib/server/sms";
 import { otpSendSchema } from "@/lib/server/validations";
 
 export async function POST(req: NextRequest) {
@@ -56,9 +56,17 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // In sandbox/demo mode, return debug_code so the developer can test
+    // This is safe: SMSIR_SANDBOX is only set in dev environments
+    const sandbox = isDemoMode() || isSandboxMode();
+    if (sandbox) {
+      console.log(`[DEV] OTP for ${phone}: ${code}`);
+    }
+
     return NextResponse.json({
       message: "کد تایید ارسال شد",
       isNewUser: !user,
+      ...(sandbox ? { debug_code: code } : {}),
     });
   } catch {
     return NextResponse.json(
