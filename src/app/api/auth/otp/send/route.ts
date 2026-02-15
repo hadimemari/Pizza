@@ -47,7 +47,7 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    const sent = await sendOtp(phone, code);
+    const sent = await sendOtp(phone, code, user?.name || undefined);
 
     if (!sent) {
       return NextResponse.json(
