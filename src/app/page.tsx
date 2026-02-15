@@ -185,12 +185,12 @@ export default function Home() {
           <div className="flex items-center gap-2 sm:gap-3 md:gap-6">
             {userName ? (
               <div className="flex items-center gap-1.5 sm:gap-2">
-                <div className="flex items-center gap-2 sm:gap-3 bg-black/5 px-3 sm:px-5 py-1.5 sm:py-2 rounded-full border border-black/5">
-                  <User className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-primary" />
+                <div className="flex items-center gap-2 sm:gap-3 bg-black/5 px-3 sm:px-5 py-1.5 sm:py-2 rounded-full border border-black/5 cursor-pointer hover:bg-primary/10 hover:border-primary/20 hover:shadow-lg hover:shadow-primary/10 hover:scale-105 active:scale-95 transition-all duration-300">
+                  <User className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-primary transition-transform duration-300 group-hover:rotate-12" />
                   <span className="text-xs sm:text-sm font-black">{userName}</span>
                 </div>
-                <button onClick={handleLogout} className="p-2 min-w-[44px] min-h-[44px] flex items-center justify-center hover:bg-black/5 rounded-full transition-colors" title="خروج">
-                  <LogOut className="w-4 h-4 text-muted-foreground" />
+                <button onClick={handleLogout} className="group p-2 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full hover:bg-red-50 hover:shadow-md hover:shadow-red-200/50 hover:scale-110 active:scale-90 transition-all duration-300" title="خروج">
+                  <LogOut className="w-4 h-4 text-muted-foreground group-hover:text-red-500 group-hover:rotate-[-12deg] transition-all duration-300" />
                 </button>
               </div>
             ) : (
