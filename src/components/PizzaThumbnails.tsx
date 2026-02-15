@@ -16,13 +16,13 @@ export const PizzaThumbnails: React.FC<PizzaThumbnailsProps> = ({ pizzas, active
   const transitionTime = "5000ms"; 
 
   return (
-    <div className="flex items-center gap-2 md:gap-4 p-2 whitespace-nowrap">
+    <div className="flex items-center gap-1.5 sm:gap-2 md:gap-4 p-1 sm:p-2 whitespace-nowrap">
       {pizzas.map((pizza, index) => (
         <button
           key={pizza.id}
           onClick={() => onSelect(index)}
           className={cn(
-            "group flex items-center gap-2 md:gap-3 bg-white/40 backdrop-blur-md px-3 md:px-5 py-2 md:py-3 rounded-full border border-black/5 hover:bg-white/80 transition-all shadow-sm flex-shrink-0"
+            "group flex items-center gap-1.5 sm:gap-2 md:gap-3 bg-white/40 sm:backdrop-blur-md px-2 sm:px-3 md:px-5 py-1.5 sm:py-2 md:py-3 rounded-full border border-black/5 hover:bg-white/80 transition-all shadow-sm flex-shrink-0"
           )}
           style={{
             transition: `all ${transitionTime} cubic-bezier(0.16, 1, 0.3, 1)`,
@@ -31,7 +31,7 @@ export const PizzaThumbnails: React.FC<PizzaThumbnailsProps> = ({ pizzas, active
             transform: index === activeIndex ? 'scale(1.05)' : 'scale(1)'
           }}
         >
-          <div className="relative w-8 h-8 md:w-10 md:h-10" style={{
+          <div className="relative w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10" style={{
             transition: `all ${transitionTime} cubic-bezier(0.16, 1, 0.3, 1)`,
             transform: index === activeIndex ? 'rotate(15deg)' : 'rotate(0)',
           }}>
@@ -44,7 +44,7 @@ export const PizzaThumbnails: React.FC<PizzaThumbnailsProps> = ({ pizzas, active
             />
           </div>
           <div className="flex flex-col items-start">
-            <span className="text-[10px] md:text-xs font-black uppercase tracking-tight" style={{
+            <span className="text-[8px] sm:text-[10px] md:text-xs font-black uppercase tracking-tight" style={{
               color: index === activeIndex ? 'hsl(var(--primary))' : 'hsl(var(--foreground))'
             }}>
               {pizza.name}
