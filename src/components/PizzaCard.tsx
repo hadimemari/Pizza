@@ -103,35 +103,43 @@ export const PizzaCard = memo(({ pizza, visible, onOrder }: { pizza: Pizza; visi
                 <div className="flex items-center gap-1.5 sm:gap-2 mb-0.5" dir="ltr">
                   <div className="flex text-primary">
                     {[...Array(5)].map((_, i) => (
-                      <Star key={i} className={`w-2 h-2 sm:w-3 sm:h-3 ${i < averageRating ? 'fill-current' : 'text-zinc-200'}`} />
+                      <Star key={i} className={`w-2.5 h-2.5 sm:w-3 sm:h-3 ${i < averageRating ? 'fill-current' : 'text-zinc-200'}`} />
                     ))}
                   </div>
                   <span className="text-[7px] sm:text-[9px] font-black text-zinc-400 uppercase tracking-[0.2em] hidden sm:inline">Premium</span>
                 </div>
 
                 <h2 className={cn(
-                  "text-lg sm:text-2xl lg:text-[2.5rem] font-black tracking-tight transition-all duration-1000 leading-tight px-1 text-zinc-900",
+                  "text-xl sm:text-2xl lg:text-[2.5rem] font-black tracking-tight transition-all duration-1000 leading-tight px-1 text-zinc-900",
                   !pizza.isAvailable && "opacity-40 grayscale blur-[1px]"
                 )}>
                   {pizza.name}
                 </h2>
 
-                <p className={cn(
-                  "font-black text-base sm:text-xl lg:text-2xl mt-0.5",
-                  pizza.isAvailable ? "text-primary" : "text-zinc-300"
-                )} dir="rtl">
-                  {pizza.price}
-                </p>
+                {/* Dynamic Price Badge */}
+                <div className="relative inline-flex items-center justify-center mt-1" dir="rtl">
+                  {pizza.isAvailable && (
+                    <div className="absolute inset-0 bg-primary/10 rounded-full blur-xl animate-pulse" />
+                  )}
+                  <p className={cn(
+                    "font-black text-xl sm:text-xl lg:text-2xl relative px-4 py-0.5 rounded-full transition-all duration-700",
+                    pizza.isAvailable
+                      ? "text-primary bg-primary/[0.06] border border-primary/10"
+                      : "text-zinc-300"
+                  )}>
+                    {pizza.price}
+                  </p>
+                </div>
               </div>
 
-              <p className="text-[10px] sm:text-xs lg:text-[13px] leading-relaxed text-zinc-500 font-medium max-w-[95%] mx-auto line-clamp-2 text-center" dir="rtl">
+              <p className="text-xs sm:text-xs lg:text-[13px] leading-relaxed text-zinc-500 font-medium max-w-[95%] mx-auto line-clamp-2 text-center" dir="rtl">
                 {pizza.description}
               </p>
 
               <div className="flex justify-center">
                 <button
                   onClick={() => setShowReviews(true)}
-                  className="flex items-center gap-1 sm:gap-2 bg-black/[0.03] px-2.5 sm:px-5 py-0.5 sm:py-1.5 rounded-full text-[8px] sm:text-[10px] font-bold text-zinc-900 hover:bg-primary/10 hover:text-primary transition-all group w-fit border border-black/[0.03]"
+                  className="flex items-center gap-1.5 sm:gap-2 bg-black/[0.03] px-3 sm:px-5 py-1 sm:py-1.5 rounded-full text-[10px] sm:text-[10px] font-bold text-zinc-900 hover:bg-primary/10 hover:text-primary transition-all group w-fit border border-black/[0.03]"
                 >
                   <MessageSquare className="w-2 h-2 sm:w-3 sm:h-3" />
                   <span className="flex items-center gap-1">
@@ -146,7 +154,7 @@ export const PizzaCard = memo(({ pizza, visible, onOrder }: { pizza: Pizza; visi
               {/* Ingredients - glass buttons, visible on all sizes */}
               <div className="flex flex-wrap justify-center gap-1 sm:gap-1.5 pt-0.5 sm:pt-2">
                 {pizza.ingredients.slice(0, 3).map((ing) => (
-                  <div key={ing} className="flex items-center gap-0.5 sm:gap-1 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full text-[7px] sm:text-[8px] font-bold bg-white/60 sm:bg-black/[0.03] text-zinc-600 border border-black/[0.04] backdrop-blur-sm">
+                  <div key={ing} className="flex items-center gap-1 sm:gap-1 px-2.5 sm:px-2.5 py-0.5 sm:py-1 rounded-full text-[9px] sm:text-[8px] font-bold bg-white/60 sm:bg-black/[0.03] text-zinc-600 border border-black/[0.04] backdrop-blur-sm">
                     <Leaf className="w-2 h-2 sm:w-2.5 sm:h-2.5 text-green-500" />
                     {ing}
                   </div>
@@ -159,7 +167,7 @@ export const PizzaCard = memo(({ pizza, visible, onOrder }: { pizza: Pizza; visi
                 onClick={onOrder}
                 disabled={!pizza.isAvailable}
                 className={cn(
-                  "w-full h-10 sm:h-12 lg:h-14 rounded-[1.5rem] sm:rounded-[2rem] text-white font-black text-sm sm:text-base transition-all border-none shadow-lg relative overflow-hidden group/btn",
+                  "w-full h-11 sm:h-12 lg:h-14 rounded-[1.5rem] sm:rounded-[2rem] text-white font-black text-base sm:text-base transition-all border-none shadow-lg relative overflow-hidden group/btn",
                   pizza.isAvailable
                     ? "bg-zinc-900 hover:bg-primary hover:scale-[1.01] active:scale-95"
                     : "bg-zinc-200 text-zinc-400"
