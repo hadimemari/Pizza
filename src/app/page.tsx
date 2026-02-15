@@ -33,14 +33,13 @@ const CategorySection = memo(({
   return (
     <div
       className="relative h-screen w-full flex flex-col lg:flex-row items-center lg:justify-center pt-14 sm:pt-20 lg:pt-12 pb-16 sm:pb-24 lg:pb-0"
-      style={{ contentVisibility: 'auto' }}
     >
       <div className="absolute inset-0 overflow-hidden pointer-events-none hidden lg:block">
         <div className="absolute top-[15%] left-[5%] w-[40%] h-[40%] bg-primary/[0.03] rounded-full blur-[150px] animate-float-bg" />
         <div className="absolute bottom-[10%] right-[5%] w-[40%] h-[40%] bg-accent/[0.03] rounded-full blur-[150px] animate-float-bg" style={{ animationDelay: '-3s' }} />
       </div>
 
-      <div className="w-full h-[28vh] sm:h-[45vh] lg:w-[55%] lg:h-full flex items-center z-10 overflow-visible relative lg:pl-12">
+      <div className="w-full h-[28vh] sm:h-[45vh] lg:w-[55%] lg:h-full flex items-center z-10 overflow-hidden sm:overflow-visible relative lg:pl-12">
         <PizzaCarousel
           pizzas={items}
           activeIndex={activeIndex}
@@ -170,27 +169,27 @@ export default function Home() {
       {isLoading && <LoadingScreen />}
 
       <div className={`h-full w-full transition-all duration-[1500ms] cubic-bezier(0.23, 1, 0.32, 1) ${isLoading ? 'opacity-0 scale-105 blur-2xl' : 'opacity-100 scale-100 blur-0'}`}>
-        <header className="fixed top-0 left-0 w-full px-6 md:px-12 py-4 md:py-6 flex items-center justify-between z-50 bg-white/40 backdrop-blur-xl border-b border-black/5">
-          <div className="flex items-center gap-4">
-            <div className="w-10 h-10 md:w-12 md:h-12 bg-primary rounded-[1rem] flex items-center justify-center text-white font-black text-xl md:text-2xl shadow-xl shadow-primary/20">
+        <header className="fixed top-0 left-0 w-full px-4 sm:px-6 md:px-12 py-3 sm:py-4 md:py-6 flex items-center justify-between z-50 bg-white/60 sm:bg-white/40 backdrop-blur-xl border-b border-black/5" dir="rtl">
+          <div className="flex items-center gap-3 sm:gap-4">
+            <div className="w-9 h-9 sm:w-10 sm:h-10 md:w-12 md:h-12 bg-primary rounded-[0.8rem] sm:rounded-[1rem] flex items-center justify-center text-white font-black text-lg sm:text-xl md:text-2xl shadow-xl shadow-primary/20">
               پ
             </div>
-            <div className="flex flex-col -gap-1">
-              <span className="font-black text-2xl md:text-3xl tracking-tighter uppercase italic text-foreground leading-none">
+            <div className="flex flex-col">
+              <span className="font-black text-xl sm:text-2xl md:text-3xl tracking-tighter uppercase italic text-foreground leading-none">
                 پیتزا<span className="text-primary">موشن</span>
               </span>
-              <span className="text-[8px] md:text-[10px] font-bold text-muted-foreground uppercase tracking-widest hidden md:block">Premium Dining</span>
+              <span className="text-[7px] sm:text-[8px] md:text-[10px] font-bold text-muted-foreground uppercase tracking-widest hidden sm:block">Premium Dining</span>
             </div>
           </div>
 
-          <div className="flex items-center gap-3 md:gap-6">
+          <div className="flex items-center gap-2 sm:gap-3 md:gap-6">
             {userName ? (
-              <div className="flex items-center gap-2">
-                <div className="flex items-center gap-3 bg-black/5 px-5 py-2 rounded-full border border-black/5">
-                  <User className="w-4 h-4 text-primary" />
-                  <span className="text-sm font-black">{userName}</span>
+              <div className="flex items-center gap-1.5 sm:gap-2">
+                <div className="flex items-center gap-2 sm:gap-3 bg-black/5 px-3 sm:px-5 py-1.5 sm:py-2 rounded-full border border-black/5">
+                  <User className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-primary" />
+                  <span className="text-xs sm:text-sm font-black">{userName}</span>
                 </div>
-                <button onClick={handleLogout} className="p-2 hover:bg-black/5 rounded-full transition-colors" title="خروج">
+                <button onClick={handleLogout} className="p-2 min-w-[44px] min-h-[44px] flex items-center justify-center hover:bg-black/5 rounded-full transition-colors" title="خروج">
                   <LogOut className="w-4 h-4 text-muted-foreground" />
                 </button>
               </div>
@@ -198,7 +197,7 @@ export default function Home() {
               <Button
                 onClick={() => setIsAuthOpen(true)}
                 variant="ghost"
-                className="rounded-full text-sm font-black hover:bg-black/5 px-6"
+                className="rounded-full text-xs sm:text-sm font-black hover:bg-black/5 px-4 sm:px-6 min-h-[44px]"
               >
                 ورود / ثبت‌نام
               </Button>
@@ -208,13 +207,13 @@ export default function Home() {
               <Button
                 variant="outline"
                 size="icon"
-                className="rounded-full border-black/5 bg-white shadow-xl w-10 h-10 md:w-12 md:h-12 hover:scale-110 transition-transform"
+                className="rounded-full border-black/5 bg-white shadow-xl w-10 h-10 md:w-12 md:h-12 hover:scale-110 transition-transform min-w-[44px] min-h-[44px]"
                 onClick={() => userName ? setIsCartOpen(true) : setIsAuthOpen(true)}
               >
                 <ShoppingBag className="w-5 h-5 md:w-6 md:h-6" />
               </Button>
               {cartCount > 0 && (
-                <div className="absolute -top-1 -right-1 w-5 h-5 md:w-6 md:h-6 bg-accent text-white rounded-full flex items-center justify-center text-[10px] md:text-xs font-black animate-in zoom-in duration-300 shadow-lg shadow-accent/30">
+                <div className="absolute -top-1 -left-1 sm:-right-1 w-5 h-5 md:w-6 md:h-6 bg-accent text-white rounded-full flex items-center justify-center text-[10px] md:text-xs font-black animate-in zoom-in duration-300 shadow-lg shadow-accent/30">
                   {cartCount}
                 </div>
               )}
@@ -224,8 +223,11 @@ export default function Home() {
 
         {/* Cinematic Vertical Scroller */}
         <div
-          className="relative w-full transition-transform duration-[1200ms] cubic-bezier(0.16, 1, 0.3, 1) will-change-transform gpu-accelerated"
-          style={{ transform: `translate3d(0, -${categoryIndex * 100}vh, 0)` }}
+          className="relative w-full transition-transform duration-[1200ms] will-change-transform gpu-accelerated"
+          style={{
+            transform: `translate3d(0, -${categoryIndex * 100}vh, 0)`,
+            transitionTimingFunction: 'cubic-bezier(0.16, 1, 0.3, 1)'
+          }}
         >
           {categories.map((cat) => (
             <CategorySection

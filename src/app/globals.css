@@ -151,3 +151,15 @@
     -webkit-overflow-scrolling: touch;
   }
 }
+
+/* Accessibility: reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .animate-spin-slow,
+  .animate-float-bg,
+  .animate-logo-pulse {
+    animation: none !important;
+  }
+  * {
+    transition-duration: 0.01ms !important;
+  }
+}

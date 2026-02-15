@@ -9,16 +9,16 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 
 const IndustrialLamp = memo(({ isOn }: { isOn: boolean }) => {
   return (
-    <div className="flex flex-col items-center mb-1 lg:mb-2 relative">
-      <div className="w-[1px] h-4 lg:h-6 bg-black/10 relative" />
+    <div className="flex flex-col items-center mb-0.5 sm:mb-1 lg:mb-2 relative">
+      <div className="w-[1px] h-3 sm:h-4 lg:h-6 bg-black/10 relative" />
       <div className="relative flex flex-col items-center">
-        <div className="w-3 h-1.5 lg:w-4 lg:h-2 bg-zinc-800 rounded-t-sm border-b border-zinc-700" />
+        <div className="w-2.5 h-1 sm:w-3 sm:h-1.5 lg:w-4 lg:h-2 bg-zinc-800 rounded-t-sm border-b border-zinc-700" />
         <div className={cn(
-          "w-12 h-6 lg:w-16 lg:h-8 bg-zinc-900 rounded-[100%_100%_15%_15%] relative z-20 border-b-2 border-zinc-800 transition-all duration-700",
+          "w-10 h-5 sm:w-12 sm:h-6 lg:w-16 lg:h-8 bg-zinc-900 rounded-[100%_100%_15%_15%] relative z-20 border-b-2 border-zinc-800 transition-all duration-700",
           isOn ? "shadow-[0_5px_15px_rgba(230,126,34,0.1)]" : "opacity-95"
         )}>
           <div className={cn(
-            "absolute bottom-0 left-1/2 -translate-x-1/2 w-6 h-1 lg:w-8 lg:h-1.5 rounded-full blur-[3px] transition-all duration-700",
+            "absolute bottom-0 left-1/2 -translate-x-1/2 w-5 h-0.5 sm:w-6 sm:h-1 lg:w-8 lg:h-1.5 rounded-full blur-[3px] transition-all duration-700",
             isOn ? "bg-primary/40 opacity-100" : "bg-zinc-950 opacity-20"
           )} />
         </div>
@@ -94,74 +94,72 @@ export const PizzaCard = memo(({ pizza, visible, onOrder }: { pizza: Pizza; visi
           )}
         >
           {/* Main Content Side */}
-          <div className="w-1/2 h-full flex flex-col p-4 sm:p-6 lg:p-8 justify-between">
-            <div className="flex-1 flex flex-col space-y-1.5 sm:space-y-3 lg:space-y-4 relative z-10 overflow-hidden text-center">
+          <div className="w-1/2 h-full flex flex-col p-3 sm:p-6 lg:p-8 justify-between">
+            <div className="flex-1 flex flex-col space-y-1 sm:space-y-3 lg:space-y-4 relative z-10 overflow-hidden text-center">
               <div className="flex flex-col items-center">
-                <div className="hidden sm:block">
-                  <IndustrialLamp isOn={pizza.isAvailable} />
-                </div>
+                {/* Lamp - visible on all sizes */}
+                <IndustrialLamp isOn={pizza.isAvailable} />
 
-                <div className="flex items-center gap-2 mb-0.5 sm:mb-1" dir="ltr">
+                <div className="flex items-center gap-1.5 sm:gap-2 mb-0.5" dir="ltr">
                   <div className="flex text-primary">
                     {[...Array(5)].map((_, i) => (
-                      <Star key={i} className={`w-2.5 h-2.5 sm:w-3 sm:h-3 ${i < averageRating ? 'fill-current' : 'text-zinc-200'}`} />
+                      <Star key={i} className={`w-2 h-2 sm:w-3 sm:h-3 ${i < averageRating ? 'fill-current' : 'text-zinc-200'}`} />
                     ))}
                   </div>
-                  <span className="text-[8px] sm:text-[9px] font-black text-zinc-400 uppercase tracking-[0.2em] hidden sm:inline">Premium</span>
+                  <span className="text-[7px] sm:text-[9px] font-black text-zinc-400 uppercase tracking-[0.2em] hidden sm:inline">Premium</span>
                 </div>
 
                 <h2 className={cn(
-                  "text-xl sm:text-2xl lg:text-[2.5rem] font-black tracking-tight transition-all duration-1000 leading-tight px-2 text-zinc-900",
+                  "text-lg sm:text-2xl lg:text-[2.5rem] font-black tracking-tight transition-all duration-1000 leading-tight px-1 text-zinc-900",
                   !pizza.isAvailable && "opacity-40 grayscale blur-[1px]"
                 )}>
                   {pizza.name}
                 </h2>
 
                 <p className={cn(
-                  "font-black text-lg sm:text-xl lg:text-2xl mt-0.5 sm:mt-1",
+                  "font-black text-base sm:text-xl lg:text-2xl mt-0.5",
                   pizza.isAvailable ? "text-primary" : "text-zinc-300"
                 )} dir="rtl">
                   {pizza.price}
                 </p>
               </div>
 
-              <p className="text-[11px] sm:text-xs lg:text-[13px] leading-relaxed text-zinc-500 font-medium max-w-[90%] mx-auto line-clamp-2 sm:line-clamp-3 text-center" dir="rtl">
+              <p className="text-[10px] sm:text-xs lg:text-[13px] leading-relaxed text-zinc-500 font-medium max-w-[95%] mx-auto line-clamp-2 text-center" dir="rtl">
                 {pizza.description}
               </p>
 
               <div className="flex justify-center">
                 <button
                   onClick={() => setShowReviews(true)}
-                  className="flex items-center gap-1.5 sm:gap-2 bg-black/[0.03] px-3 sm:px-5 py-1 sm:py-1.5 rounded-full text-[9px] sm:text-[10px] font-bold text-zinc-900 hover:bg-primary/10 hover:text-primary transition-all group w-fit border border-black/[0.03]"
+                  className="flex items-center gap-1 sm:gap-2 bg-black/[0.03] px-2.5 sm:px-5 py-0.5 sm:py-1.5 rounded-full text-[8px] sm:text-[10px] font-bold text-zinc-900 hover:bg-primary/10 hover:text-primary transition-all group w-fit border border-black/[0.03]"
                 >
-                  <MessageSquare className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
+                  <MessageSquare className="w-2 h-2 sm:w-3 sm:h-3" />
                   <span className="flex items-center gap-1">
                     نظرات
-                    <span className="px-1.5 sm:px-2 py-0.5 rounded-full bg-primary text-white text-[7px] sm:text-[8px] group-hover:scale-110 transition-transform inline-block font-black">
+                    <span className="px-1 sm:px-2 py-0.5 rounded-full bg-primary text-white text-[6px] sm:text-[8px] group-hover:scale-110 transition-transform inline-block font-black">
                       {pizza.reviews.length}
                     </span>
                   </span>
                 </button>
               </div>
 
-              <div className="hidden sm:block space-y-4 pt-2">
-                <div className="flex flex-wrap justify-center gap-1.5">
-                  {pizza.ingredients.slice(0, 4).map((ing) => (
-                    <div key={ing} className="flex items-center gap-1 px-2.5 py-1 rounded-full text-[8px] font-bold bg-black/[0.03] text-zinc-600 border border-black/[0.02]">
-                      <Leaf className="w-2.5 h-2.5 text-green-500" />
-                      {ing}
-                    </div>
-                  ))}
-                </div>
+              {/* Ingredients - glass buttons, visible on all sizes */}
+              <div className="flex flex-wrap justify-center gap-1 sm:gap-1.5 pt-0.5 sm:pt-2">
+                {pizza.ingredients.slice(0, 3).map((ing) => (
+                  <div key={ing} className="flex items-center gap-0.5 sm:gap-1 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full text-[7px] sm:text-[8px] font-bold bg-white/60 sm:bg-black/[0.03] text-zinc-600 border border-black/[0.04] backdrop-blur-sm">
+                    <Leaf className="w-2 h-2 sm:w-2.5 sm:h-2.5 text-green-500" />
+                    {ing}
+                  </div>
+                ))}
               </div>
             </div>
 
-            <div className="mt-2 sm:mt-4 pt-2 sm:pt-4 border-t border-black/5">
+            <div className="mt-1.5 sm:mt-4 pt-1.5 sm:pt-4 border-t border-black/5">
               <Button
                 onClick={onOrder}
                 disabled={!pizza.isAvailable}
                 className={cn(
-                  "w-full h-11 sm:h-12 lg:h-14 rounded-[1.5rem] sm:rounded-[2rem] text-white font-black text-sm sm:text-base transition-all border-none shadow-lg relative overflow-hidden group/btn",
+                  "w-full h-10 sm:h-12 lg:h-14 rounded-[1.5rem] sm:rounded-[2rem] text-white font-black text-sm sm:text-base transition-all border-none shadow-lg relative overflow-hidden group/btn",
                   pizza.isAvailable
                     ? "bg-zinc-900 hover:bg-primary hover:scale-[1.01] active:scale-95"
                     : "bg-zinc-200 text-zinc-400"
@@ -175,9 +173,9 @@ export const PizzaCard = memo(({ pizza, visible, onOrder }: { pizza: Pizza; visi
           </div>
 
           {/* Reviews Side */}
-          <div className="w-1/2 h-full flex flex-col p-5 sm:p-8 bg-white/70 sm:backdrop-blur-3xl">
-            <div className="flex items-center justify-between mb-4 sm:mb-6">
-              <h3 className="text-lg sm:text-xl font-black text-zinc-900">نظرات مشتریان</h3>
+          <div className="w-1/2 h-full flex flex-col p-4 sm:p-8 bg-white/70 sm:backdrop-blur-3xl">
+            <div className="flex items-center justify-between mb-3 sm:mb-6">
+              <h3 className="text-base sm:text-xl font-black text-zinc-900">نظرات مشتریان</h3>
               <button
                 onClick={(e) => { e.stopPropagation(); setShowReviews(false); }}
                 className="w-8 h-8 flex items-center justify-center bg-black/[0.03] text-zinc-900 rounded-full hover:bg-primary hover:text-white transition-all border border-black/[0.03] group"
@@ -187,26 +185,26 @@ export const PizzaCard = memo(({ pizza, visible, onOrder }: { pizza: Pizza; visi
             </div>
 
             <ScrollArea className="flex-1 pl-2">
-              <div className="space-y-3">
+              <div className="space-y-2 sm:space-y-3">
                 {pizza.reviews.length > 0 ? (
                   pizza.reviews.map((r) => (
-                    <div key={r.id} className="p-3 sm:p-4 bg-white/50 rounded-[1.5rem] border border-black/[0.03] shadow-sm transition-all hover:bg-white">
-                      <div className="flex justify-between items-center mb-1.5">
-                        <span className="font-black text-xs text-zinc-900">{r.userName}</span>
+                    <div key={r.id} className="p-2.5 sm:p-4 bg-white/50 rounded-[1.2rem] sm:rounded-[1.5rem] border border-black/[0.03] shadow-sm transition-all hover:bg-white">
+                      <div className="flex justify-between items-center mb-1">
+                        <span className="font-black text-[10px] sm:text-xs text-zinc-900">{r.userName}</span>
                         <div className="flex text-primary" dir="ltr">
                           {[...Array(r.rating)].map((_, i) => (
-                            <Star key={i} className="w-2.5 h-2.5 fill-current" />
+                            <Star key={i} className="w-2 h-2 sm:w-2.5 sm:h-2.5 fill-current" />
                           ))}
                         </div>
                       </div>
-                      <p className="text-[11px] text-zinc-500 leading-relaxed font-medium">{r.comment}</p>
-                      <span className="text-[8px] text-zinc-400 mt-2 block font-bold" dir="ltr">{r.date}</span>
+                      <p className="text-[10px] sm:text-[11px] text-zinc-500 leading-relaxed font-medium">{r.comment}</p>
+                      <span className="text-[7px] sm:text-[8px] text-zinc-400 mt-1.5 block font-bold" dir="ltr">{r.date}</span>
                     </div>
                   ))
                 ) : (
-                  <div className="flex flex-col items-center justify-center py-16 text-zinc-300">
-                    <MessageSquare className="w-10 h-10 mb-3 opacity-20" />
-                    <p className="text-base font-black">بدون نظر</p>
+                  <div className="flex flex-col items-center justify-center py-12 sm:py-16 text-zinc-300">
+                    <MessageSquare className="w-8 h-8 sm:w-10 sm:h-10 mb-2 sm:mb-3 opacity-20" />
+                    <p className="text-sm sm:text-base font-black">بدون نظر</p>
                   </div>
                 )}
               </div>

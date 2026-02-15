@@ -37,13 +37,12 @@ export const PizzaCarousel = memo(({ pizzas, activeIndex, onPizzaClick }: PizzaC
   const transitionDuration = viewport === 'mobile' ? '700ms' : '1000ms';
   const easing = "cubic-bezier(0.16, 1, 0.3, 1)";
 
-  // Rotation: mobile items come from bottom (clockwise), desktop from right
-  const parentRotation = viewport === 'mobile'
-    ? activeIndex * angleStep
-    : activeIndex * -angleStep;
+  // Clockwise rotation for all viewports
+  const parentRotation = activeIndex * -angleStep;
 
   const getCenterStyles = (): React.CSSProperties => {
-    if (viewport === 'mobile') return { left: '50%', top: '115%', transform: 'translateX(-50%) translate3d(0,0,0)' };
+    // Mobile: center ABOVE container → active item at bottom, others rotate upward & hide
+    if (viewport === 'mobile') return { left: '50%', top: '-10%', transform: 'translateX(-50%) translate3d(0,0,0)' };
     if (viewport === 'tablet') return { left: '50%', top: '-100px', transform: 'translateX(-50%) translate3d(0,0,0)' };
     return { left: '-400px', top: '50%', transform: 'translateY(-50%) translate3d(0,0,0)' };
   };
@@ -85,7 +84,9 @@ export const PizzaCarousel = memo(({ pizzas, activeIndex, onPizzaClick }: PizzaC
 
         {/* Pizza items on the rail */}
         {pizzas.map((pizza, index) => {
-          const angle = viewport === 'mobile' ? index * -angleStep - 90 : index * angleStep;
+          // Mobile: +90 puts active at bottom of circle; others rotate upward
+          // Desktop: 0 base, items arranged around circle
+          const angle = viewport === 'mobile' ? index * angleStep + 90 : index * angleStep;
           const isActive = index === activeIndex;
           const currentRotation = angle + parentRotation;
 
@@ -103,7 +104,7 @@ export const PizzaCarousel = memo(({ pizzas, activeIndex, onPizzaClick }: PizzaC
             >
               <div style={{
                 transform: isActive ? 'scale(1.08)' : 'scale(0.7)',
-                opacity: isActive ? 1 : 0.45,
+                opacity: isActive ? 1 : 0.4,
                 transition: `transform ${transitionDuration} ${easing}, opacity ${transitionDuration} ${easing}`
               }}>
                 <div className="relative" style={{ width: pizzaSize, height: pizzaSize }}>
