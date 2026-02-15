@@ -4,7 +4,7 @@ import React, { useEffect, useState, useRef, useMemo, memo } from 'react';
 import { type MappedProduct as Pizza } from '@/lib/data-mapper';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-import { Leaf, ShoppingCart, Star, MessageSquare, ChevronLeft } from 'lucide-react';
+import { Leaf, ShoppingCart, Star, MessageSquare, ChevronLeft, Heart } from 'lucide-react';
 import { ScrollArea } from "@/components/ui/scroll-area";
 
 const IndustrialLamp = memo(({ isOn }: { isOn: boolean }) => {
@@ -29,7 +29,10 @@ const IndustrialLamp = memo(({ isOn }: { isOn: boolean }) => {
 
 IndustrialLamp.displayName = 'IndustrialLamp';
 
-export const PizzaCard = memo(({ pizza, visible, onOrder }: { pizza: Pizza; visible: boolean; onOrder: () => void }) => {
+export const PizzaCard = memo(({ pizza, visible, onOrder, isFavorite, onToggleFavorite }: {
+  pizza: Pizza; visible: boolean; onOrder: () => void;
+  isFavorite?: boolean; onToggleFavorite?: () => void;
+}) => {
   const [showReviews, setShowReviews] = useState(false);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const [isHovered, setIsHovered] = useState(false);
@@ -94,7 +97,21 @@ export const PizzaCard = memo(({ pizza, visible, onOrder }: { pizza: Pizza; visi
           )}
         >
           {/* Main Content Side */}
-          <div className="w-1/2 h-full flex flex-col p-3 sm:p-6 lg:p-8 justify-between">
+          <div className="w-1/2 h-full flex flex-col p-3 sm:p-6 lg:p-8 justify-between relative">
+            {/* Heart / Favorite Button */}
+            {onToggleFavorite && (
+              <button
+                onClick={(e) => { e.stopPropagation(); onToggleFavorite(); }}
+                className={cn(
+                  "absolute top-3 left-3 sm:top-5 sm:left-5 z-30 w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center transition-all duration-300 border",
+                  isFavorite
+                    ? "bg-red-50 border-red-200 text-red-500 scale-110 shadow-lg shadow-red-200/40"
+                    : "bg-white/80 border-black/5 text-zinc-300 hover:text-red-400 hover:border-red-200 hover:bg-red-50 hover:scale-110 active:scale-90"
+                )}
+              >
+                <Heart className={cn("w-4 h-4 sm:w-5 sm:h-5 transition-all duration-300", isFavorite && "fill-current")} />
+              </button>
+            )}
             <div className="flex-1 flex flex-col space-y-1 sm:space-y-3 lg:space-y-4 relative z-10 overflow-hidden text-center">
               <div className="flex flex-col items-center">
                 {/* Lamp - visible on all sizes */}

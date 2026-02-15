@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef, useMemo } from "react";
+import dynamic from "next/dynamic";
 import {
   Dialog,
   DialogContent,
@@ -12,12 +13,15 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
-  User, MapPin, Heart, Settings, ChevronLeft,
+  User, MapPin, Heart, ChevronLeft, ChevronDown,
   Plus, Trash2, Loader2, Check, AlertTriangle,
-  Phone, Mail, Cake, Flame, Star, Crown,
+  Mail, Cake, Star, Crown, Calendar,
   Home, Briefcase, PenLine, ShoppingBag, Zap,
 } from "lucide-react";
 import { api } from "@/lib/api-client";
+
+// Dynamic import for MapPicker (no SSR)
+const MapPicker = dynamic(() => import("@/components/MapPicker"), { ssr: false });
 
 interface ProfileDialogProps {
   isOpen: boolean;
@@ -25,12 +29,11 @@ interface ProfileDialogProps {
   onNameUpdate?: (name: string) => void;
 }
 
-type Tab = "profile" | "addresses" | "favorites" | "settings";
+type Tab = "profile" | "addresses" | "favorites";
 
 interface ProfileData {
   id: string; phone: string; name: string | null;
   email: string | null; birthDate: string | null;
-  allergies: string | null; spicePreference: string | null;
   defaultOrderNote: string | null; loyaltyPoints: number;
   loyaltyTier: string; totalOrders: number; totalSpent: number;
   referralCode: string | null; smsOptIn: boolean;
@@ -61,30 +64,196 @@ const TIER_CONFIG: Record<string, { label: string; color: string; icon: React.Re
   DIAMOND: { label: "الماسی", color: "text-cyan-600 bg-cyan-50 border-cyan-200", icon: <Crown className="w-3.5 h-3.5" /> },
 };
 
-const SPICE_OPTIONS = [
-  { value: "MILD", label: "ملایم", icon: "🌶️" },
-  { value: "MEDIUM", label: "متوسط", icon: "🌶️🌶️" },
-  { value: "HOT", label: "تند", icon: "🌶️🌶️🌶️" },
+// ── Shamsi months & helpers ──
+const SHAMSI_MONTHS = [
+  "فروردین", "اردیبهشت", "خرداد", "تیر", "مرداد", "شهریور",
+  "مهر", "آبان", "آذر", "دی", "بهمن", "اسفند",
 ];
+
+function getDaysInMonth(month: number): number {
+  if (month <= 6) return 31;
+  if (month <= 11) return 30;
+  return 29;
+}
+
+// ── ShamsiDatePicker component ──
+function ShamsiDatePicker({
+  value,
+  onChange,
+}: {
+  value: string;
+  onChange: (val: string) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  // Parse existing value "YYYY/MM/DD"
+  const parsed = useMemo(() => {
+    const m = value.match(/^(\d{4})\/(\d{1,2})\/(\d{1,2})$/);
+    if (m) return { year: parseInt(m[1]), month: parseInt(m[2]), day: parseInt(m[3]) };
+    return { year: 1380, month: 1, day: 1 };
+  }, [value]);
+
+  const [year, setYear] = useState(parsed.year);
+  const [month, setMonth] = useState(parsed.month);
+  const [day, setDay] = useState(parsed.day);
+
+  useEffect(() => {
+    setYear(parsed.year);
+    setMonth(parsed.month);
+    setDay(parsed.day);
+  }, [parsed]);
+
+  // Close on click outside
+  useEffect(() => {
+    if (!open) return;
+    const handle = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener("mousedown", handle);
+    return () => document.removeEventListener("mousedown", handle);
+  }, [open]);
+
+  const maxDay = getDaysInMonth(month);
+  const clampedDay = Math.min(day, maxDay);
+
+  const handleConfirm = () => {
+    const m = String(month).padStart(2, "0");
+    const d = String(clampedDay).padStart(2, "0");
+    onChange(`${year}/${m}/${d}`);
+    setOpen(false);
+  };
+
+  const displayText = value
+    ? `${parsed.day} ${SHAMSI_MONTHS[parsed.month - 1]} ${parsed.year}`
+    : "";
+
+  const years = useMemo(() => {
+    const arr: number[] = [];
+    for (let y = 1405; y >= 1340; y--) arr.push(y);
+    return arr;
+  }, []);
+
+  return (
+    <div className="relative" ref={ref}>
+      <button
+        type="button"
+        onClick={() => setOpen(!open)}
+        className="w-full h-10 rounded-xl bg-black/[0.03] border border-black/5 text-sm flex items-center justify-between px-3 hover:border-primary/30 transition-all duration-200"
+      >
+        <span className={displayText ? "text-foreground" : "text-muted-foreground"}>
+          {displayText || "انتخاب تاریخ تولد"}
+        </span>
+        <ChevronDown className={`w-4 h-4 text-muted-foreground transition-transform duration-300 ${open ? "rotate-180" : ""}`} />
+      </button>
+
+      <div className={`absolute top-full left-0 right-0 mt-2 z-50 transition-all duration-300 origin-top ${
+        open ? "opacity-100 scale-100 translate-y-0" : "opacity-0 scale-95 -translate-y-2 pointer-events-none"
+      }`}>
+        <div className="bg-white rounded-2xl shadow-2xl border border-black/10 p-4 space-y-3">
+          <p className="text-xs font-bold text-center text-muted-foreground flex items-center justify-center gap-1.5">
+            <Calendar className="w-3.5 h-3.5" />
+            تاریخ تولد شمسی
+          </p>
+
+          <div className="flex gap-2" dir="rtl">
+            {/* Day */}
+            <div className="flex-1 space-y-1">
+              <label className="text-[9px] font-bold text-muted-foreground text-center block">روز</label>
+              <div className="h-[140px] overflow-y-auto no-scrollbar rounded-xl bg-black/[0.03] border border-black/5">
+                {Array.from({ length: maxDay }, (_, i) => i + 1).map((d) => (
+                  <button
+                    key={d}
+                    type="button"
+                    onClick={() => setDay(d)}
+                    className={`w-full py-1.5 text-xs font-bold transition-all duration-200 ${
+                      clampedDay === d
+                        ? "bg-primary text-white"
+                        : "hover:bg-primary/10"
+                    }`}
+                  >
+                    {d}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Month */}
+            <div className="flex-[1.5] space-y-1">
+              <label className="text-[9px] font-bold text-muted-foreground text-center block">ماه</label>
+              <div className="h-[140px] overflow-y-auto no-scrollbar rounded-xl bg-black/[0.03] border border-black/5">
+                {SHAMSI_MONTHS.map((name, i) => (
+                  <button
+                    key={i}
+                    type="button"
+                    onClick={() => setMonth(i + 1)}
+                    className={`w-full py-1.5 text-xs font-bold transition-all duration-200 ${
+                      month === i + 1
+                        ? "bg-primary text-white"
+                        : "hover:bg-primary/10"
+                    }`}
+                  >
+                    {name}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Year */}
+            <div className="flex-1 space-y-1">
+              <label className="text-[9px] font-bold text-muted-foreground text-center block">سال</label>
+              <div className="h-[140px] overflow-y-auto no-scrollbar rounded-xl bg-black/[0.03] border border-black/5">
+                {years.map((y) => (
+                  <button
+                    key={y}
+                    type="button"
+                    onClick={() => setYear(y)}
+                    className={`w-full py-1.5 text-xs font-bold transition-all duration-200 ${
+                      year === y
+                        ? "bg-primary text-white"
+                        : "hover:bg-primary/10"
+                    }`}
+                  >
+                    {y}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <Button
+            type="button"
+            onClick={handleConfirm}
+            className="w-full h-9 rounded-xl bg-black hover:bg-primary text-white text-xs font-bold transition-all duration-300"
+          >
+            <Check className="w-3.5 h-3.5 ml-1.5" /> تایید
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════
+// Main ProfileDialog
+// ═══════════════════════════════════════════
 
 export const ProfileDialog: React.FC<ProfileDialogProps> = ({ isOpen, onClose, onNameUpdate }) => {
   const [tab, setTab] = useState<Tab>("profile");
+  const [prevTab, setPrevTab] = useState<Tab>("profile");
   const [profile, setProfile] = useState<ProfileData | null>(null);
   const [completeness, setCompleteness] = useState(0);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [transitioning, setTransitioning] = useState(false);
 
   // Form states
   const [formName, setFormName] = useState("");
   const [formEmail, setFormEmail] = useState("");
   const [formBirthDate, setFormBirthDate] = useState("");
-  const [formAllergies, setFormAllergies] = useState("");
-  const [formSpice, setFormSpice] = useState<string | null>(null);
   const [formOrderNote, setFormOrderNote] = useState("");
-  const [formSmsOptIn, setFormSmsOptIn] = useState(true);
-  const [formPayment, setFormPayment] = useState<string | null>(null);
 
   // Address form
   const [showAddressForm, setShowAddressForm] = useState(false);
@@ -93,6 +262,30 @@ export const ProfileDialog: React.FC<ProfileDialogProps> = ({ isOpen, onClose, o
   const [addrStreet, setAddrStreet] = useState("");
   const [addrPostalCode, setAddrPostalCode] = useState("");
   const [addrDefault, setAddrDefault] = useState(false);
+  const [addrLat, setAddrLat] = useState<number | null>(null);
+  const [addrLng, setAddrLng] = useState<number | null>(null);
+
+  // Tab transition direction
+  const tabOrder: Tab[] = ["profile", "addresses", "favorites"];
+  const getDirection = (from: Tab, to: Tab) => {
+    return tabOrder.indexOf(to) > tabOrder.indexOf(from) ? 1 : -1;
+  };
+  const [slideDir, setSlideDir] = useState(0);
+
+  const handleTabChange = (newTab: Tab) => {
+    if (newTab === tab || transitioning) return;
+    const dir = getDirection(tab, newTab);
+    setSlideDir(dir);
+    setPrevTab(tab);
+    setTransitioning(true);
+    setError(""); setSuccess("");
+
+    // Start exit animation, then switch
+    setTimeout(() => {
+      setTab(newTab);
+      setTimeout(() => setTransitioning(false), 50);
+    }, 200);
+  };
 
   const loadProfile = useCallback(async () => {
     setLoading(true);
@@ -105,11 +298,7 @@ export const ProfileDialog: React.FC<ProfileDialogProps> = ({ isOpen, onClose, o
       setFormName(data.user.name || "");
       setFormEmail(data.user.email || "");
       setFormBirthDate(data.user.birthDate || "");
-      setFormAllergies(data.user.allergies || "");
-      setFormSpice(data.user.spicePreference || null);
       setFormOrderNote(data.user.defaultOrderNote || "");
-      setFormSmsOptIn(data.user.smsOptIn);
-      setFormPayment(data.user.preferredPayment || null);
     }
     setLoading(false);
   }, []);
@@ -118,7 +307,9 @@ export const ProfileDialog: React.FC<ProfileDialogProps> = ({ isOpen, onClose, o
     if (isOpen) {
       loadProfile();
       setTab("profile");
+      setPrevTab("profile");
       setSuccess("");
+      setTransitioning(false);
     }
   }, [isOpen, loadProfile]);
 
@@ -129,11 +320,7 @@ export const ProfileDialog: React.FC<ProfileDialogProps> = ({ isOpen, onClose, o
       name: formName || undefined,
       email: formEmail || "",
       birthDate: formBirthDate || "",
-      allergies: formAllergies || "",
-      spicePreference: formSpice,
       defaultOrderNote: formOrderNote || "",
-      smsOptIn: formSmsOptIn,
-      preferredPayment: formPayment,
     });
     setSaving(false);
     if (err) { setError(err); return; }
@@ -155,12 +342,14 @@ export const ProfileDialog: React.FC<ProfileDialogProps> = ({ isOpen, onClose, o
       street: addrStreet,
       postalCode: addrPostalCode || "",
       isDefault: addrDefault,
+      latitude: addrLat,
+      longitude: addrLng,
     });
     setSaving(false);
     if (err) { setError(err); return; }
     setShowAddressForm(false);
     setAddrTitle(""); setAddrNeighborhood(""); setAddrStreet("");
-    setAddrPostalCode(""); setAddrDefault(false);
+    setAddrPostalCode(""); setAddrDefault(false); setAddrLat(null); setAddrLng(null);
     loadProfile();
   };
 
@@ -178,7 +367,6 @@ export const ProfileDialog: React.FC<ProfileDialogProps> = ({ isOpen, onClose, o
 
   const handleQuickOrder = async (favorite: FavoriteData) => {
     setSaving(true); setError("");
-    // اضافه کردن همه آیتم‌ها به سبد
     for (const item of favorite.items) {
       if (!item.product.isAvailable) continue;
       const { error: err } = await api.cart.add(item.product.id, item.quantity);
@@ -194,9 +382,18 @@ export const ProfileDialog: React.FC<ProfileDialogProps> = ({ isOpen, onClose, o
   const tabs: { id: Tab; label: string; icon: React.ReactNode }[] = [
     { id: "profile", label: "پروفایل", icon: <User className="w-4 h-4" /> },
     { id: "addresses", label: "آدرس‌ها", icon: <MapPin className="w-4 h-4" /> },
-    { id: "favorites", label: "همیشگی", icon: <Heart className="w-4 h-4" /> },
-    { id: "settings", label: "تنظیمات", icon: <Settings className="w-4 h-4" /> },
+    { id: "favorites", label: "علاقه‌مندی", icon: <Heart className="w-4 h-4" /> },
   ];
+
+  // Format join date
+  const joinDate = profile?.createdAt
+    ? new Date(profile.createdAt).toLocaleDateString("fa-IR")
+    : "";
+
+  // Animation class for tab content
+  const contentAnim = transitioning
+    ? `opacity-0 ${slideDir > 0 ? "-translate-x-4" : "translate-x-4"}`
+    : "opacity-100 translate-x-0";
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -212,7 +409,7 @@ export const ProfileDialog: React.FC<ProfileDialogProps> = ({ isOpen, onClose, o
           {tabs.map((t) => (
             <button
               key={t.id}
-              onClick={() => { setTab(t.id); setError(""); setSuccess(""); }}
+              onClick={() => handleTabChange(t.id)}
               className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-xs font-bold transition-all duration-300 ${
                 tab === t.id
                   ? "bg-white shadow-md text-primary scale-[1.02]"
@@ -227,13 +424,13 @@ export const ProfileDialog: React.FC<ProfileDialogProps> = ({ isOpen, onClose, o
 
         {/* Messages */}
         {error && (
-          <div className="mx-4 bg-red-50 text-red-600 text-xs font-bold px-4 py-2 rounded-xl text-center flex items-center justify-center gap-2">
+          <div className="mx-4 bg-red-50 text-red-600 text-xs font-bold px-4 py-2 rounded-xl text-center flex items-center justify-center gap-2 animate-in fade-in slide-in-from-top-2 duration-300">
             <AlertTriangle className="w-3.5 h-3.5" />
             {error}
           </div>
         )}
         {success && (
-          <div className="mx-4 bg-green-50 text-green-600 text-xs font-bold px-4 py-2 rounded-xl text-center flex items-center justify-center gap-2 animate-in fade-in duration-300">
+          <div className="mx-4 bg-green-50 text-green-600 text-xs font-bold px-4 py-2 rounded-xl text-center flex items-center justify-center gap-2 animate-in fade-in slide-in-from-top-2 duration-300">
             <Check className="w-3.5 h-3.5" />
             {success}
           </div>
@@ -245,11 +442,23 @@ export const ProfileDialog: React.FC<ProfileDialogProps> = ({ isOpen, onClose, o
               <Loader2 className="w-8 h-8 animate-spin text-primary" />
             </div>
           ) : (
-            <>
+            <div className={`transition-all duration-300 ease-out ${contentAnim}`}>
               {/* ═══ TAB: PROFILE ═══ */}
               {tab === "profile" && profile && (
                 <div className="space-y-5">
-                  {/* Loyalty Card */}
+                  {/* ── Completeness Bar (above card) ── */}
+                  <div className="flex items-center gap-3">
+                    <div className="flex-1 h-2 rounded-full bg-black/[0.06] overflow-hidden">
+                      <div
+                        className="h-full rounded-full bg-gradient-to-l from-primary to-amber-400 transition-all duration-1000 ease-out"
+                        style={{ width: `${completeness}%` }}
+                      />
+                    </div>
+                    <span className="text-xs font-black text-primary whitespace-nowrap">{completeness}%</span>
+                    <span className="text-[10px] text-muted-foreground whitespace-nowrap">تکمیل پروفایل</span>
+                  </div>
+
+                  {/* ── Loyalty Card ── */}
                   <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-black via-gray-900 to-black p-5 text-white">
                     <div className="absolute top-0 left-0 w-full h-full opacity-10">
                       <div className="absolute top-2 left-4 w-20 h-20 rounded-full bg-primary blur-2xl" />
@@ -266,43 +475,30 @@ export const ProfileDialog: React.FC<ProfileDialogProps> = ({ isOpen, onClose, o
                           {tier.icon} {tier.label}
                         </div>
                       </div>
-                      <div className="flex gap-6 mt-4 pt-3 border-t border-white/10">
-                        <div>
-                          <p className="text-[10px] text-white/40">امتیاز</p>
-                          <p className="text-sm font-black">{profile.loyaltyPoints.toLocaleString("fa-IR")}</p>
+                      <div className="flex items-end justify-between mt-4 pt-3 border-t border-white/10">
+                        <div className="flex gap-6">
+                          <div>
+                            <p className="text-[10px] text-white/40">امتیاز</p>
+                            <p className="text-sm font-black">{profile.loyaltyPoints.toLocaleString("fa-IR")}</p>
+                          </div>
+                          <div>
+                            <p className="text-[10px] text-white/40">سفارشات</p>
+                            <p className="text-sm font-black">{profile.totalOrders.toLocaleString("fa-IR")}</p>
+                          </div>
+                          <div>
+                            <p className="text-[10px] text-white/40">مبلغ کل</p>
+                            <p className="text-sm font-black">{profile.totalSpent.toLocaleString("fa-IR")} ت</p>
+                          </div>
                         </div>
-                        <div>
-                          <p className="text-[10px] text-white/40">سفارشات</p>
-                          <p className="text-sm font-black">{profile.totalOrders.toLocaleString("fa-IR")}</p>
-                        </div>
-                        <div>
-                          <p className="text-[10px] text-white/40">مبلغ کل</p>
-                          <p className="text-sm font-black">{profile.totalSpent.toLocaleString("fa-IR")} ت</p>
-                        </div>
+                        {/* Join date - bottom right */}
+                        {joinDate && (
+                          <p className="text-[9px] text-white/30 font-mono">عضویت: {joinDate}</p>
+                        )}
                       </div>
                     </div>
                   </div>
 
-                  {/* Completeness */}
-                  <div className="flex items-center gap-3 bg-primary/5 p-3 rounded-xl">
-                    <div className="relative w-12 h-12">
-                      <svg className="w-12 h-12 -rotate-90" viewBox="0 0 36 36">
-                        <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                          fill="none" stroke="#e5e7eb" strokeWidth="3" />
-                        <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                          fill="none" stroke="hsl(28,77%,52%)" strokeWidth="3"
-                          strokeDasharray={`${completeness}, 100`}
-                          className="transition-all duration-1000" />
-                      </svg>
-                      <span className="absolute inset-0 flex items-center justify-center text-[10px] font-black">{completeness}%</span>
-                    </div>
-                    <div>
-                      <p className="text-xs font-bold">تکمیل پروفایل</p>
-                      <p className="text-[10px] text-muted-foreground">پروفایل کامل‌تر = تجربه بهتر</p>
-                    </div>
-                  </div>
-
-                  {/* Edit Form */}
+                  {/* ── Edit Form ── */}
                   <div className="space-y-3">
                     <div className="space-y-1.5">
                       <Label className="text-[10px] font-bold text-muted-foreground flex items-center gap-1"><User className="w-3 h-3" /> نام</Label>
@@ -314,29 +510,7 @@ export const ProfileDialog: React.FC<ProfileDialogProps> = ({ isOpen, onClose, o
                     </div>
                     <div className="space-y-1.5">
                       <Label className="text-[10px] font-bold text-muted-foreground flex items-center gap-1"><Cake className="w-3 h-3" /> تاریخ تولد (شمسی)</Label>
-                      <Input value={formBirthDate} onChange={(e) => setFormBirthDate(e.target.value)} className="h-10 rounded-xl bg-black/[0.03] border-black/5 text-sm" placeholder="15/08 (روز/ماه)" maxLength={5} />
-                    </div>
-                    <div className="space-y-1.5">
-                      <Label className="text-[10px] font-bold text-muted-foreground flex items-center gap-1"><AlertTriangle className="w-3 h-3" /> حساسیت غذایی</Label>
-                      <Input value={formAllergies} onChange={(e) => setFormAllergies(e.target.value)} className="h-10 rounded-xl bg-black/[0.03] border-black/5 text-sm" placeholder="لاکتوز، گلوتن، ..." />
-                    </div>
-                    <div className="space-y-1.5">
-                      <Label className="text-[10px] font-bold text-muted-foreground flex items-center gap-1"><Flame className="w-3 h-3" /> ترجیح تندی</Label>
-                      <div className="flex gap-2">
-                        {SPICE_OPTIONS.map((opt) => (
-                          <button
-                            key={opt.value}
-                            onClick={() => setFormSpice(formSpice === opt.value ? null : opt.value)}
-                            className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all duration-200 border ${
-                              formSpice === opt.value
-                                ? "bg-primary/10 border-primary/30 text-primary scale-105"
-                                : "bg-black/[0.03] border-black/5 hover:bg-black/[0.06]"
-                            }`}
-                          >
-                            {opt.icon} {opt.label}
-                          </button>
-                        ))}
-                      </div>
+                      <ShamsiDatePicker value={formBirthDate} onChange={setFormBirthDate} />
                     </div>
                     <div className="space-y-1.5">
                       <Label className="text-[10px] font-bold text-muted-foreground flex items-center gap-1"><PenLine className="w-3 h-3" /> یادداشت همیشگی</Label>
@@ -393,6 +567,19 @@ export const ProfileDialog: React.FC<ProfileDialogProps> = ({ isOpen, onClose, o
                   {showAddressForm ? (
                     <div className="space-y-3 p-4 rounded-xl border border-primary/20 bg-primary/[0.02]">
                       <p className="text-sm font-bold flex items-center gap-2"><Plus className="w-4 h-4" /> آدرس جدید</p>
+
+                      {/* Map Picker */}
+                      <MapPicker
+                        latitude={addrLat}
+                        longitude={addrLng}
+                        onLocationSelect={(lat, lng) => { setAddrLat(lat); setAddrLng(lng); }}
+                      />
+                      {addrLat && addrLng && (
+                        <p className="text-[10px] text-green-600 font-bold flex items-center gap-1">
+                          <Check className="w-3 h-3" /> موقعیت روی نقشه انتخاب شد
+                        </p>
+                      )}
+
                       <Input value={addrTitle} onChange={(e) => setAddrTitle(e.target.value)} className="h-10 rounded-xl bg-white border-black/5 text-sm" placeholder="عنوان (خانه، محل کار، ...)" />
                       <Input value={addrNeighborhood} onChange={(e) => setAddrNeighborhood(e.target.value)} className="h-10 rounded-xl bg-white border-black/5 text-sm" placeholder="محله *" />
                       <Input value={addrStreet} onChange={(e) => setAddrStreet(e.target.value)} className="h-10 rounded-xl bg-white border-black/5 text-sm" placeholder="نشانی کامل (خیابان، کوچه، پلاک، طبقه) *" />
@@ -420,14 +607,14 @@ export const ProfileDialog: React.FC<ProfileDialogProps> = ({ isOpen, onClose, o
                 </div>
               )}
 
-              {/* ═══ TAB: FAVORITES (همیشگی) ═══ */}
+              {/* ═══ TAB: FAVORITES (علاقه‌مندی) ═══ */}
               {tab === "favorites" && profile && (
                 <div className="space-y-3">
                   {profile.favorites.length === 0 && (
                     <div className="text-center py-8">
                       <Heart className="w-10 h-10 mx-auto text-muted-foreground/30 mb-3" />
-                      <p className="text-sm text-muted-foreground">هنوز سفارش همیشگی ندارید</p>
-                      <p className="text-[10px] text-muted-foreground/60 mt-1">از منوی محصولات، سفارش دلخواه خود را ذخیره کنید</p>
+                      <p className="text-sm text-muted-foreground">هنوز آیتمی علاقه‌مند نشده‌اید</p>
+                      <p className="text-[10px] text-muted-foreground/60 mt-1">با زدن قلب روی کارت هر محصول، آن را ذخیره کنید</p>
                     </div>
                   )}
 
@@ -435,8 +622,8 @@ export const ProfileDialog: React.FC<ProfileDialogProps> = ({ isOpen, onClose, o
                     <div key={fav.id} className="group relative p-4 rounded-xl bg-black/[0.02] border border-black/5 hover:border-primary/20 hover:shadow-md transition-all duration-300">
                       <div className="flex items-start justify-between mb-3">
                         <div className="flex items-center gap-2">
-                          <div className="w-8 h-8 rounded-lg bg-accent/10 flex items-center justify-center">
-                            <Zap className="w-4 h-4 text-accent" />
+                          <div className="w-8 h-8 rounded-lg bg-red-50 flex items-center justify-center">
+                            <Heart className="w-4 h-4 text-red-500 fill-red-500" />
                           </div>
                           <div>
                             <p className="text-sm font-bold">{fav.title}</p>
@@ -459,7 +646,7 @@ export const ProfileDialog: React.FC<ProfileDialogProps> = ({ isOpen, onClose, o
                             </div>
                             <div>
                               <p className="text-[10px] font-bold whitespace-nowrap">{item.product.name}</p>
-                              <p className="text-[9px] text-muted-foreground">×{item.quantity}</p>
+                              <p className="text-[9px] text-muted-foreground">{item.product.price.toLocaleString("fa-IR")} ت</p>
                             </div>
                           </div>
                         ))}
@@ -482,73 +669,7 @@ export const ProfileDialog: React.FC<ProfileDialogProps> = ({ isOpen, onClose, o
                   ))}
                 </div>
               )}
-
-              {/* ═══ TAB: SETTINGS ═══ */}
-              {tab === "settings" && profile && (
-                <div className="space-y-4">
-                  {/* اطلاع‌رسانی */}
-                  <div className="p-4 rounded-xl bg-black/[0.02] border border-black/5 space-y-3">
-                    <p className="text-sm font-bold">اطلاع‌رسانی</p>
-                    <label className="flex items-center justify-between cursor-pointer">
-                      <div className="flex items-center gap-2">
-                        <Phone className="w-4 h-4 text-muted-foreground" />
-                        <span className="text-xs">دریافت پیامک تبلیغاتی</span>
-                      </div>
-                      <button
-                        onClick={() => setFormSmsOptIn(!formSmsOptIn)}
-                        className={`w-10 h-5 rounded-full transition-all duration-300 ${formSmsOptIn ? "bg-primary" : "bg-gray-300"}`}
-                      >
-                        <div className={`w-4 h-4 rounded-full bg-white shadow-sm transition-all duration-300 ${formSmsOptIn ? "mr-0.5 translate-x-0" : "mr-[22px]"}`} />
-                      </button>
-                    </label>
-                  </div>
-
-                  {/* روش پرداخت */}
-                  <div className="p-4 rounded-xl bg-black/[0.02] border border-black/5 space-y-3">
-                    <p className="text-sm font-bold">روش پرداخت ترجیحی</p>
-                    {[
-                      { value: "ONLINE", label: "پرداخت آنلاین" },
-                      { value: "CASH", label: "نقدی هنگام تحویل" },
-                      { value: "CARD_ON_DELIVERY", label: "کارت‌خوان هنگام تحویل" },
-                    ].map((opt) => (
-                      <label key={opt.value} className="flex items-center gap-2 cursor-pointer">
-                        <input
-                          type="radio"
-                          name="payment"
-                          checked={formPayment === opt.value}
-                          onChange={() => setFormPayment(opt.value)}
-                          className="text-primary"
-                        />
-                        <span className="text-xs">{opt.label}</span>
-                      </label>
-                    ))}
-                  </div>
-
-                  {/* اطلاعات حساب */}
-                  <div className="p-4 rounded-xl bg-black/[0.02] border border-black/5 space-y-2">
-                    <p className="text-sm font-bold">اطلاعات حساب</p>
-                    <div className="flex justify-between text-xs">
-                      <span className="text-muted-foreground">شماره موبایل</span>
-                      <span className="font-mono" dir="ltr">{profile.phone}</span>
-                    </div>
-                    <div className="flex justify-between text-xs">
-                      <span className="text-muted-foreground">تاریخ عضویت</span>
-                      <span>{new Date(profile.createdAt).toLocaleDateString("fa-IR")}</span>
-                    </div>
-                    {profile.referralCode && (
-                      <div className="flex justify-between text-xs">
-                        <span className="text-muted-foreground">کد معرف</span>
-                        <span className="font-mono font-bold text-primary">{profile.referralCode}</span>
-                      </div>
-                    )}
-                  </div>
-
-                  <Button onClick={handleSaveProfile} disabled={saving} className="w-full h-11 rounded-xl bg-black hover:bg-primary text-white font-bold transition-all duration-500">
-                    {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : "ذخیره تنظیمات"}
-                  </Button>
-                </div>
-              )}
-            </>
+            </div>
           )}
         </ScrollArea>
       </DialogContent>

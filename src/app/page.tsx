@@ -23,7 +23,9 @@ const CategorySection = memo(({
   isActive,
   activeIndex,
   onPizzaClick,
-  onOrder
+  onOrder,
+  favoriteIds,
+  onToggleFavorite,
 }: {
   cat: MappedCategory;
   items: MappedProduct[];
@@ -31,6 +33,8 @@ const CategorySection = memo(({
   activeIndex: number;
   onPizzaClick: (i: number) => void;
   onOrder: () => void;
+  favoriteIds: Set<string>;
+  onToggleFavorite: (productId: string) => void;
 }) => {
   return (
     <div
@@ -55,6 +59,8 @@ const CategorySection = memo(({
             pizza={items[activeIndex]}
             visible={true}
             onOrder={onOrder}
+            isFavorite={favoriteIds.has(items[activeIndex].id)}
+            onToggleFavorite={() => onToggleFavorite(items[activeIndex].id)}
           />
         )}
       </div>
@@ -78,6 +84,7 @@ export default function Home() {
   const [cartCount, setCartCount] = useState(0);
   const [userName, setUserName] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [favoriteProductIds, setFavoriteProductIds] = useState<Set<string>>(new Set());
 
   // Fetch initial data
   useEffect(() => {
@@ -105,10 +112,20 @@ export default function Home() {
 
       if (meRes.data?.user) {
         setUserName(meRes.data.user.name);
-        // Load cart count
-        const cartRes = await api.cart.get();
+        // Load cart count + favorites
+        const [cartRes, favRes] = await Promise.all([
+          api.cart.get(),
+          api.favorites.list(),
+        ]);
         if (cartRes.data?.items) {
           setCartCount(cartRes.data.items.reduce((s, i) => s + i.quantity, 0));
+        }
+        if (favRes.data?.favorites) {
+          const ids = new Set<string>();
+          favRes.data.favorites.forEach((f) => {
+            f.items.forEach((item) => ids.add(item.product.id));
+          });
+          setFavoriteProductIds(ids);
         }
       }
 
@@ -140,16 +157,51 @@ export default function Home() {
 
   const handleLoginSuccess = useCallback(async (name: string) => {
     setUserName(name);
-    const cartRes = await api.cart.get();
+    const [cartRes, favRes] = await Promise.all([
+      api.cart.get(),
+      api.favorites.list(),
+    ]);
     if (cartRes.data?.items) {
       setCartCount(cartRes.data.items.reduce((s, i) => s + i.quantity, 0));
     }
+    if (favRes.data?.favorites) {
+      const ids = new Set<string>();
+      favRes.data.favorites.forEach((f) => {
+        f.items.forEach((item) => ids.add(item.product.id));
+      });
+      setFavoriteProductIds(ids);
+    }
   }, []);
+
+  const handleToggleFavorite = useCallback(async (productId: string) => {
+    if (!userName) {
+      setIsAuthOpen(true);
+      return;
+    }
+    // Optimistic update
+    setFavoriteProductIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(productId)) next.delete(productId);
+      else next.add(productId);
+      return next;
+    });
+    const { error } = await api.favorites.toggle(productId);
+    if (error) {
+      // Revert on error
+      setFavoriteProductIds((prev) => {
+        const next = new Set(prev);
+        if (next.has(productId)) next.delete(productId);
+        else next.add(productId);
+        return next;
+      });
+    }
+  }, [userName]);
 
   const handleLogout = useCallback(async () => {
     await api.auth.logout();
     setUserName(null);
     setCartCount(0);
+    setFavoriteProductIds(new Set());
   }, []);
 
   // Session inactivity monitor (30 min idle → auto-logout)
@@ -249,6 +301,8 @@ export default function Home() {
                 setActiveIndices(prev => ({ ...prev, [cat.id]: i }));
               }}
               onOrder={handleOrder}
+              favoriteIds={favoriteProductIds}
+              onToggleFavorite={handleToggleFavorite}
             />
           ))}
         </div>

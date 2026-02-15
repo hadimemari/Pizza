@@ -17,8 +17,6 @@ export async function GET() {
         email: true,
         birthDate: true,
         avatarUrl: true,
-        allergies: true,
-        spicePreference: true,
         defaultOrderNote: true,
         loyaltyPoints: true,
         loyaltyTier: true,
@@ -53,12 +51,10 @@ export async function GET() {
 
     // محاسبه درصد تکمیل پروفایل
     let completeness = 0;
-    if (user.name && user.name !== "کاربر") completeness += 15;
+    if (user.name && user.name !== "کاربر") completeness += 20;
     if (user.addresses.length > 0) completeness += 25;
-    if (user.email) completeness += 10;
-    if (user.birthDate) completeness += 10;
-    if (user.allergies) completeness += 10;
-    if (user.spicePreference) completeness += 5;
+    if (user.email) completeness += 15;
+    if (user.birthDate) completeness += 15;
     if (user.avatarUrl) completeness += 10;
     if (user.totalOrders > 0) completeness += 15;
 
@@ -92,8 +88,6 @@ export async function PATCH(req: NextRequest) {
     if (data.name !== undefined) updateData.name = data.name;
     if (data.email !== undefined) updateData.email = data.email || null;
     if (data.birthDate !== undefined) updateData.birthDate = data.birthDate || null;
-    if (data.allergies !== undefined) updateData.allergies = data.allergies || null;
-    if (data.spicePreference !== undefined) updateData.spicePreference = data.spicePreference;
     if (data.defaultOrderNote !== undefined) updateData.defaultOrderNote = data.defaultOrderNote || null;
     if (data.smsOptIn !== undefined) updateData.smsOptIn = data.smsOptIn;
     if (data.preferredPayment !== undefined) updateData.preferredPayment = data.preferredPayment;
@@ -103,8 +97,7 @@ export async function PATCH(req: NextRequest) {
       data: updateData,
       select: {
         id: true, phone: true, name: true, email: true,
-        birthDate: true, allergies: true, spicePreference: true,
-        defaultOrderNote: true, smsOptIn: true, preferredPayment: true,
+        birthDate: true, defaultOrderNote: true, smsOptIn: true, preferredPayment: true,
       },
     });
 

@@ -25,9 +25,7 @@ model User {
   birthDate        String?  // روز/ماه شمسی مثال: "15/08"
   avatarUrl        String?
 
-  // ── ترجیحات غذایی ──
-  allergies        String?  // JSON array: ["لاکتوز","گلوتن"]
-  spicePreference  String?  // MILD | MEDIUM | HOT
+  // ── یادداشت پیش‌فرض ──
   defaultOrderNote String?
 
   // ── وفاداری ──

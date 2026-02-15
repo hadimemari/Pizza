@@ -56,9 +56,7 @@ export const paymentRequestSchema = z.object({
 export const profileUpdateSchema = z.object({
   name: z.string().min(2, "نام باید حداقل ۲ حرف باشد").max(100).optional(),
   email: z.string().email("ایمیل معتبر نیست").optional().or(z.literal("")),
-  birthDate: z.string().regex(/^\d{1,2}\/\d{1,2}$/, "فرمت تاریخ: روز/ماه").optional().or(z.literal("")),
-  allergies: z.string().max(500).optional(), // JSON array
-  spicePreference: z.enum(["MILD", "MEDIUM", "HOT"]).optional().nullable(),
+  birthDate: z.string().regex(/^\d{4}\/\d{1,2}\/\d{1,2}$/, "فرمت تاریخ: سال/ماه/روز").optional().or(z.literal("")),
   defaultOrderNote: z.string().max(300).optional().or(z.literal("")),
   smsOptIn: z.boolean().optional(),
   preferredPayment: z.enum(["ONLINE", "CASH", "CARD_ON_DELIVERY"]).optional().nullable(),

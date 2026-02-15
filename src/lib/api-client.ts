@@ -168,7 +168,6 @@ export const api = {
         user: {
           id: string; phone: string; name: string | null;
           email: string | null; birthDate: string | null; avatarUrl: string | null;
-          allergies: string | null; spicePreference: string | null;
           defaultOrderNote: string | null; loyaltyPoints: number;
           loyaltyTier: string; totalOrders: number; totalSpent: number;
           referralCode: string | null; smsOptIn: boolean;
@@ -248,6 +247,12 @@ export const api = {
     remove: (id: string) =>
       request<{ message: string }>(`/api/favorites?id=${id}`, {
         method: "DELETE",
+      }),
+
+    toggle: (productId: string) =>
+      request<{ favorited: boolean; message: string }>("/api/favorites/toggle", {
+        method: "POST",
+        body: JSON.stringify({ productId }),
       }),
   },
 };
