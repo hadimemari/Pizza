@@ -160,4 +160,94 @@ export const api = {
         body: JSON.stringify({ orderId }),
       }),
   },
+
+  // ── Profile ──
+  profile: {
+    get: () =>
+      request<{
+        user: {
+          id: string; phone: string; name: string | null;
+          email: string | null; birthDate: string | null; avatarUrl: string | null;
+          allergies: string | null; spicePreference: string | null;
+          defaultOrderNote: string | null; loyaltyPoints: number;
+          loyaltyTier: string; totalOrders: number; totalSpent: number;
+          referralCode: string | null; smsOptIn: boolean;
+          preferredPayment: string | null; createdAt: string;
+          lastOrderAt: string | null;
+          addresses: Array<{
+            id: string; title: string; province: string; city: string;
+            neighborhood: string; street: string; postalCode: string | null;
+            isDefault: boolean;
+          }>;
+          favorites: Array<{
+            id: string; title: string;
+            items: Array<{
+              id: string; quantity: number;
+              product: { id: string; name: string; price: number; image: string; isAvailable: boolean };
+            }>;
+          }>;
+        };
+        completeness: number;
+      }>("/api/profile"),
+
+    update: (data: Record<string, unknown>) =>
+      request<{ message: string }>("/api/profile", {
+        method: "PATCH",
+        body: JSON.stringify(data),
+      }),
+  },
+
+  // ── Addresses ──
+  addresses: {
+    list: () =>
+      request<{
+        addresses: Array<{
+          id: string; title: string; province: string; city: string;
+          neighborhood: string; street: string; postalCode: string | null;
+          isDefault: boolean;
+        }>;
+      }>("/api/addresses"),
+
+    create: (data: Record<string, unknown>) =>
+      request<{ message: string }>("/api/addresses", {
+        method: "POST",
+        body: JSON.stringify(data),
+      }),
+
+    update: (id: string, data: Record<string, unknown>) =>
+      request<{ message: string }>(`/api/addresses?id=${id}`, {
+        method: "PATCH",
+        body: JSON.stringify(data),
+      }),
+
+    remove: (id: string) =>
+      request<{ message: string }>(`/api/addresses?id=${id}`, {
+        method: "DELETE",
+      }),
+  },
+
+  // ── Favorites (سفارش همیشگی) ──
+  favorites: {
+    list: () =>
+      request<{
+        favorites: Array<{
+          id: string; title: string; totalAmount: number;
+          items: Array<{
+            id: string; quantity: number;
+            product: { id: string; name: string; price: number; image: string; isAvailable: boolean };
+          }>;
+        }>;
+      }>("/api/favorites"),
+
+    create: (title: string, items: Array<{ productId: string; quantity: number }>) =>
+      request<{ message: string }>("/api/favorites", {
+        method: "POST",
+        body: JSON.stringify({ title, items }),
+      }),
+
+    remove: (id: string) =>
+      request<{ message: string }>(`/api/favorites?id=${id}`, {
+        method: "DELETE",
+      }),
+  },
 };

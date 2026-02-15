@@ -56,17 +56,15 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const response: Record<string, unknown> = {
-      message: "کد تایید ارسال شد",
-      isNewUser: !user,
-    };
-
-    // Return OTP code in response when using sandbox or demo mode (no real SMS sent)
-    if (isDemoMode() || isSandboxMode()) {
-      response.debug_code = code;
+    // [SECURITY FIX] Never return OTP in response. Only log to server console in dev.
+    if (process.env.NODE_ENV === "development" && (isDemoMode() || isSandboxMode())) {
+      console.log(`[DEV] OTP for ${phone}: ${code}`);
     }
 
-    return NextResponse.json(response);
+    return NextResponse.json({
+      message: "کد تایید ارسال شد",
+      isNewUser: !user,
+    });
   } catch {
     return NextResponse.json(
       { error: "خطای سرور" },

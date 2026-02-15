@@ -65,7 +65,9 @@ export async function sendOtp(phone: string, code: string): Promise<boolean> {
         ],
       };
 
-      console.log(`[SMS] Sending OTP (sandbox=${sandbox}):`, JSON.stringify(body));
+      // [SECURITY FIX] Redact OTP code from logs
+      const logBody = { ...body, parameters: [{ name: "Code", value: "***" }] };
+      console.log(`[SMS] Sending OTP (sandbox=${sandbox}):`, JSON.stringify(logBody));
 
       const response = await fetch(`${SMSIR_BASE}/send/verify`, {
         method: "POST",
@@ -112,6 +114,8 @@ export async function getCredit(): Promise<number | null> {
   }
 }
 
+// [SECURITY FIX] Use crypto PRNG instead of Math.random()
 export function generateOtpCode(): string {
-  return Math.floor(100000 + Math.random() * 900000).toString();
+  const { randomInt } = require("crypto");
+  return randomInt(100000, 999999).toString();
 }

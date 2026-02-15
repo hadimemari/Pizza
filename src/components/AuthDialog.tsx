@@ -186,11 +186,6 @@ export const AuthDialog: React.FC<AuthDialogProps> = ({ isOpen, onClose, onLogin
                   dir="ltr"
                 />
               </div>
-              {debugCode && (
-                <div className="bg-amber-50 border border-amber-200 text-amber-800 text-xs font-bold px-4 py-2 rounded-xl text-center dir-ltr">
-                  [DEV] کد تایید: <span className="font-mono text-sm tracking-widest">{debugCode}</span>
-                </div>
-              )}
               <div className="flex justify-between items-center text-xs text-muted-foreground">
                 <button
                   type="button"

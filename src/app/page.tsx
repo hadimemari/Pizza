@@ -8,11 +8,13 @@ import { PizzaThumbnails } from '@/components/PizzaThumbnails';
 import { CategoryNavigator } from '@/components/CategoryNavigator';
 import { AuthDialog } from '@/components/AuthDialog';
 import { CartSheet } from '@/components/CartSheet';
+import { ProfileDialog } from '@/components/ProfileDialog';
 import { LoadingScreen } from '@/components/LoadingScreen';
 import { Button } from '@/components/ui/button';
 import { ShoppingBag, User, LogOut } from 'lucide-react';
 import { api } from '@/lib/api-client';
 import { mapProduct, mapCategory, type MappedProduct, type MappedCategory } from '@/lib/data-mapper';
+import { useSessionMonitor } from '@/lib/useSessionMonitor';
 
 // Memoized Category Section
 const CategorySection = memo(({
@@ -71,6 +73,7 @@ export default function Home() {
   const [activeCategoryId, setActiveCategoryId] = useState("");
   const [activeIndices, setActiveIndices] = useState<Record<string, number>>({});
   const [isAuthOpen, setIsAuthOpen] = useState(false);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [cartCount, setCartCount] = useState(0);
   const [userName, setUserName] = useState<string | null>(null);
@@ -149,6 +152,9 @@ export default function Home() {
     setCartCount(0);
   }, []);
 
+  // Session inactivity monitor (30 min idle → auto-logout)
+  useSessionMonitor(!!userName, handleLogout);
+
   const currentCategoryItems = useMemo(() => {
     return products.filter(item => item.category === activeCategoryId);
   }, [products, activeCategoryId]);
@@ -185,7 +191,10 @@ export default function Home() {
           <div className="flex items-center gap-2 sm:gap-3 md:gap-6">
             {userName ? (
               <div className="flex items-center gap-1.5 sm:gap-2">
-                <div className="flex items-center gap-2 sm:gap-3 bg-black/5 px-3 sm:px-5 py-1.5 sm:py-2 rounded-full border border-black/5 cursor-pointer hover:bg-primary/10 hover:border-primary/20 hover:shadow-lg hover:shadow-primary/10 hover:scale-105 active:scale-95 transition-all duration-300">
+                <div
+                  onClick={() => setIsProfileOpen(true)}
+                  className="flex items-center gap-2 sm:gap-3 bg-black/5 px-3 sm:px-5 py-1.5 sm:py-2 rounded-full border border-black/5 cursor-pointer hover:bg-primary/10 hover:border-primary/20 hover:shadow-lg hover:shadow-primary/10 hover:scale-105 active:scale-95 transition-all duration-300"
+                >
                   <User className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-primary transition-transform duration-300 group-hover:rotate-12" />
                   <span className="text-xs sm:text-sm font-black">{userName}</span>
                 </div>
@@ -301,6 +310,12 @@ export default function Home() {
         isOpen={isAuthOpen}
         onClose={() => setIsAuthOpen(false)}
         onLoginSuccess={handleLoginSuccess}
+      />
+
+      <ProfileDialog
+        isOpen={isProfileOpen}
+        onClose={() => setIsProfileOpen(false)}
+        onNameUpdate={(name) => setUserName(name)}
       />
 
       <CartSheet
