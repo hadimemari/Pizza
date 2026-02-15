@@ -22,7 +22,7 @@ export const PizzaThumbnails: React.FC<PizzaThumbnailsProps> = ({ pizzas, active
           key={pizza.id}
           onClick={() => onSelect(index)}
           className={cn(
-            "group flex items-center gap-1.5 sm:gap-2 md:gap-3 bg-white/40 sm:backdrop-blur-md px-2 sm:px-3 md:px-5 py-1.5 sm:py-2 md:py-3 rounded-full border border-black/5 hover:bg-white/80 transition-all shadow-sm flex-shrink-0"
+            "group flex items-center gap-1.5 sm:gap-2 md:gap-3 bg-white sm:bg-white/40 sm:backdrop-blur-md px-2 sm:px-3 md:px-5 py-1.5 sm:py-2 md:py-3 rounded-full border border-black/[0.08] sm:border-black/5 hover:bg-white/80 transition-all shadow-sm flex-shrink-0"
           )}
           style={{
             transition: `all ${transitionTime} cubic-bezier(0.16, 1, 0.3, 1)`,

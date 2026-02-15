@@ -117,9 +117,9 @@
     animation: none !important;
   }
 
+  /* Keep will-change:transform for smooth category slide transitions */
   .gpu-accelerated {
     perspective: none;
-    will-change: auto;
   }
 
   /* Fast taps on all interactive elements */

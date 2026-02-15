@@ -55,7 +55,7 @@ export const PizzaCard = memo(({ pizza, visible, onOrder }: { pizza: Pizza; visi
 
   return (
     <div
-      className="relative group/card"
+      className="relative group/card h-full sm:h-auto"
       dir="rtl"
       onMouseMove={handleMouseMove}
       onMouseEnter={() => setIsHovered(true)}
@@ -81,7 +81,7 @@ export const PizzaCard = memo(({ pizza, visible, onOrder }: { pizza: Pizza; visi
         ref={cardRef}
         className={cn(
           "rounded-[2rem] sm:rounded-[3rem] w-full max-w-[78vw] sm:max-w-[420px] lg:max-w-[440px] flex flex-col overflow-hidden relative border border-white/20 transition-all duration-1000 z-10",
-          "h-auto sm:h-[680px] lg:h-[720px]",
+          "h-full sm:h-[680px] lg:h-[720px]",
           "bg-white/90 sm:bg-white/40 sm:backdrop-blur-3xl",
           "shadow-[0_8px_30px_rgba(0,0,0,0.06)] sm:shadow-[0_20px_60px_rgba(0,0,0,0.03)]",
           !visible ? "opacity-0 scale-95" : "opacity-100 scale-100"
