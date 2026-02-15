@@ -9,6 +9,7 @@ import { CategoryNavigator } from '@/components/CategoryNavigator';
 import { AuthDialog } from '@/components/AuthDialog';
 import { CartSheet } from '@/components/CartSheet';
 import { ProfileDialog } from '@/components/ProfileDialog';
+import { FavoritesPopup } from '@/components/FavoritesPopup';
 import { LoadingScreen } from '@/components/LoadingScreen';
 import { Button } from '@/components/ui/button';
 import { ShoppingBag, User, LogOut } from 'lucide-react';
@@ -85,6 +86,7 @@ export default function Home() {
   const [userName, setUserName] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [favoriteProductIds, setFavoriteProductIds] = useState<Set<string>>(new Set());
+  const [showFavoritesPopup, setShowFavoritesPopup] = useState(false);
 
   // Fetch initial data
   useEffect(() => {
@@ -126,6 +128,9 @@ export default function Home() {
             f.items.forEach((item) => ids.add(item.product.id));
           });
           setFavoriteProductIds(ids);
+          if (ids.size > 0) {
+            setTimeout(() => setShowFavoritesPopup(true), 2500);
+          }
         }
       }
 
@@ -170,6 +175,9 @@ export default function Home() {
         f.items.forEach((item) => ids.add(item.product.id));
       });
       setFavoriteProductIds(ids);
+      if (ids.size > 0) {
+        setTimeout(() => setShowFavoritesPopup(true), 500);
+      }
     }
   }, []);
 
@@ -376,6 +384,17 @@ export default function Home() {
         isOpen={isCartOpen}
         onClose={() => setIsCartOpen(false)}
         onCartUpdate={setCartCount}
+      />
+
+      <FavoritesPopup
+        isOpen={showFavoritesPopup}
+        onClose={() => setShowFavoritesPopup(false)}
+        onOrderAdded={async () => {
+          const { data } = await api.cart.get();
+          if (data?.items) {
+            setCartCount(data.items.reduce((s, i) => s + i.quantity, 0));
+          }
+        }}
       />
     </main>
   );

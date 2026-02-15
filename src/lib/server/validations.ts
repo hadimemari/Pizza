@@ -41,6 +41,7 @@ export const cartUpdateSchema = z.object({
 
 export const orderCreateSchema = z.object({
   note: z.string().max(500).optional(),
+  addressId: z.string().min(1, "آدرس تحویل الزامی است").optional(),
 });
 
 export const orderStatusSchema = z.object({
@@ -54,9 +55,12 @@ export const paymentRequestSchema = z.object({
 // ── پروفایل کاربر ──
 
 export const profileUpdateSchema = z.object({
-  name: z.string().min(2, "نام باید حداقل ۲ حرف باشد").max(100).optional(),
+  firstName: z.string().min(2, "نام باید حداقل ۲ حرف باشد").max(50).optional(),
+  lastName: z.string().min(2, "نام خانوادگی باید حداقل ۲ حرف باشد").max(50).optional(),
   email: z.string().email("ایمیل معتبر نیست").optional().or(z.literal("")),
-  birthDate: z.string().regex(/^\d{4}\/\d{1,2}\/\d{1,2}$/, "فرمت تاریخ: سال/ماه/روز").optional().or(z.literal("")),
+  birthYear: z.number().int().min(1340).max(1410).optional().nullable(),
+  birthMonth: z.number().int().min(1).max(12).optional().nullable(),
+  birthDay: z.number().int().min(1).max(31).optional().nullable(),
   defaultOrderNote: z.string().max(300).optional().or(z.literal("")),
   smsOptIn: z.boolean().optional(),
   preferredPayment: z.enum(["ONLINE", "CASH", "CARD_ON_DELIVERY"]).optional().nullable(),

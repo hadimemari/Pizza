@@ -15,14 +15,19 @@ datasource db {
 model User {
   id        String   @id @default(cuid())
   phone     String   @unique
-  name      String?
+  name      String?  // display name (computed: firstName + lastName)
+  firstName String?
+  lastName  String?
   role      String   @default("CUSTOMER") // CUSTOMER | ADMIN
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   // ── اطلاعات تکمیلی ──
   email            String?
-  birthDate        String?  // روز/ماه شمسی مثال: "15/08"
+  birthDate        String?  // computed: "YYYY/MM/DD"
+  birthYear        Int?
+  birthMonth       Int?
+  birthDay         Int?
   avatarUrl        String?
 
   // ── یادداشت پیش‌فرض ──
@@ -219,8 +224,12 @@ model Order {
   id          String   @id @default(cuid())
   orderNumber Int      @unique
   status      String   @default("PENDING") // PENDING | CONFIRMED | PREPARING | DELIVERED | CANCELLED
-  totalAmount Int      // مبلغ کل به تومان
+  totalAmount Int      // مبلغ کل به تومان (شامل مالیات و ارسال)
+  subtotal    Int      @default(0) // جمع غذاها
+  deliveryFee Int      @default(0) // هزینه ارسال
+  tax         Int      @default(0) // مالیات ارزش افزوده
   note        String?  // یادداشت مشتری
+  addressId   String?  // آدرس تحویل
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 

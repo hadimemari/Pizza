@@ -72,12 +72,13 @@ export async function POST(req: NextRequest) {
         data: {
           phone,
           name: name || "کاربر",
+          firstName: name || null,
         },
       });
     } else if (name && !user.name) {
       user = await db.user.update({
         where: { id: user.id },
-        data: { name },
+        data: { name, firstName: name },
       });
     }
 

@@ -139,13 +139,13 @@ export const api = {
         }>;
       }>("/api/orders"),
 
-    create: (note?: string) =>
+    create: (note?: string, addressId?: string) =>
       request<{
         message: string;
-        order: { id: string; orderNumber: number; totalAmount: number; status: string };
+        order: { id: string; orderNumber: number; subtotal: number; tax: number; deliveryFee: number; totalAmount: number; status: string };
       }>("/api/orders", {
         method: "POST",
-        body: JSON.stringify({ note }),
+        body: JSON.stringify({ note, addressId }),
       }),
   },
 
@@ -167,7 +167,9 @@ export const api = {
       request<{
         user: {
           id: string; phone: string; name: string | null;
-          email: string | null; birthDate: string | null; avatarUrl: string | null;
+          firstName: string | null; lastName: string | null;
+          email: string | null; avatarUrl: string | null;
+          birthYear: number | null; birthMonth: number | null; birthDay: number | null;
           defaultOrderNote: string | null; loyaltyPoints: number;
           loyaltyTier: string; totalOrders: number; totalSpent: number;
           referralCode: string | null; smsOptIn: boolean;

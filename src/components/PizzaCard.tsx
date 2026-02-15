@@ -98,20 +98,6 @@ export const PizzaCard = memo(({ pizza, visible, onOrder, isFavorite, onToggleFa
         >
           {/* Main Content Side */}
           <div className="w-1/2 h-full flex flex-col p-3 sm:p-6 lg:p-8 justify-between relative">
-            {/* Heart / Favorite Button */}
-            {onToggleFavorite && (
-              <button
-                onClick={(e) => { e.stopPropagation(); onToggleFavorite(); }}
-                className={cn(
-                  "absolute top-3 left-3 sm:top-5 sm:left-5 z-30 w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center transition-all duration-300 border",
-                  isFavorite
-                    ? "bg-red-50 border-red-200 text-red-500 scale-110 shadow-lg shadow-red-200/40"
-                    : "bg-white/80 border-black/5 text-zinc-300 hover:text-red-400 hover:border-red-200 hover:bg-red-50 hover:scale-110 active:scale-90"
-                )}
-              >
-                <Heart className={cn("w-4 h-4 sm:w-5 sm:h-5 transition-all duration-300", isFavorite && "fill-current")} />
-              </button>
-            )}
             <div className="flex-1 flex flex-col space-y-1 sm:space-y-3 lg:space-y-4 relative z-10 overflow-hidden text-center">
               <div className="flex flex-col items-center">
                 {/* Lamp - visible on all sizes */}
@@ -153,7 +139,7 @@ export const PizzaCard = memo(({ pizza, visible, onOrder, isFavorite, onToggleFa
                 {pizza.description}
               </p>
 
-              <div className="flex justify-center">
+              <div className="flex justify-center gap-2">
                 <button
                   onClick={() => setShowReviews(true)}
                   className="flex items-center gap-1.5 sm:gap-2 bg-black/[0.03] px-3 sm:px-5 py-1 sm:py-1.5 rounded-full text-[10px] sm:text-[10px] font-bold text-zinc-900 hover:bg-primary/10 hover:text-primary transition-all group w-fit border border-black/[0.03]"
@@ -166,6 +152,20 @@ export const PizzaCard = memo(({ pizza, visible, onOrder, isFavorite, onToggleFa
                     </span>
                   </span>
                 </button>
+                {onToggleFavorite && (
+                  <button
+                    onClick={(e) => { e.stopPropagation(); onToggleFavorite(); }}
+                    className={cn(
+                      "flex items-center gap-1 sm:gap-1.5 px-3 sm:px-4 py-1 sm:py-1.5 rounded-full text-[10px] font-bold transition-all duration-300 border",
+                      isFavorite
+                        ? "bg-red-50 text-red-500 border-red-200 hover:bg-red-100"
+                        : "bg-black/[0.03] text-zinc-500 border-black/[0.03] hover:bg-red-50 hover:text-red-400 hover:border-red-200"
+                    )}
+                  >
+                    <Heart className={cn("w-2.5 h-2.5 sm:w-3 sm:h-3 transition-all duration-300", isFavorite && "fill-current scale-110")} />
+                    <span className="hidden sm:inline">{isFavorite ? "همیشگی" : "همیشگی"}</span>
+                  </button>
+                )}
               </div>
 
               {/* Ingredients - glass buttons, visible on all sizes */}

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useCallback, useRef, useMemo } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import dynamic from "next/dynamic";
 import {
   Dialog,
@@ -13,9 +13,9 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
-  User, MapPin, Heart, ChevronLeft, ChevronDown,
+  User, MapPin, Heart,
   Plus, Trash2, Loader2, Check, AlertTriangle,
-  Mail, Cake, Star, Crown, Calendar,
+  Mail, Cake, Star, Crown,
   Home, Briefcase, PenLine, ShoppingBag, Zap,
 } from "lucide-react";
 import { api } from "@/lib/api-client";
@@ -32,8 +32,10 @@ interface ProfileDialogProps {
 type Tab = "profile" | "addresses" | "favorites";
 
 interface ProfileData {
-  id: string; phone: string; name: string | null;
-  email: string | null; birthDate: string | null;
+  id: string; phone: string;
+  firstName: string | null; lastName: string | null;
+  email: string | null;
+  birthYear: number | null; birthMonth: number | null; birthDay: number | null;
   defaultOrderNote: string | null; loyaltyPoints: number;
   loyaltyTier: string; totalOrders: number; totalSpent: number;
   referralCode: string | null; smsOptIn: boolean;
@@ -71,167 +73,9 @@ const SHAMSI_MONTHS = [
 ];
 
 function getDaysInMonth(month: number): number {
-  if (month <= 6) return 31;
-  if (month <= 11) return 30;
+  if (month >= 1 && month <= 6) return 31;
+  if (month >= 7 && month <= 11) return 30;
   return 29;
-}
-
-// ── ShamsiDatePicker component ──
-function ShamsiDatePicker({
-  value,
-  onChange,
-}: {
-  value: string;
-  onChange: (val: string) => void;
-}) {
-  const [open, setOpen] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
-
-  // Parse existing value "YYYY/MM/DD"
-  const parsed = useMemo(() => {
-    const m = value.match(/^(\d{4})\/(\d{1,2})\/(\d{1,2})$/);
-    if (m) return { year: parseInt(m[1]), month: parseInt(m[2]), day: parseInt(m[3]) };
-    return { year: 1380, month: 1, day: 1 };
-  }, [value]);
-
-  const [year, setYear] = useState(parsed.year);
-  const [month, setMonth] = useState(parsed.month);
-  const [day, setDay] = useState(parsed.day);
-
-  useEffect(() => {
-    setYear(parsed.year);
-    setMonth(parsed.month);
-    setDay(parsed.day);
-  }, [parsed]);
-
-  // Close on click outside
-  useEffect(() => {
-    if (!open) return;
-    const handle = (e: MouseEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
-    };
-    document.addEventListener("mousedown", handle);
-    return () => document.removeEventListener("mousedown", handle);
-  }, [open]);
-
-  const maxDay = getDaysInMonth(month);
-  const clampedDay = Math.min(day, maxDay);
-
-  const handleConfirm = () => {
-    const m = String(month).padStart(2, "0");
-    const d = String(clampedDay).padStart(2, "0");
-    onChange(`${year}/${m}/${d}`);
-    setOpen(false);
-  };
-
-  const displayText = value
-    ? `${parsed.day} ${SHAMSI_MONTHS[parsed.month - 1]} ${parsed.year}`
-    : "";
-
-  const years = useMemo(() => {
-    const arr: number[] = [];
-    for (let y = 1405; y >= 1340; y--) arr.push(y);
-    return arr;
-  }, []);
-
-  return (
-    <div className="relative" ref={ref}>
-      <button
-        type="button"
-        onClick={() => setOpen(!open)}
-        className="w-full h-10 rounded-xl bg-black/[0.03] border border-black/5 text-sm flex items-center justify-between px-3 hover:border-primary/30 transition-all duration-200"
-      >
-        <span className={displayText ? "text-foreground" : "text-muted-foreground"}>
-          {displayText || "انتخاب تاریخ تولد"}
-        </span>
-        <ChevronDown className={`w-4 h-4 text-muted-foreground transition-transform duration-300 ${open ? "rotate-180" : ""}`} />
-      </button>
-
-      <div className={`absolute top-full left-0 right-0 mt-2 z-50 transition-all duration-300 origin-top ${
-        open ? "opacity-100 scale-100 translate-y-0" : "opacity-0 scale-95 -translate-y-2 pointer-events-none"
-      }`}>
-        <div className="bg-white rounded-2xl shadow-2xl border border-black/10 p-4 space-y-3">
-          <p className="text-xs font-bold text-center text-muted-foreground flex items-center justify-center gap-1.5">
-            <Calendar className="w-3.5 h-3.5" />
-            تاریخ تولد شمسی
-          </p>
-
-          <div className="flex gap-2" dir="rtl">
-            {/* Day */}
-            <div className="flex-1 space-y-1">
-              <label className="text-[9px] font-bold text-muted-foreground text-center block">روز</label>
-              <div className="h-[140px] overflow-y-auto no-scrollbar rounded-xl bg-black/[0.03] border border-black/5">
-                {Array.from({ length: maxDay }, (_, i) => i + 1).map((d) => (
-                  <button
-                    key={d}
-                    type="button"
-                    onClick={() => setDay(d)}
-                    className={`w-full py-1.5 text-xs font-bold transition-all duration-200 ${
-                      clampedDay === d
-                        ? "bg-primary text-white"
-                        : "hover:bg-primary/10"
-                    }`}
-                  >
-                    {d}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Month */}
-            <div className="flex-[1.5] space-y-1">
-              <label className="text-[9px] font-bold text-muted-foreground text-center block">ماه</label>
-              <div className="h-[140px] overflow-y-auto no-scrollbar rounded-xl bg-black/[0.03] border border-black/5">
-                {SHAMSI_MONTHS.map((name, i) => (
-                  <button
-                    key={i}
-                    type="button"
-                    onClick={() => setMonth(i + 1)}
-                    className={`w-full py-1.5 text-xs font-bold transition-all duration-200 ${
-                      month === i + 1
-                        ? "bg-primary text-white"
-                        : "hover:bg-primary/10"
-                    }`}
-                  >
-                    {name}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Year */}
-            <div className="flex-1 space-y-1">
-              <label className="text-[9px] font-bold text-muted-foreground text-center block">سال</label>
-              <div className="h-[140px] overflow-y-auto no-scrollbar rounded-xl bg-black/[0.03] border border-black/5">
-                {years.map((y) => (
-                  <button
-                    key={y}
-                    type="button"
-                    onClick={() => setYear(y)}
-                    className={`w-full py-1.5 text-xs font-bold transition-all duration-200 ${
-                      year === y
-                        ? "bg-primary text-white"
-                        : "hover:bg-primary/10"
-                    }`}
-                  >
-                    {y}
-                  </button>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          <Button
-            type="button"
-            onClick={handleConfirm}
-            className="w-full h-9 rounded-xl bg-black hover:bg-primary text-white text-xs font-bold transition-all duration-300"
-          >
-            <Check className="w-3.5 h-3.5 ml-1.5" /> تایید
-          </Button>
-        </div>
-      </div>
-    </div>
-  );
 }
 
 // ═══════════════════════════════════════════
@@ -250,9 +94,12 @@ export const ProfileDialog: React.FC<ProfileDialogProps> = ({ isOpen, onClose, o
   const [transitioning, setTransitioning] = useState(false);
 
   // Form states
-  const [formName, setFormName] = useState("");
+  const [formFirstName, setFormFirstName] = useState("");
+  const [formLastName, setFormLastName] = useState("");
   const [formEmail, setFormEmail] = useState("");
-  const [formBirthDate, setFormBirthDate] = useState("");
+  const [formBirthYear, setFormBirthYear] = useState<number | "">("");
+  const [formBirthMonth, setFormBirthMonth] = useState<number | "">("");
+  const [formBirthDay, setFormBirthDay] = useState<number | "">("");
   const [formOrderNote, setFormOrderNote] = useState("");
 
   // Address form
@@ -287,6 +134,31 @@ export const ProfileDialog: React.FC<ProfileDialogProps> = ({ isOpen, onClose, o
     }, 200);
   };
 
+  // Shamsi year options (descending)
+  const yearOptions = useMemo(() => {
+    const arr: number[] = [];
+    for (let y = 1405; y >= 1340; y--) arr.push(y);
+    return arr;
+  }, []);
+
+  // Day options based on selected month
+  const dayOptions = useMemo(() => {
+    const maxDay = formBirthMonth ? getDaysInMonth(Number(formBirthMonth)) : 31;
+    const arr: number[] = [];
+    for (let d = 1; d <= maxDay; d++) arr.push(d);
+    return arr;
+  }, [formBirthMonth]);
+
+  // Clamp day if month changes and day exceeds max
+  useEffect(() => {
+    if (formBirthDay && formBirthMonth) {
+      const maxDay = getDaysInMonth(Number(formBirthMonth));
+      if (Number(formBirthDay) > maxDay) {
+        setFormBirthDay(maxDay);
+      }
+    }
+  }, [formBirthMonth, formBirthDay]);
+
   const loadProfile = useCallback(async () => {
     setLoading(true);
     setError("");
@@ -295,9 +167,12 @@ export const ProfileDialog: React.FC<ProfileDialogProps> = ({ isOpen, onClose, o
     if (data) {
       setProfile(data.user as unknown as ProfileData);
       setCompleteness(data.completeness);
-      setFormName(data.user.name || "");
+      setFormFirstName(data.user.firstName || "");
+      setFormLastName(data.user.lastName || "");
       setFormEmail(data.user.email || "");
-      setFormBirthDate(data.user.birthDate || "");
+      setFormBirthYear(data.user.birthYear || "");
+      setFormBirthMonth(data.user.birthMonth || "");
+      setFormBirthDay(data.user.birthDay || "");
       setFormOrderNote(data.user.defaultOrderNote || "");
     }
     setLoading(false);
@@ -317,15 +192,19 @@ export const ProfileDialog: React.FC<ProfileDialogProps> = ({ isOpen, onClose, o
     setSaving(true);
     setError(""); setSuccess("");
     const { error: err } = await api.profile.update({
-      name: formName || undefined,
+      firstName: formFirstName || undefined,
+      lastName: formLastName || undefined,
       email: formEmail || "",
-      birthDate: formBirthDate || "",
+      birthYear: formBirthYear ? Number(formBirthYear) : undefined,
+      birthMonth: formBirthMonth ? Number(formBirthMonth) : undefined,
+      birthDay: formBirthDay ? Number(formBirthDay) : undefined,
       defaultOrderNote: formOrderNote || "",
     });
     setSaving(false);
     if (err) { setError(err); return; }
     setSuccess("پروفایل بروزرسانی شد");
-    if (formName && onNameUpdate) onNameUpdate(formName);
+    const fullName = `${formFirstName} ${formLastName}`.trim();
+    if (fullName && onNameUpdate) onNameUpdate(fullName);
     loadProfile();
     setTimeout(() => setSuccess(""), 3000);
   };
@@ -379,10 +258,14 @@ export const ProfileDialog: React.FC<ProfileDialogProps> = ({ isOpen, onClose, o
 
   const tier = TIER_CONFIG[profile?.loyaltyTier || "BRONZE"];
 
+  const displayName = profile
+    ? `${profile.firstName || ""} ${profile.lastName || ""}`.trim() || "کاربر"
+    : "کاربر";
+
   const tabs: { id: Tab; label: string; icon: React.ReactNode }[] = [
     { id: "profile", label: "پروفایل", icon: <User className="w-4 h-4" /> },
     { id: "addresses", label: "آدرس‌ها", icon: <MapPin className="w-4 h-4" /> },
-    { id: "favorites", label: "علاقه‌مندی", icon: <Heart className="w-4 h-4" /> },
+    { id: "favorites", label: "همیشگی", icon: <Heart className="w-4 h-4" /> },
   ];
 
   // Format join date
@@ -394,6 +277,9 @@ export const ProfileDialog: React.FC<ProfileDialogProps> = ({ isOpen, onClose, o
   const contentAnim = transitioning
     ? `opacity-0 ${slideDir > 0 ? "-translate-x-4" : "translate-x-4"}`
     : "opacity-100 translate-x-0";
+
+  // Select styling
+  const selectClass = "h-10 flex-1 rounded-xl bg-black/[0.03] border border-black/5 text-sm px-2 appearance-none text-center cursor-pointer hover:border-primary/30 focus:border-primary/40 focus:outline-none focus:ring-1 focus:ring-primary/20 transition-all duration-200";
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -468,7 +354,7 @@ export const ProfileDialog: React.FC<ProfileDialogProps> = ({ isOpen, onClose, o
                       <div className="flex justify-between items-start">
                         <div>
                           <p className="text-xs text-white/60 mb-1">پیتزا موشن</p>
-                          <p className="text-lg font-black">{profile.name || "کاربر"}</p>
+                          <p className="text-lg font-black">{displayName}</p>
                           <p className="text-xs text-white/50 font-mono mt-1 tracking-wider" dir="ltr">{profile.phone}</p>
                         </div>
                         <div className={`px-3 py-1 rounded-full border text-[10px] font-bold flex items-center gap-1 ${tier.color}`}>
@@ -500,9 +386,16 @@ export const ProfileDialog: React.FC<ProfileDialogProps> = ({ isOpen, onClose, o
 
                   {/* ── Edit Form ── */}
                   <div className="space-y-3">
-                    <div className="space-y-1.5">
-                      <Label className="text-[10px] font-bold text-muted-foreground flex items-center gap-1"><User className="w-3 h-3" /> نام</Label>
-                      <Input value={formName} onChange={(e) => setFormName(e.target.value)} className="h-10 rounded-xl bg-black/[0.03] border-black/5 text-sm" placeholder="نام و نام خانوادگی" />
+                    {/* First Name & Last Name side by side */}
+                    <div className="flex gap-3">
+                      <div className="flex-1 space-y-1.5">
+                        <Label className="text-[10px] font-bold text-muted-foreground flex items-center gap-1"><User className="w-3 h-3" /> نام</Label>
+                        <Input value={formFirstName} onChange={(e) => setFormFirstName(e.target.value)} className="h-10 rounded-xl bg-black/[0.03] border-black/5 text-sm" placeholder="نام" />
+                      </div>
+                      <div className="flex-1 space-y-1.5">
+                        <Label className="text-[10px] font-bold text-muted-foreground flex items-center gap-1"><User className="w-3 h-3" /> نام خانوادگی</Label>
+                        <Input value={formLastName} onChange={(e) => setFormLastName(e.target.value)} className="h-10 rounded-xl bg-black/[0.03] border-black/5 text-sm" placeholder="نام خانوادگی" />
+                      </div>
                     </div>
                     <div className="space-y-1.5">
                       <Label className="text-[10px] font-bold text-muted-foreground flex items-center gap-1"><Mail className="w-3 h-3" /> ایمیل</Label>
@@ -510,7 +403,41 @@ export const ProfileDialog: React.FC<ProfileDialogProps> = ({ isOpen, onClose, o
                     </div>
                     <div className="space-y-1.5">
                       <Label className="text-[10px] font-bold text-muted-foreground flex items-center gap-1"><Cake className="w-3 h-3" /> تاریخ تولد (شمسی)</Label>
-                      <ShamsiDatePicker value={formBirthDate} onChange={setFormBirthDate} />
+                      <div className="flex gap-2" dir="rtl">
+                        {/* Day */}
+                        <select
+                          value={formBirthDay}
+                          onChange={(e) => setFormBirthDay(e.target.value ? Number(e.target.value) : "")}
+                          className={selectClass}
+                        >
+                          <option value="">روز</option>
+                          {dayOptions.map((d) => (
+                            <option key={d} value={d}>{d}</option>
+                          ))}
+                        </select>
+                        {/* Month */}
+                        <select
+                          value={formBirthMonth}
+                          onChange={(e) => setFormBirthMonth(e.target.value ? Number(e.target.value) : "")}
+                          className={selectClass}
+                        >
+                          <option value="">ماه</option>
+                          {SHAMSI_MONTHS.map((name, i) => (
+                            <option key={i} value={i + 1}>{name}</option>
+                          ))}
+                        </select>
+                        {/* Year */}
+                        <select
+                          value={formBirthYear}
+                          onChange={(e) => setFormBirthYear(e.target.value ? Number(e.target.value) : "")}
+                          className={selectClass}
+                        >
+                          <option value="">سال</option>
+                          {yearOptions.map((y) => (
+                            <option key={y} value={y}>{y}</option>
+                          ))}
+                        </select>
+                      </div>
                     </div>
                     <div className="space-y-1.5">
                       <Label className="text-[10px] font-bold text-muted-foreground flex items-center gap-1"><PenLine className="w-3 h-3" /> یادداشت همیشگی</Label>
@@ -607,13 +534,13 @@ export const ProfileDialog: React.FC<ProfileDialogProps> = ({ isOpen, onClose, o
                 </div>
               )}
 
-              {/* ═══ TAB: FAVORITES (علاقه‌مندی) ═══ */}
+              {/* ═══ TAB: FAVORITES (همیشگی) ═══ */}
               {tab === "favorites" && profile && (
                 <div className="space-y-3">
                   {profile.favorites.length === 0 && (
                     <div className="text-center py-8">
                       <Heart className="w-10 h-10 mx-auto text-muted-foreground/30 mb-3" />
-                      <p className="text-sm text-muted-foreground">هنوز آیتمی علاقه‌مند نشده‌اید</p>
+                      <p className="text-sm text-muted-foreground">هنوز آیتمی در همیشگی ذخیره نشده</p>
                       <p className="text-[10px] text-muted-foreground/60 mt-1">با زدن قلب روی کارت هر محصول، آن را ذخیره کنید</p>
                     </div>
                   )}
