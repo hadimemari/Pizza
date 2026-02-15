@@ -31,17 +31,15 @@ export function isDemoMode(): boolean {
   return !getApiKey() || !getTemplateId();
 }
 
-export async function sendOtp(phone: string, code: string, userName?: string): Promise<boolean> {
+export async function sendOtp(phone: string, code: string): Promise<boolean> {
   const apiKey = getApiKey();
   const templateId = getTemplateId();
-  const displayName = userName || "کاربر";
 
   // Demo mode: log OTP to console if API key not configured
   if (!apiKey || !templateId) {
     console.log(`\n╔════════════════════════════════════╗`);
     console.log(`║  [SMS DEMO] کد تایید              ║`);
     console.log(`║  Phone: ${phone.padEnd(24)}║`);
-    console.log(`║  Name:  ${displayName.padEnd(24)}║`);
     console.log(`║  Code:  ${code.padEnd(24)}║`);
     console.log(`╚════════════════════════════════════╝\n`);
     return true;
@@ -60,7 +58,6 @@ export async function sendOtp(phone: string, code: string, userName?: string): P
           mobile: toInternational(phone),
           templateId: parseInt(templateId),
           parameters: [
-            { name: "Name", value: displayName },
             { name: "Code", value: code },
           ],
         }),
