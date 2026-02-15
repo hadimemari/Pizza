@@ -4,6 +4,7 @@
 // ──────────────────────────────────────────
 
 const SMSIR_BASE = "https://api.sms.ir/v1";
+const SANDBOX_TEMPLATE_ID = 123456;
 
 interface SmsIrResponse {
   status: number;
@@ -49,22 +50,31 @@ export async function sendOtp(phone: string, code: string): Promise<boolean> {
     return true;
   }
 
+  // In sandbox mode, always use the built-in sandbox template
+  const sandbox = isSandboxMode();
+  const resolvedTemplateId = sandbox ? SANDBOX_TEMPLATE_ID : parseInt(templateId);
+
   // Retry with backoff for network errors
   for (let attempt = 0; attempt < 3; attempt++) {
     try {
+      const body = {
+        mobile: toInternational(phone),
+        templateId: resolvedTemplateId,
+        parameters: [
+          { name: "Code", value: code },
+        ],
+      };
+
+      console.log(`[SMS] Sending OTP (sandbox=${sandbox}):`, JSON.stringify(body));
+
       const response = await fetch(`${SMSIR_BASE}/send/verify`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "Accept": "text/plain",
           "x-api-key": apiKey,
         },
-        body: JSON.stringify({
-          mobile: toInternational(phone),
-          templateId: parseInt(templateId),
-          parameters: [
-            { name: "Code", value: code },
-          ],
-        }),
+        body: JSON.stringify(body),
       });
 
       const result: SmsIrResponse = await response.json();
@@ -74,7 +84,7 @@ export async function sendOtp(phone: string, code: string): Promise<boolean> {
         return true;
       }
 
-      console.error(`[SMS] Failed to send OTP: ${result.message} (status: ${result.status})`);
+      console.error(`[SMS] Failed to send OTP:`, JSON.stringify(result));
       return false;
     } catch (error) {
       console.error(`[SMS] Network error (attempt ${attempt + 1}/3):`, error);
