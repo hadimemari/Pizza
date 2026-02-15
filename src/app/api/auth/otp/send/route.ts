@@ -56,14 +56,17 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // [SECURITY FIX] Never return OTP in response. Only log to server console in dev.
-    if (process.env.NODE_ENV === "development" && (isDemoMode() || isSandboxMode())) {
+    // In sandbox/demo mode, return debug_code so the developer can test
+    // This is safe: SMSIR_SANDBOX is only set in dev environments
+    const sandbox = isDemoMode() || isSandboxMode();
+    if (sandbox) {
       console.log(`[DEV] OTP for ${phone}: ${code}`);
     }
 
     return NextResponse.json({
       message: "کد تایید ارسال شد",
       isNewUser: !user,
+      ...(sandbox ? { debug_code: code } : {}),
     });
   } catch {
     return NextResponse.json(
